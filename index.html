@@ -804,45 +804,56 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
     }
   }
 
-  // Request a fresh relay + QR from the backend on page load
+  // Pre-warm the backend immediately on script load (fire-and-forget)
+  fetch(API_BASE + '/health').catch(function(){});
+
+  // Request a fresh relay + QR from the backend, with auto-retry
   function initRelay() {
     var statusEl = document.getElementById('qr-status');
     var qrImg = document.getElementById('qr-img');
-    if (statusEl) statusEl.textContent = 'Waking verifier — first load may take ~30s...';
-
-    // Show a pulsing animation on the placeholder while loading
+    if (statusEl) statusEl.textContent = 'Connecting to verifier...';
     if (qrImg) qrImg.style.animation = 'pulse-timer 2s infinite';
 
-    // Timeout: if backend doesn't respond in 45s, keep waiting
-    var timeout = setTimeout(function() {
-      if (!RELAY_ID) {
-        if (statusEl) statusEl.textContent = 'Verifier is waking up — please wait...';
-      }
-    }, 45000);
+    var attempt = 0;
+    var maxAttempts = 12; // ~60s total with backoff
 
-    fetch(API_BASE + '/challenge', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ site: 'humanpresenceprotocol.com', session_duration: 600 })
-    })
-    .then(function(res) { return res.json(); })
-    .then(function(data) {
-      clearTimeout(timeout);
-      if (data.relay_id) {
-        RELAY_ID = data.relay_id;
-        if (qrImg) { qrImg.src = API_BASE + '/qr?relay_id=' + RELAY_ID + '&session_duration=600'; qrImg.style.animation = 'none'; }
-        if (statusEl) statusEl.textContent = 'Scan with HPP iPhone app';
-        startPolling();
-      } else {
-        if (statusEl) statusEl.textContent = 'Verifier unavailable — refresh to try again';
-        if (qrImg) qrImg.style.animation = 'none';
+    function tryChallenge() {
+      attempt++;
+      var delay = Math.min(attempt * 3, 10); // 3s, 6s, 9s, then cap at 10s
+      if (attempt > 1 && statusEl) {
+        statusEl.textContent = 'Waking verifier — attempt ' + attempt + '...';
       }
-    })
-    .catch(function() {
-      clearTimeout(timeout);
-      if (statusEl) statusEl.textContent = 'Verifier offline — refresh to try again';
-      if (qrImg) qrImg.style.animation = 'none';
-    });
+
+      fetch(API_BASE + '/challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ site: 'humanpresenceprotocol.com', session_duration: 600 })
+      })
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.relay_id) {
+          RELAY_ID = data.relay_id;
+          if (qrImg) { qrImg.src = API_BASE + '/qr?relay_id=' + RELAY_ID + '&session_duration=600'; qrImg.style.animation = 'none'; }
+          if (statusEl) statusEl.textContent = 'Scan with HPP iPhone app';
+          startPolling();
+        } else if (attempt < maxAttempts) {
+          setTimeout(tryChallenge, delay * 1000);
+        } else {
+          if (statusEl) statusEl.textContent = 'Verifier unavailable — refresh to try again';
+          if (qrImg) qrImg.style.animation = 'none';
+        }
+      })
+      .catch(function() {
+        if (attempt < maxAttempts) {
+          setTimeout(tryChallenge, delay * 1000);
+        } else {
+          if (statusEl) statusEl.textContent = 'Verifier offline — refresh to try again';
+          if (qrImg) qrImg.style.animation = 'none';
+        }
+      });
+    }
+
+    tryChallenge();
   }
 
   // Relay polling — check every 2s for attestation token
