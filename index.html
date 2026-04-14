@@ -824,15 +824,16 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
         statusEl.textContent = 'Waking verifier — attempt ' + attempt + '...';
       }
 
-      fetch(API_BASE + '/challenge', {
+      // Step 1: Create relay slot, Step 2: Build QR
+      fetch(API_BASE + '/relay/create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ site: 'humanpresenceprotocol.com', session_duration: 600 })
+        body: '{}'
       })
       .then(function(res) { return res.json(); })
-      .then(function(data) {
-        if (data.relay_id) {
-          RELAY_ID = data.relay_id;
+      .then(function(relayData) {
+        if (relayData.relay_id) {
+          RELAY_ID = relayData.relay_id;
           if (qrImg) { qrImg.src = API_BASE + '/qr?relay_id=' + RELAY_ID + '&session_duration=600'; qrImg.style.animation = 'none'; }
           if (statusEl) statusEl.textContent = 'Scan with HPP iPhone app';
           startPolling();
