@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Human Presence Protocol — humanpresenceprotocol.com</title>
-<meta name="description" content="Human Presence Protocol (HPP) — Cryptographic proof-of-humanity via device-native biometrics. No passwords, no CAPTCHAs, no PII.">
-<link rel="canonical" href="https://humanpresenceprotocol.com/">
+<title>HPP — Verified Access — humanpresenceprotocol.com</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
@@ -328,6 +326,32 @@ footer .footer-title {
   flex-shrink: 0; background: var(--gold-light); color: var(--gold);
   font-family: var(--mono); font-size: 0.62rem; font-weight: 500;
   padding: 2px 8px; border-radius: 20px; letter-spacing: 0.03em;
+}
+/* ── Age Verification States ── */
+.rad-age-badge {
+  flex-shrink: 0; background: var(--accent-light); color: var(--accent);
+  font-family: var(--mono); font-size: 0.6rem; font-weight: 600;
+  padding: 2px 7px; border-radius: 20px; letter-spacing: 0.03em;
+}
+.rad-age-verified-pill {
+  flex-shrink: 0; background: #e8f0e8; color: var(--green-dark);
+  font-family: var(--mono); font-size: 0.65rem; font-weight: 500;
+  padding: 2px 9px; border-radius: 20px; letter-spacing: 0.03em;
+}
+.rad-card.age-not-met {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217,119,6,0.10);
+}
+.rad-age-not-met-state {
+  border-radius: 6px; padding: 0.75rem;
+  display: flex; align-items: flex-start; gap: 8px;
+  background: #fef3c7; border: 1px solid #d97706; color: #92400e;
+}
+.rad-age-not-met-pill {
+  flex-shrink: 0; background: #fef3c7; color: #d97706;
+  font-family: var(--mono); font-size: 0.65rem; font-weight: 500;
+  padding: 2px 9px; border-radius: 20px; letter-spacing: 0.03em;
+  border: 1px solid #d97706;
 }
 .rad-card-risk { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.4; }
 .rad-locked-state, .rad-released-state {
@@ -937,11 +961,11 @@ body.log-open #log-panel { right: 0; }
       <li><a href="#verification">Verification</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <div class="nav-timer-wrap" style="display:none;">
+    <div class="nav-timer-wrap">
       <span class="nav-timer-label">Session</span>
       <span class="session-timer" id="timer">--:--</span>
     </div>
-    <div class="nav-verified">&#10003; HPP</div>
+    <div class="nav-verified">&#10003; HPP VERIFIED</div>
   </div>
 </nav>
 
@@ -1010,7 +1034,9 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-card-title">Infinite Scroll Boundary</div>
         <div style="display:flex;gap:6px;align-items:center;">
           
+          
           <div class="rad-verified-pill" id="c1-pill" style="display:none">&#10003; Verified</div>
+          <div class="rad-age-not-met-pill" id="c1-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
       <div class="rad-card-risk">Continuous passive consumption without a stopping condition.</div>
@@ -1030,6 +1056,10 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-check-icon">&#10003;</div>
         <div class="rad-released-msg">Continuation granted for this session window. Feed preview unblurred for one bounded interval.</div>
       </div>
+      <div class="rad-age-not-met-state" id="c1-age-not-met" style="display:none">
+        <div class="rad-lock-icon">&#9888;</div>
+        <div class="rad-lock-msg">Human presence confirmed. Age threshold (+) not satisfied.</div>
+      </div>
       <button class="rad-btn" id="c1-btn" data-action="Continue with Human Presence" onclick="releaseCard('c1')">
         Continue with Human Presence
       </button>
@@ -1041,7 +1071,9 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-card-title">Autoplay Gate</div>
         <div style="display:flex;gap:6px;align-items:center;">
           
+          
           <div class="rad-verified-pill" id="c2-pill" style="display:none">&#10003; Verified</div>
+          <div class="rad-age-not-met-pill" id="c2-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
       <div class="rad-card-risk">Content progression without an affirmative moment of human choice.</div>
@@ -1061,6 +1093,10 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-check-icon">&#10003;</div>
         <div class="rad-released-msg">Human choice recorded before progression.</div>
       </div>
+      <div class="rad-age-not-met-state" id="c2-age-not-met" style="display:none">
+        <div class="rad-lock-icon">&#9888;</div>
+        <div class="rad-lock-msg">Human presence confirmed. Age threshold (+) not satisfied.</div>
+      </div>
       <button class="rad-btn" id="c2-btn" data-action="Advance with Human Presence" onclick="releaseCard('c2')">
         Advance with Human Presence
       </button>
@@ -1072,7 +1108,9 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-card-title">Notification Delivery Gate</div>
         <div style="display:flex;gap:6px;align-items:center;">
           
+          
           <div class="rad-verified-pill" id="c3-pill" style="display:none">&#10003; Verified</div>
+          <div class="rad-age-not-met-pill" id="c3-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
       <div class="rad-card-risk">Compulsive re-engagement trigger delivered without verified present intent.</div>
@@ -1092,6 +1130,10 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-check-icon">&#10003;</div>
         <div class="rad-released-msg">Notification released after verified presence.</div>
       </div>
+      <div class="rad-age-not-met-state" id="c3-age-not-met" style="display:none">
+        <div class="rad-lock-icon">&#9888;</div>
+        <div class="rad-lock-msg">Human presence confirmed. Age threshold (+) not satisfied.</div>
+      </div>
       <button class="rad-btn" id="c3-btn" data-action="Release Notification" onclick="releaseCard('c3')">
         Release Notification
       </button>
@@ -1102,8 +1144,10 @@ body.log-open #log-panel { right: 0; }
       <div class="rad-card-header">
         <div class="rad-card-title">Age Gated Feature</div>
         <div style="display:flex;gap:6px;align-items:center;">
-          <div class="rad-sim-badge">Simulated</div>
-          <div class="rad-verified-pill" id="c4-pill" style="display:none">&#10003; Verified</div>
+          
+          <div class="rad-age-badge">13+</div>
+          <div class="rad-verified-pill" id="c4-pill" style="display:none">&#10003; Age Verified</div>
+          <div class="rad-age-not-met-pill" id="c4-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
       <div class="rad-card-risk">Restricted feature access without age-qualified presence verification.</div>
@@ -1115,13 +1159,17 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-qr-wrap">
           <img id="c4-qr" src="" alt="Scan with HPP iPhone app">
         </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
+        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone... <span style="color:var(--gold);font-weight:600;">Age check: 13+</span></div>
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c4')">Cancel</button>
       </div>
       <div class="rad-released-state" id="c4-released" style="display:none">
         <div class="rad-check-icon">&#10003;</div>
         <div class="rad-released-msg">Age predicate satisfied. Feature unlocked.</div>
+      </div>
+      <div class="rad-age-not-met-state" id="c4-age-not-met" style="display:none">
+        <div class="rad-lock-icon">&#9888;</div>
+        <div class="rad-lock-msg">Human presence confirmed. Age threshold (13+) not satisfied.</div>
       </div>
       <button class="rad-btn" id="c4-btn" data-action="Verify Access" onclick="releaseCard('c4')">
         Verify Access
@@ -1134,7 +1182,9 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-card-title">Reinforcement Control</div>
         <div style="display:flex;gap:6px;align-items:center;">
           
+          
           <div class="rad-verified-pill" id="c5-pill" style="display:none">&#10003; Verified</div>
+          <div class="rad-age-not-met-pill" id="c5-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
       <div class="rad-card-risk">Variable reward loop tied to social validation without a deliberate human engagement gate.</div>
@@ -1154,6 +1204,10 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-check-icon">&#10003;</div>
         <div class="rad-released-msg">Reinforcement signal released after deliberate engagement.</div>
       </div>
+      <div class="rad-age-not-met-state" id="c5-age-not-met" style="display:none">
+        <div class="rad-lock-icon">&#9888;</div>
+        <div class="rad-lock-msg">Human presence confirmed. Age threshold (+) not satisfied.</div>
+      </div>
       <button class="rad-btn" id="c5-btn" data-action="Reveal with Human Presence" onclick="releaseCard('c5')">
         Reveal with Human Presence
       </button>
@@ -1165,7 +1219,9 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-card-title">Escalation Gate</div>
         <div style="display:flex;gap:6px;align-items:center;">
           
+          
           <div class="rad-verified-pill" id="c6-pill" style="display:none">&#10003; Verified</div>
+          <div class="rad-age-not-met-pill" id="c6-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
       <div class="rad-card-risk">Silent algorithmic progression into stronger content tiers without explicit human confirmation.</div>
@@ -1184,6 +1240,10 @@ body.log-open #log-panel { right: 0; }
       <div class="rad-released-state" id="c6-released" style="display:none">
         <div class="rad-check-icon">&#10003;</div>
         <div class="rad-released-msg">Escalation resumed after explicit human confirmation.</div>
+      </div>
+      <div class="rad-age-not-met-state" id="c6-age-not-met" style="display:none">
+        <div class="rad-lock-icon">&#9888;</div>
+        <div class="rad-lock-msg">Human presence confirmed. Age threshold (+) not satisfied.</div>
       </div>
       <button class="rad-btn" id="c6-btn" data-action="Continue with Human Presence" onclick="releaseCard('c6')">
         Continue with Human Presence
@@ -1542,8 +1602,6 @@ body.log-open #log-panel { right: 0; }
 </section>
 
 <!-- ══ SITE CONTENT (loaded from welcome-gate.html) ══ -->
-<!-- (Home/overview section removed — already rendered at top of page) -->
-
 <!-- ══ 1. ARCHITECTURE ══ -->
 <section id="architecture" class="alt-bg">
   <div class="container">
@@ -2468,10 +2526,11 @@ body.log-open #log-panel { right: 0; }
   /* ═══════════════════════════════════════════════════════════════════════
      Session State
      ═══════════════════════════════════════════════════════════════════════ */
-  var API_BASE      = "https://hpp-verifier.onrender.com";
-  var EXPIRES_AT    = 2776177806;
-  var SESSION_TOKEN = "static-github-pages";
-  var RECEIPT       = {"event_id":"static-site","timestamp":"2026-04-14T14:43:27.520Z","assurance":"STATIC","outcome":"success","credit_action":"—","challenge_id":"—","nonce":"—","epoch":1776177807,"receipt_id":"static","fingerprint":"—","site":"humanpresenceprotocol.com","session_token":"static"};
+  var EXPIRES_AT    = null;
+  var SESSION_TOKEN = null;
+  var RECEIPT       = null;
+    var API_BASE      = "https://hpp-verifier.onrender.com";
+  var RAD_CARDS_CLIENT = [{"id":"c1","title":"Infinite Scroll Boundary","risk":"Continuous passive consumption without a stopping condition.","locked":"Session boundary reached.","action":"Continue with Human Presence","released":"Continuation granted for this session window. Feed preview unblurred for one bounded interval.","primitive":"P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841","simulated":false},{"id":"c2","title":"Autoplay Gate","risk":"Content progression without an affirmative moment of human choice.","locked":"Next item requires confirmation.","action":"Advance with Human Presence","released":"Human choice recorded before progression.","primitive":"P12 — Commitment-Based Presence Proof · Pro-Q 64/018,841","simulated":false},{"id":"c3","title":"Notification Delivery Gate","risk":"Compulsive re-engagement trigger delivered without verified present intent.","locked":"Notification held pending presence.","action":"Release Notification","released":"Notification released after verified presence.","primitive":"P2 — HW-Bound Attestation Root · Pro-A 63/983,106 · Filed 02/14/2026","simulated":false},{"id":"c4","title":"Age Gated Feature","risk":"Restricted feature access without age-qualified presence verification.","locked":"Access requires age-qualified presence.","action":"Verify Access","released":"Age predicate satisfied. Feature unlocked.","primitive":"P2 + Pro-M 64/018,735 + Pro-P 63/985,418 — Age Verification · Filed 02/18/2026","simulated":false,"age_predicate":{"min_age":13}},{"id":"c5","title":"Reinforcement Control","risk":"Variable reward loop tied to social validation without a deliberate human engagement gate.","locked":"Reinforcement signal withheld pending presence.","action":"Reveal with Human Presence","released":"Reinforcement signal released after deliberate engagement.","primitive":"P11 — Tamper-Evident Ledger · Pro-K 63/983,135 · Filed 02/14/2026","simulated":false},{"id":"c6","title":"Escalation Gate","risk":"Silent algorithmic progression into stronger content tiers without explicit human confirmation.","locked":"Escalation paused.","action":"Continue with Human Presence","released":"Escalation resumed after explicit human confirmation.","primitive":"P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841 + INV-08 64/019,933","simulated":false}];
   var logEntries    = [];
   var released      = {};
   var demoKeyPair   = null;
@@ -2592,6 +2651,12 @@ body.log-open #log-panel { right: 0; }
 
   /* ── Simulate Mode (existing WebCrypto demo flow) ─────────────────── */
   async function releaseCardSimulate(id) {
+    var cardDef = RAD_CARDS_CLIENT.find(function(c) { return c.id === id; });
+    var agePred = cardDef ? cardDef.age_predicate : null;
+
+    if (agePred) {
+      addLogEntry('CHALLENGE', 'Simulated age verification (min_age: ' + agePred.min_age + ') \u2014 qualified');
+    }
     addLogEntry('CHALLENGE', 'Requesting challenge from server (POST /challenge)...');
 
     try {
@@ -2639,13 +2704,23 @@ body.log-open #log-panel { right: 0; }
   /* ── iPhone Mode (real Secure Enclave attestation via QR relay) ────── */
   async function releaseCardIPhone(id) {
     var cardName = (document.getElementById(id).querySelector('.rad-card-title') || {}).textContent || id;
+    var cardDef = RAD_CARDS_CLIENT.find(function(c) { return c.id === id; });
+    var agePred = cardDef ? cardDef.age_predicate : null;
+
     addLogEntry('SYSTEM', 'Requesting relay for card: ' + cardName);
+    if (agePred) {
+      addLogEntry('SYSTEM', 'Requesting age-verified attestation (min_age: ' + agePred.min_age + ')');
+    }
 
     try {
+      var challengeBody = { hpp_ver: '2.0', site: window.location.hostname };
+      if (agePred) {
+        challengeBody.age_predicate = agePred;
+      }
       var resp = await fetch(API_BASE + '/challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hpp_ver: '2.0', site: window.location.hostname })
+        body: JSON.stringify(challengeBody)
       });
 
       if (!resp.ok) {
@@ -2673,7 +2748,11 @@ body.log-open #log-panel { right: 0; }
       btnEl.style.display     = 'none';
 
       // Render QR code via existing server endpoint
-      qrImg.src = '/qr?relay_id=' + encodeURIComponent(relayId) + '&session_duration=600';
+      var qrUrl = '/qr?relay_id=' + encodeURIComponent(relayId) + '&session_duration=600';
+      if (agePred) {
+        qrUrl += '&age_predicate_min_age=' + agePred.min_age;
+      }
+      qrImg.src = qrUrl;
 
       // Start polling relay
       var pollCount = 0;
@@ -2689,21 +2768,34 @@ body.log-open #log-panel { right: 0; }
             if (rd.session_token) {
               // Attestation received!
               clearCardPoller(id);
-              addLogEntry('ATTESTATION', 'Real attestation received for ' + cardName + ' \u2014 token: ' + rd.session_token.slice(0, 16) + '...');
+              if (agePred) {
+                addLogEntry('ATTESTATION', 'Age-verified attestation received for ' + cardName + ' \u2014 threshold: ' + agePred.min_age + '+ \u2014 token: ' + rd.session_token.slice(0, 16) + '...');
+              } else {
+                addLogEntry('ATTESTATION', 'Real attestation received for ' + cardName + ' \u2014 token: ' + rd.session_token.slice(0, 16) + '...');
+              }
 
-              // Optional: validate token
+              // Validate token and check age_qualified
+              var ageResult = null;
               try {
                 var sv = await fetch(API_BASE + '/session/' + encodeURIComponent(rd.session_token));
                 if (sv.ok) {
                   var sd = await sv.json();
                   addLogEntry('ATTESTATION', 'Token validated \u2014 expires: ' + new Date((sd.expires_at || 0) * 1000).toUTCString());
+                  if (sd.age_qualified !== undefined) {
+                    ageResult = sd.age_qualified;
+                    addLogEntry('ATTESTATION', 'Age claim: age_qualified=' + sd.age_qualified + (sd.age_predicate_min ? ' (min_age: ' + sd.age_predicate_min + ')' : ''));
+                  }
                 }
               } catch(ve) { /* best effort */ }
 
-              // Hide waiting, release card
+              // Hide waiting, release card (age-aware)
               waitingEl.style.display = 'none';
               btnEl.style.display     = '';
-              finalizeCardRelease(id, 'ATTESTATION');
+              if (agePred && ageResult === false) {
+                finalizeCardAgeNotMet(id, 'ATTESTATION');
+              } else {
+                finalizeCardRelease(id, 'ATTESTATION');
+              }
             }
           }
         } catch(pe) { /* network hiccup, keep polling */ }
@@ -2736,17 +2828,55 @@ body.log-open #log-panel { right: 0; }
     var relEl    = document.getElementById(id + '-released');
     var btnEl    = document.getElementById(id + '-btn');
     var pillEl   = document.getElementById(id + '-pill');
+    var ageNotMetEl = document.getElementById(id + '-age-not-met');
+
+    var cardDef = RAD_CARDS_CLIENT.find(function(c) { return c.id === id; });
+    var agePred = cardDef ? cardDef.age_predicate : null;
+    var isSimulated = (logType === 'DEMO-SIGN');
 
     lockedEl.style.display  = 'none';
+    if (ageNotMetEl) ageNotMetEl.style.display = 'none';
     relEl.style.display     = 'flex';
     btnEl.disabled          = true;
-    btnEl.textContent       = 'Presence Verified';
+    if (agePred && isSimulated) {
+      btnEl.textContent  = 'Age Verified (Simulated)';
+      pillEl.textContent = '\u2713 Age Verified (Simulated)';
+    } else if (agePred) {
+      btnEl.textContent  = 'Age Verified';
+    } else {
+      btnEl.textContent  = 'Presence Verified';
+    }
     pillEl.style.display    = 'inline-flex';
-    card.classList.remove('locked');
+    card.classList.remove('locked', 'age-not-met');
     card.classList.add('released');
 
     var cardName = (card.querySelector('.rad-card-title') || {}).textContent || id;
     addLogEntry(logType, 'Card released: ' + id + ' \u2014 ' + cardName);
+  }
+
+  /* ── Finalize card age-not-met (presence confirmed, age threshold not met) */
+  function finalizeCardAgeNotMet(id, logType) {
+    released[id] = true;
+    var card     = document.getElementById(id);
+    var lockedEl = document.getElementById(id + '-locked');
+    var relEl    = document.getElementById(id + '-released');
+    var btnEl    = document.getElementById(id + '-btn');
+    var pillEl   = document.getElementById(id + '-pill');
+    var ageNotMetEl   = document.getElementById(id + '-age-not-met');
+    var ageNotMetPill = document.getElementById(id + '-age-not-met-pill');
+
+    lockedEl.style.display  = 'none';
+    relEl.style.display     = 'none';
+    if (ageNotMetEl) ageNotMetEl.style.display = 'flex';
+    btnEl.disabled          = true;
+    btnEl.textContent       = 'Age Not Met';
+    pillEl.style.display    = 'none';
+    if (ageNotMetPill) ageNotMetPill.style.display = 'inline-flex';
+    card.classList.remove('locked', 'released');
+    card.classList.add('age-not-met');
+
+    var cardName = (card.querySelector('.rad-card-title') || {}).textContent || id;
+    addLogEntry(logType, 'Card age not met: ' + id + ' \u2014 ' + cardName + ' \u2014 presence confirmed but age threshold not satisfied');
   }
 
   /* ── Cancel a single card's attestation polling ───────────────────── */
@@ -2810,12 +2940,16 @@ body.log-open #log-panel { right: 0; }
       var relEl     = document.getElementById(id + '-released');
       var btnEl     = document.getElementById(id + '-btn');
       var pillEl    = document.getElementById(id + '-pill');
+      var ageNotMetEl   = document.getElementById(id + '-age-not-met');
+      var ageNotMetPill = document.getElementById(id + '-age-not-met-pill');
       if (lockedEl)  lockedEl.style.display  = 'flex';
       if (waitingEl) waitingEl.style.display  = 'none';
       if (relEl)     relEl.style.display      = 'none';
+      if (ageNotMetEl)   ageNotMetEl.style.display   = 'none';
+      if (ageNotMetPill) ageNotMetPill.style.display  = 'none';
       if (btnEl)     { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.action || 'Release'; btnEl.style.display = ''; }
       if (pillEl)    pillEl.style.display     = 'none';
-      if (card)      { card.classList.add('locked'); card.classList.remove('released'); }
+      if (card)      { card.classList.add('locked'); card.classList.remove('released', 'age-not-met'); }
     });
     addLogEntry('SYSTEM', 'All ' + ids.length + ' RAD cards reset to locked state');
   };
