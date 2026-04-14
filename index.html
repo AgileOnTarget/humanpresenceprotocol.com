@@ -813,12 +813,10 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
     // Show a pulsing animation on the placeholder while loading
     if (qrImg) qrImg.style.animation = 'pulse-timer 2s infinite';
 
-    // Timeout: if backend doesn't respond in 45s, offer fallback
+    // Timeout: if backend doesn't respond in 45s, keep waiting
     var timeout = setTimeout(function() {
       if (!RELAY_ID) {
-        if (statusEl) statusEl.textContent = 'Verifier is waking up — tap QR to enter site now';
-        if (qrImg) { qrImg.style.cursor = 'pointer'; qrImg.style.animation = 'none'; }
-        if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
+        if (statusEl) statusEl.textContent = 'Verifier is waking up — please wait...';
       }
     }, 45000);
 
@@ -836,16 +834,14 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
         if (statusEl) statusEl.textContent = 'Scan with HPP iPhone app';
         startPolling();
       } else {
-        if (statusEl) statusEl.textContent = 'Verifier unavailable — tap to enter site';
-        if (qrImg) { qrImg.style.cursor = 'pointer'; qrImg.style.animation = 'none'; }
-        if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
+        if (statusEl) statusEl.textContent = 'Verifier unavailable — refresh to try again';
+        if (qrImg) qrImg.style.animation = 'none';
       }
     })
     .catch(function() {
       clearTimeout(timeout);
-      if (statusEl) statusEl.textContent = 'Verifier offline — tap to enter site';
-      if (qrImg) { qrImg.style.cursor = 'pointer'; qrImg.style.animation = 'none'; }
-      if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
+      if (statusEl) statusEl.textContent = 'Verifier offline — refresh to try again';
+      if (qrImg) qrImg.style.animation = 'none';
     });
   }
 
