@@ -2582,6 +2582,16 @@ body.log-open #log-panel { right: 0; }
   var released      = {};
   var demoKeyPair   = null;
 
+  /* ── Disconnect session on window close ──────────────────────────── */
+  window.addEventListener('beforeunload', function() {
+    if (SESSION_TOKEN) {
+      navigator.sendBeacon(
+        API_BASE + '/session/disconnect',
+        new Blob([JSON.stringify({ session_token: SESSION_TOKEN })], { type: 'application/json' })
+      );
+    }
+  });
+
   /* ── Read session_token from URL before stripping ────────────────── */
   var urlParams = new URLSearchParams(window.location.search);
   SESSION_TOKEN = urlParams.get('session_token') || null;
