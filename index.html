@@ -3,38 +3,385 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Human Presence Protocol — humanpresenceprotocol.com</title>
-<meta name="description" content="Human Presence Protocol (HPP) — Cryptographic proof-of-humanity via device-native biometrics. No passwords, no CAPTCHAs, no PII.">
-<link rel="canonical" href="https://humanpresenceprotocol.com/">
+<title>Human Presence Protocol — Architectural Framework for Verifiable Human Presence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════════════════════════════════
-   HPP Unified Site — All CSS Inline
-   Palette: Navy #1a3a6b · Gold #8b6914 · Warm White #fafaf8
-   Fonts: EB Garamond (serif) · DM Mono (mono) · Crimson Pro (body)
-   ═══════════════════════════════════════════════════════════════════════════ */
+  :root {
+    --ink: #1a1a1a;
+    --ink-light: #444;
+    --ink-muted: #777;
+    --bg: #fafaf8;
+    --bg-section: #f0efe9;
+    --accent: #1a3a6b;
+    --accent-mid: #2c5282;
+    --accent-light: #e8eef7;
+    --gold: #8b6914;
+    --gold-light: #f7f2e4;
+    --rule: #ccc;
+    --rule-light: #e8e8e8;
+    --serif: 'EB Garamond', Georgia, serif;
+    --mono: 'DM Mono', monospace;
+    --body: 'Crimson Pro', Georgia, serif;
+    --nav-h: 56px;
+  }
 
-:root {
-  --ink: #1a1a1a; --ink-light: #444; --ink-muted: #777;
-  --bg: #fafaf8; --bg-section: #f0efe9;
-  --accent: #1a3a6b; --accent-mid: #2c5282; --accent-light: #e8eef7;
-  --gold: #8b6914; --gold-light: #f7f2e4;
-  --rule: #ccc; --rule-light: #e8e8e8;
-  --green-dark: #1a6b3a; --red-dark: #b91c1c;
-  --serif: 'EB Garamond', Georgia, serif;
-  --mono: 'DM Mono', monospace;
-  --body: 'Crimson Pro', Georgia, serif;
-  --nav-h: 56px;
-  --log-w: 380px;
-}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--serif);
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* ── GATE PAGE ── */
+  #gate {
+    position: relative; z-index: 10;
+    text-align: center;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 5rem 2rem 5rem;
+    animation: fadeIn 0.7s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .gate-symbol {
+    width: 64px; height: 64px;
+    margin: 0 auto 2rem;
+    position: relative;
+  }
+  .gate-symbol svg { width: 100%; height: 100%; }
+
+  /* Pulsing ring */
+  .pulse-ring {
+    position: absolute; inset: -16px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    opacity: 0;
+    animation: pulse 3s ease-out infinite;
+  }
+  .pulse-ring:nth-child(2) { animation-delay: 1s; }
+  .pulse-ring:nth-child(3) { animation-delay: 2s; }
+
+  @keyframes pulse {
+    0% { transform: scale(0.8); opacity: 0.4; }
+    100% { transform: scale(1.8); opacity: 0; }
+  }
+
+  .gate-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+
+  .gate-title {
+    font-size: clamp(1.6rem, 5vw, 2.2rem);
+    font-weight: 500;
+    color: var(--accent);
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+
+  .gate-sub {
+    font-size: 1.1rem;
+    color: var(--ink-light);
+    line-height: 1.65;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+
+  .gate-divider {
+    width: 40px; height: 2px;
+    background: var(--accent);
+    margin: 0 auto 2.5rem;
+  }
+
+  .gate-instruction {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    margin-bottom: 2rem;
+    line-height: 1.9;
+  }
+
+  /* QR placeholder */
+  .qr-block {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+  }
+  .qr-placeholder {
+    width: 120px; height: 120px;
+    background: white;
+    border: 1px solid var(--rule-light);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .qr-placeholder svg { width: 80%; height: 80%; }
+  .qr-caption {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+
+  .app-store-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--accent);
+    background: var(--accent-light);
+    color: var(--accent);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    margin-bottom: 3rem;
+  }
+  .app-store-btn:hover {
+    background: var(--accent);
+    color: white;
+  }
+
+  .gate-footer {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.05em;
+    line-height: 1.8;
+  }
+
+  /* Demo trigger */
+  .demo-trigger {
+    margin-top: 2rem;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--rule);
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: color 0.2s;
+  }
+  .demo-trigger:hover { color: var(--ink-muted); }
+
+  /* ── MODAL OVERLAY ── */
+  #modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(26,26,26,0.5);
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  #modal-overlay.active {
+    display: flex;
+    animation: overlayIn 0.25s ease both;
+  }
+  @keyframes overlayIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* ── MODAL ── */
+  .modal {
+    position: relative;
+    max-width: 560px;
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    padding: 0;
+    animation: modalIn 0.3s cubic-bezier(0.16,1,0.3,1) both;
+    box-shadow: 0 24px 64px rgba(26,26,26,0.12), 0 2px 8px rgba(26,26,26,0.06);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.97) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  /* Navy top bar */
+  .modal::before {
+    content: '';
+    display: block;
+    height: 3px;
+    background: var(--accent);
+  }
+
+  .modal-inner {
+    padding: 2.5rem 2.5rem 2rem;
+  }
+
+  .modal-eyebrow {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .modal-eyebrow::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule-light);
+  }
+
+  .modal-body {
+    font-size: 1.08rem;
+    line-height: 1.75;
+    color: var(--ink-light);
+  }
+
+  .modal-body .opener {
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+  }
+
+  .modal-body .trio {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    margin: 1rem 0;
+    padding-left: 1rem;
+    border-left: 2px solid var(--rule);
+    font-style: italic;
+    color: var(--ink-muted);
+    font-size: 0.98rem;
+  }
+
+  .modal-body .emphasis {
+    color: var(--ink);
+    font-weight: 500;
+    font-size: 1.05rem;
+  }
+
+  .modal-body .headline {
+    font-size: 1.12rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin: 1.25rem 0 0.75rem;
+  }
+
+  .modal-body .closing {
+    font-size: 1.18rem;
+    font-weight: 500;
+    color: var(--accent);
+    margin-top: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .modal-sep {
+    width: 32px;
+    height: 2px;
+    background: var(--accent);
+    margin: 1.25rem 0;
+    opacity: 0.3;
+  }
+
+  /* OK button */
+  .modal-footer {
+    padding: 0 2.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-top: 1px solid var(--rule-light);
+    padding-top: 1.25rem;
+  }
+
+  .modal-legal {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+    max-width: 260px;
+  }
+
+  .btn-ok {
+    flex-shrink: 0;
+    padding: 0.65rem 2.25rem;
+    background: var(--accent);
+    border: 1px solid var(--accent);
+    color: white;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-ok:hover { background: var(--accent-mid); border-color: var(--accent-mid); }
+  .btn-ok span { position: relative; z-index: 1; }
+
+  /* Verified badge */
+  #verified-badge {
+    display: none;
+    position: fixed;
+    bottom: 2rem; right: 2rem;
+    z-index: 200;
+    background: var(--accent);
+    border: 1px solid var(--accent-mid);
+    padding: 0.75rem 1.25rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: white;
+    text-transform: uppercase;
+    box-shadow: 0 4px 16px rgba(26,58,107,0.2);
+  }
+  @keyframes badgeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  #verified-badge::before {
+    content: '✓ ';
+  }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 html { scroll-behavior: smooth; font-size: 17px; }
+
 body {
-  background: var(--bg); color: var(--ink);
-  font-family: var(--body); font-weight: 300;
-  line-height: 1.7; -webkit-font-smoothing: antialiased;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--body);
+  font-weight: 300;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ── NAV ── */
@@ -43,7 +390,8 @@ nav {
   background: rgba(250,250,248,0.97);
   border-bottom: 1px solid var(--rule);
   backdrop-filter: blur(8px);
-  height: var(--nav-h); display: flex; align-items: center;
+  height: var(--nav-h);
+  display: flex; align-items: center;
 }
 .nav-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 2rem;
@@ -54,48 +402,32 @@ nav {
   color: var(--accent); text-decoration: none; letter-spacing: 0.02em;
   margin-right: auto; white-space: nowrap;
 }
-.nav-links { display: flex; gap: 0; list-style: none; }
+.nav-links {
+  display: flex; gap: 0; list-style: none;
+}
 .nav-links a {
   display: block; padding: 0 0.85rem;
   font-family: var(--mono); font-size: 0.68rem; font-weight: 400;
   color: var(--ink-muted); text-decoration: none;
   letter-spacing: 0.06em; text-transform: uppercase;
-  transition: color 0.15s; border-right: 1px solid var(--rule-light);
+  transition: color 0.15s;
+  border-right: 1px solid var(--rule-light);
 }
-.nav-links li:first-child a { border-left: 1px solid var(--rule-light); }
+.nav-links a:first-child { border-left: 1px solid var(--rule-light); }
 .nav-links a:hover { color: var(--accent); }
-.nav-timer-wrap {
-  display: flex; align-items: center; gap: 0.5rem;
-  margin-left: 1rem; padding: 3px 12px;
-  background: var(--surface); border: 1px solid var(--rule);
-  border-radius: 4px; white-space: nowrap;
-}
-.nav-timer-label {
-  font-family: var(--mono); font-size: 0.6rem; font-weight: 400;
-  color: var(--ink-muted); letter-spacing: 0.08em; text-transform: uppercase;
-}
-.session-timer {
-  font-family: var(--mono); font-size: 0.85rem; font-weight: 600;
-  color: var(--accent); letter-spacing: 0.04em;
-}
-.session-timer.expiring { color: var(--red-dark); animation: pulse-timer 1s infinite; }
-@keyframes pulse-timer { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-.nav-verified {
-  margin-left: 0.75rem; padding: 3px 10px;
-  background: var(--accent); color: #fff;
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 500;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  border-radius: 3px; white-space: nowrap;
-}
 
 /* ── LAYOUT ── */
 .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
 .container-wide { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
 section { padding: 5rem 0; border-bottom: 1px solid var(--rule-light); }
 section:last-child { border-bottom: none; }
 
 /* ── HERO ── */
-#home { padding: 4rem 0 5rem; background: var(--bg); }
+#home {
+  padding: 7rem 0 5rem;
+  background: var(--bg);
+}
 .hero-label {
   font-family: var(--mono); font-size: 0.72rem; font-weight: 400;
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
@@ -109,16 +441,19 @@ section:last-child { border-bottom: none; }
 .hero-definition {
   font-size: 1.25rem; font-weight: 300; color: var(--ink-light);
   max-width: 640px; line-height: 1.65; margin-bottom: 2.5rem;
-  border-left: 3px solid var(--accent); padding-left: 1.25rem; font-style: italic;
+  border-left: 3px solid var(--accent); padding-left: 1.25rem;
+  font-style: italic;
 }
 .hero-meta {
   font-family: var(--mono); font-size: 0.72rem; color: var(--ink-muted);
   letter-spacing: 0.04em; margin-bottom: 3rem;
 }
 .hero-meta span { color: var(--accent); font-weight: 500; }
+
 .entry-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
-  background: var(--rule); border: 1px solid var(--rule); margin-top: 3rem;
+  background: var(--rule); border: 1px solid var(--rule);
+  margin-top: 3rem;
 }
 .entry-card {
   background: var(--bg); padding: 1.75rem;
@@ -133,7 +468,9 @@ section:last-child { border-bottom: none; }
   font-family: var(--serif); font-size: 1.1rem; font-weight: 500;
   color: var(--accent); margin-bottom: 0.5rem; display: block;
 }
-.entry-card .ec-desc { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.5; }
+.entry-card .ec-desc {
+  font-size: 0.88rem; color: var(--ink-muted); line-height: 1.5;
+}
 
 /* ── SECTION HEADERS ── */
 .section-eyebrow {
@@ -148,7 +485,9 @@ section:last-child { border-bottom: none; }
   font-size: 1.1rem; color: var(--ink-light); max-width: 660px;
   line-height: 1.65; margin-bottom: 2.5rem;
 }
-.section-rule { width: 48px; height: 2px; background: var(--accent); margin-bottom: 2.5rem; }
+.section-rule {
+  width: 48px; height: 2px; background: var(--accent); margin-bottom: 2.5rem;
+}
 
 /* ── TYPOGRAPHY ── */
 h3 {
@@ -163,7 +502,6 @@ h4 {
 p { margin-bottom: 1rem; }
 p:last-child { margin-bottom: 0; }
 
-/* ── NOTION BLOCKS ── */
 .notion-block {
   border: 1px solid var(--rule); border-left: 4px solid var(--accent);
   padding: 1.5rem 1.75rem; margin-bottom: 1.25rem; background: var(--bg);
@@ -179,7 +517,10 @@ p:last-child { margin-bottom: 0; }
 .notion-block p { font-size: 0.97rem; color: var(--ink-light); }
 
 /* ── TABLES ── */
-.data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 1.5rem 0; }
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.88rem; margin: 1.5rem 0;
+}
 .data-table th {
   font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
   text-transform: uppercase; color: var(--ink-muted);
@@ -191,10 +532,10 @@ p:last-child { margin-bottom: 0; }
   color: var(--ink-light); vertical-align: top; line-height: 1.5;
 }
 .data-table tr:hover td { background: var(--accent-light); }
-.data-table .td-mono { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); }
+.data-table .td-mono {
+  font-family: var(--mono); font-size: 0.78rem; color: var(--accent);
+}
 .data-table .td-bold { font-weight: 600; color: var(--ink); }
-
-/* ── BADGES ── */
 .badge {
   display: inline-block; padding: 0.15rem 0.5rem;
   font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.06em;
@@ -215,22 +556,23 @@ p:last-child { margin-bottom: 0; }
   font-style: normal; font-family: var(--mono); font-size: 0.7rem;
   color: var(--ink-muted); letter-spacing: 0.05em;
 }
+
 .warn-box {
   background: #fef9ec; border: 1px solid #d4a017; border-left: 4px solid #d4a017;
   padding: 1.25rem 1.5rem; margin: 1.5rem 0; font-size: 0.95rem;
 }
-.warn-box strong {
-  color: var(--gold); font-family: var(--mono); font-size: 0.78rem;
-  letter-spacing: 0.08em; text-transform: uppercase;
-}
+.warn-box strong { color: var(--gold); font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; }
 
 /* ── GRID LAYOUTS ── */
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 .three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-.card { border: 1px solid var(--rule); padding: 1.5rem; background: var(--bg); }
+.card {
+  border: 1px solid var(--rule); padding: 1.5rem;
+  background: var(--bg);
+}
 .card h4 { margin-top: 0; }
 
-/* ── TIMELINE ── */
+/* ── FILING TIMELINE ── */
 .timeline { position: relative; padding-left: 2rem; }
 .timeline::before {
   content: ''; position: absolute; left: 0.35rem; top: 0.4rem; bottom: 0;
@@ -247,10 +589,7 @@ p:last-child { margin-bottom: 0; }
   font-family: var(--mono); font-size: 0.72rem; color: var(--accent);
   letter-spacing: 0.06em; margin-bottom: 0.3rem; display: block;
 }
-.tl-label {
-  font-family: var(--serif); font-size: 1.05rem; font-weight: 500;
-  color: var(--ink); margin-bottom: 0.4rem;
-}
+.tl-label { font-family: var(--serif); font-size: 1.05rem; font-weight: 500; color: var(--ink); margin-bottom: 0.4rem; }
 .tl-desc { font-size: 0.92rem; color: var(--ink-muted); line-height: 1.55; }
 
 /* ── PRIMITIVES TABLE ── */
@@ -258,7 +597,9 @@ p:last-child { margin-bottom: 0; }
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
   background: var(--rule); border: 1px solid var(--rule); margin: 1.5rem 0;
 }
-.primitive-cell { background: var(--bg); padding: 0.85rem 1rem; }
+.primitive-cell {
+  background: var(--bg); padding: 0.85rem 1rem;
+}
 .primitive-cell .pc-id {
   font-family: var(--mono); font-size: 0.7rem; color: var(--accent);
   margin-right: 0.5rem; font-weight: 500;
@@ -272,10 +613,30 @@ p:last-child { margin-bottom: 0; }
   position: relative; font-size: 0.95rem; color: var(--ink-light);
 }
 .checklist li::before {
-  content: '\2014'; position: absolute; left: 0; color: var(--accent);
+  content: '—'; position: absolute; left: 0; color: var(--accent);
   font-family: var(--mono); font-size: 0.9rem;
 }
 .checklist li strong { color: var(--ink); }
+
+/* ── SEND ORDER ── */
+.send-step {
+  display: grid; grid-template-columns: 2.5rem 1fr; gap: 1rem;
+  align-items: start; padding: 1.25rem 0; border-bottom: 1px solid var(--rule-light);
+}
+.send-step:last-child { border-bottom: none; }
+.step-num {
+  font-family: var(--mono); font-size: 1.5rem; font-weight: 300;
+  color: var(--rule); line-height: 1;
+}
+.step-body strong {
+  font-family: var(--serif); font-size: 1.05rem; font-weight: 600;
+  color: var(--accent); display: block; margin-bottom: 0.25rem;
+}
+.step-body .step-timing {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem; display: block;
+}
+.step-body p { font-size: 0.92rem; color: var(--ink-muted); margin: 0; }
 
 /* ── FOOTER ── */
 footer {
@@ -284,606 +645,21 @@ footer {
   letter-spacing: 0.04em; line-height: 1.8;
 }
 footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
-footer .footer-title {
-  color: rgba(255,255,255,0.9); font-size: 0.95rem;
-  font-family: var(--serif); font-weight: 500; margin-bottom: 0.75rem;
-}
+footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-family: var(--serif); font-weight: 500; margin-bottom: 0.75rem; }
 
 /* ── UTILITY ── */
 .text-mono { font-family: var(--mono); font-size: 0.82rem; }
 .text-muted { color: var(--ink-muted); }
+.mt-sm { margin-top: 1rem; }
+.mt-md { margin-top: 2rem; }
+.mt-lg { margin-top: 3rem; }
 .alt-bg { background: var(--bg-section); }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   RAD DEMO CARDS — HPP Palette
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#demo { padding: 4rem 0 5rem; background: var(--bg-section); }
-.rad-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
-}
-.rad-card {
-  background: var(--bg); border: 1.5px solid var(--rule);
-  border-radius: 10px; padding: 1.25rem;
-  display: flex; flex-direction: column; gap: 10px;
-  transition: border-color 0.25s, box-shadow 0.25s;
-}
-.rad-card.released {
-  border-color: var(--green-dark);
-  box-shadow: 0 0 0 3px rgba(26,107,58,0.10);
-}
-.rad-card-header {
-  display: flex; align-items: flex-start; justify-content: space-between; gap: 8px;
-}
-.rad-card-title {
-  font-family: var(--serif); font-size: 1.05rem; font-weight: 500;
-  color: var(--ink); flex: 1;
-}
-.rad-verified-pill {
-  flex-shrink: 0; background: #e8f0e8; color: var(--green-dark);
-  font-family: var(--mono); font-size: 0.65rem; font-weight: 500;
-  padding: 2px 9px; border-radius: 20px; letter-spacing: 0.03em;
-}
-.rad-sim-badge {
-  flex-shrink: 0; background: var(--gold-light); color: var(--gold);
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 500;
-  padding: 2px 8px; border-radius: 20px; letter-spacing: 0.03em;
-}
-.rad-card-risk { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.4; }
-.rad-locked-state, .rad-released-state {
-  border-radius: 6px; padding: 0.75rem;
-  display: flex; align-items: flex-start; gap: 8px;
-}
-.rad-locked-state {
-  background: var(--bg-section); border: 1px dashed var(--rule); color: var(--ink-muted);
-}
-.rad-released-state {
-  background: #e8f0e8; border: 1px solid var(--green-dark); color: var(--green-dark);
-}
-.rad-lock-icon, .rad-check-icon { font-size: 14px; flex-shrink: 0; padding-top: 1px; }
-.rad-lock-msg, .rad-released-msg { font-size: 0.82rem; line-height: 1.4; }
-.rad-btn {
-  width: 100%; background: var(--accent); color: #fff;
-  border: none; border-radius: 6px; padding: 10px 14px;
-  font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
-  cursor: pointer; transition: opacity 0.15s; text-align: left;
-  letter-spacing: 0.04em;
-}
-.rad-btn:hover:not(:disabled) { opacity: 0.85; }
-.rad-btn:disabled {
-  background: var(--bg-section); color: var(--ink-muted);
-  border: 1px solid var(--rule); cursor: default;
-}
-.rad-primitive {
-  font-family: var(--mono); font-size: 0.65rem; color: var(--accent);
-  font-weight: 500; letter-spacing: 0.03em; line-height: 1.4;
-  padding-top: 4px; border-top: 1px solid var(--rule-light); margin-top: 2px;
-}
-
-/* ── RAD MODE TOGGLE ── */
-.rad-mode-bar {
-  display: flex; align-items: center; gap: 12px;
-  margin-bottom: 20px; padding: 10px 16px;
-  background: var(--bg); border: 1px solid var(--rule);
-  border-radius: 8px;
-}
-.rad-mode-label {
-  font-family: var(--mono); font-size: 0.68rem; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-muted);
-}
-.rad-mode-toggle {
-  position: relative; width: 42px; height: 22px;
-  background: var(--rule); border-radius: 11px; cursor: pointer;
-  transition: background 0.2s; border: none; padding: 0;
-}
-.rad-mode-toggle.active { background: var(--accent); }
-.rad-mode-toggle::after {
-  content: ''; position: absolute; top: 2px; left: 2px;
-  width: 18px; height: 18px; background: #fff;
-  border-radius: 50%; transition: transform 0.2s;
-}
-.rad-mode-toggle.active::after { transform: translateX(20px); }
-.rad-mode-desc {
-  font-family: var(--mono); font-size: 0.65rem; color: var(--accent);
-  letter-spacing: 0.04em;
-}
-.rad-mode-desc.sim { color: var(--gold); }
-
-/* ── RAD WAITING STATE ── */
-.rad-waiting-state {
-  display: none; flex-direction: column; align-items: center; gap: 10px;
-  padding: 1rem; border-radius: 6px;
-  background: var(--accent-light); border: 1px solid var(--accent);
-}
-.rad-qr-wrap {
-  background: #fff; padding: 8px; border-radius: 6px;
-  border: 1px solid var(--rule); display: inline-block;
-}
-.rad-qr-wrap img { display: block; width: 140px; height: 140px; }
-.rad-waiting-label {
-  font-family: var(--mono); font-size: 0.7rem; font-weight: 500;
-  color: var(--accent); letter-spacing: 0.04em; text-align: center;
-}
-.rad-waiting-hint {
-  font-size: 0.78rem; color: var(--ink-muted); text-align: center; line-height: 1.4;
-}
-.rad-waiting-spinner {
-  display: inline-block; width: 16px; height: 16px;
-  border: 2px solid var(--accent-light); border-top-color: var(--accent);
-  border-radius: 50%; animation: rad-spin 0.8s linear infinite;
-  vertical-align: middle; margin-right: 6px;
-}
-@keyframes rad-spin { to { transform: rotate(360deg); } }
-.rad-cancel-btn {
-  background: none; border: 1px solid var(--rule); border-radius: 4px;
-  padding: 5px 14px; font-family: var(--mono); font-size: 0.65rem;
-  color: var(--ink-muted); cursor: pointer; letter-spacing: 0.04em;
-  transition: border-color 0.15s, color 0.15s;
-}
-.rad-cancel-btn:hover { border-color: var(--red-dark); color: var(--red-dark); }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   SIDE LOG PANEL
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#log-tab {
-  position: fixed; right: 0; top: 50%; transform: translateY(-50%);
-  z-index: 200; writing-mode: vertical-rl; text-orientation: mixed;
-  background: #0d1a2e; color: rgba(255,255,255,0.7);
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 500;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  padding: 16px 8px; cursor: pointer;
-  border-radius: 6px 0 0 6px;
-  transition: background 0.15s, color 0.15s;
-}
-#log-tab:hover { background: #162a4a; color: #fff; }
-#log-tab span { display: inline; }
-body.log-open #log-tab { display: none; }
-
-#log-panel {
-  position: fixed; right: -400px; top: 0; bottom: 0;
-  width: var(--log-w); z-index: 250;
-  background: #0d1a2e; color: rgba(255,255,255,0.85);
-  display: flex; flex-direction: column;
-  transition: right 0.3s ease;
-  box-shadow: -4px 0 20px rgba(0,0,0,0.3);
-}
-body.log-open #log-panel { right: 0; }
-
-.log-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.1);
-  flex-shrink: 0;
-}
-.log-title {
-  font-family: var(--mono); font-size: 0.72rem; font-weight: 500;
-  letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.9);
-}
-.log-close {
-  background: none; border: none; color: rgba(255,255,255,0.5);
-  font-size: 1.2rem; cursor: pointer; padding: 2px 6px;
-}
-.log-close:hover { color: #fff; }
-
-.log-entries {
-  flex: 1; overflow-y: auto; padding: 12px 16px;
-  font-family: var(--mono); font-size: 0.68rem; line-height: 1.7;
-}
-.log-entry { margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.log-entry:last-child { border-bottom: none; }
-.log-ts { color: rgba(255,255,255,0.35); }
-.log-type-CHALLENGE { color: #58a6ff; }
-.log-type-DEMO-SIGN { color: #d29922; }
-.log-type-RECEIPT { color: #3fb950; }
-.log-type-SYSTEM { color: rgba(255,255,255,0.5); }
-.log-type-EXPORT { color: #bc8cff; }
-.log-type-ATTESTATION { color: #3fb950; font-weight: 600; }
-.log-msg { color: rgba(255,255,255,0.8); }
-
-.log-actions {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-  padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.1);
-  flex-shrink: 0;
-}
-.log-actions button {
-  background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.7); font-family: var(--mono); font-size: 0.62rem;
-  font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 8px 6px; border-radius: 4px; cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.log-actions button:hover { background: rgba(255,255,255,0.15); color: #fff; }
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   REPLAY ATTACK DEMO
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#replay-demo { padding: 4rem 0 5rem; background: var(--bg); }
-
-.replay-widget {
-  background: var(--bg-section); border: 1.5px solid var(--rule);
-  border-left: 4px solid var(--accent); border-radius: 10px;
-  padding: 1.5rem; margin-top: 2rem;
-}
-.replay-steps { list-style: none; padding: 0; margin: 0; }
-.replay-step {
-  padding: 10px 0; border-bottom: 1px solid var(--rule-light);
-  font-family: var(--mono); font-size: 0.75rem; line-height: 1.6;
-  color: var(--ink-muted); opacity: 0.35;
-  transition: opacity 0.3s;
-}
-.replay-step:last-child { border-bottom: none; }
-.replay-step.active { opacity: 1; color: var(--ink); }
-.replay-step.done { opacity: 1; }
-.replay-step .step-label {
-  font-weight: 600; color: var(--accent); display: block;
-  margin-bottom: 2px; font-size: 0.68rem; letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-.replay-step .step-detail {
-  color: var(--ink-muted); font-size: 0.72rem; word-break: break-all;
-}
-.replay-step .step-ok {
-  color: var(--green-dark); font-weight: 600;
-}
-.replay-step .step-fail {
-  color: var(--red-dark); font-weight: 600;
-}
-.replay-step .step-expected {
-  color: var(--gold); font-style: italic; font-size: 0.68rem;
-}
-.replay-step .step-time {
-  color: var(--ink-muted); font-size: 0.65rem; opacity: 0.6; margin-left: 6px;
-}
-
-.replay-result {
-  display: none; margin-top: 1.25rem; padding: 1rem 1.25rem;
-  border-radius: 8px; font-family: var(--mono); font-size: 0.82rem;
-  line-height: 1.5;
-}
-.replay-result.blocked {
-  display: block; background: #0d2818; color: #a3e4b8;
-  border: 1px solid var(--green-dark);
-}
-.replay-result.blocked .result-title {
-  font-weight: 700; font-size: 0.9rem; color: #4ade80;
-  margin-bottom: 4px; letter-spacing: 0.04em;
-}
-.replay-result.error {
-  display: block; background: #2a0e0e; color: #f0a0a0;
-  border: 1px solid var(--red-dark);
-}
-
-.replay-btn {
-  display: inline-block; background: var(--accent); color: #fff;
-  border: none; border-radius: 6px; padding: 12px 28px;
-  font-family: var(--mono); font-size: 0.82rem; font-weight: 600;
-  cursor: pointer; letter-spacing: 0.06em; text-transform: uppercase;
-  transition: opacity 0.15s; margin-top: 1rem;
-}
-.replay-btn:hover:not(:disabled) { opacity: 0.85; }
-.replay-btn:disabled {
-  background: var(--bg-section); color: var(--ink-muted);
-  border: 1px solid var(--rule); cursor: default;
-}
-
-.replay-explanation {
-  margin-top: 2rem; display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 1px; background: var(--rule); border: 1px solid var(--rule);
-}
-.replay-explanation .re-cell {
-  background: var(--bg); padding: 1rem 1.25rem;
-}
-.replay-explanation .re-cell h4 {
-  font-family: var(--mono); font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--accent); margin: 0 0 0.4rem;
-}
-.replay-explanation .re-cell p {
-  font-size: 0.88rem; color: var(--ink-muted); line-height: 1.5; margin: 0;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   BOT COST CALCULATOR
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#bot-cost { padding: 4rem 0 5rem; background: var(--bg-section); }
-
-.bot-calc {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
-  margin-top: 2rem;
-}
-.bot-input-panel {
-  background: var(--bg); border: 1.5px solid var(--rule);
-  border-radius: 10px; padding: 1.5rem;
-}
-.bot-output-panel {
-  background: var(--bg); border: 1.5px solid var(--accent);
-  border-radius: 10px; padding: 1.5rem;
-}
-.bot-input-label {
-  font-family: var(--mono); font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--accent); margin-bottom: 8px; display: block;
-}
-.bot-slider-row {
-  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
-}
-.bot-slider {
-  flex: 1; -webkit-appearance: none; appearance: none;
-  height: 6px; border-radius: 3px; background: var(--rule);
-  outline: none;
-}
-.bot-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 20px; height: 20px; border-radius: 50%;
-  background: var(--accent); cursor: pointer;
-  border: 2px solid #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-}
-.bot-slider-val {
-  font-family: var(--mono); font-size: 1.1rem; font-weight: 700;
-  color: var(--accent); min-width: 80px; text-align: right;
-}
-.bot-output-label {
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 500;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  color: var(--ink-muted); margin-bottom: 2px; display: block;
-}
-.bot-output-val {
-  font-family: var(--mono); font-size: 1.5rem; font-weight: 700;
-  color: var(--accent); margin-bottom: 14px; line-height: 1.2;
-}
-.bot-output-val.red { color: var(--red-dark); }
-.bot-output-val.gold { color: var(--gold); }
-.bot-output-val.green { color: var(--green-dark); }
-
-.bot-compare {
-  margin-top: 2rem; display: grid; grid-template-columns: 1fr 1fr;
-  gap: 1px; background: var(--rule); border: 1px solid var(--rule);
-  border-radius: 8px; overflow: hidden;
-}
-.bot-compare-cell {
-  background: var(--bg); padding: 1.25rem;
-}
-.bot-compare-cell.highlight {
-  background: #e8f0e8;
-}
-.bot-compare-cell h4 {
-  font-family: var(--mono); font-size: 0.68rem; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 6px;
-}
-.bot-compare-cell h4.red { color: var(--red-dark); }
-.bot-compare-cell h4.green { color: var(--green-dark); }
-.bot-compare-cell p {
-  font-size: 0.88rem; color: var(--ink-muted); line-height: 1.5; margin: 0;
-}
-.bot-compare-cell .big-num {
-  font-family: var(--mono); font-size: 1.3rem; font-weight: 700;
-  color: var(--ink); display: block; margin-bottom: 4px;
-}
-
-.bot-footnote {
-  margin-top: 1.5rem; font-family: var(--mono); font-size: 0.65rem;
-  color: var(--ink-muted); letter-spacing: 0.02em; line-height: 1.6;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   THROUGHPUT CALCULATOR
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#throughput { padding: 4rem 0 5rem; background: var(--bg); }
-
-.tp-bar-chart {
-  margin-top: 2rem; display: flex; flex-direction: column; gap: 16px;
-}
-.tp-bar-row {
-  display: flex; align-items: center; gap: 16px;
-}
-.tp-bar-label {
-  font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
-  color: var(--ink); min-width: 110px; text-align: right;
-}
-.tp-bar-track {
-  flex: 1; height: 36px; background: var(--bg-section);
-  border: 1px solid var(--rule); border-radius: 6px;
-  position: relative; overflow: hidden;
-}
-.tp-bar-fill {
-  height: 100%; border-radius: 5px;
-  transition: width 0.8s ease;
-  display: flex; align-items: center; padding-left: 12px;
-  font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
-  color: #fff; white-space: nowrap;
-  min-width: 60px;
-}
-.tp-bar-fill.red { background: var(--red-dark); }
-.tp-bar-fill.green { background: var(--green-dark); }
-.tp-bar-overflow {
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
-  color: var(--red-dark); letter-spacing: 0.04em;
-}
-.tp-ratio-banner {
-  margin-top: 1.5rem; padding: 1rem 1.5rem;
-  background: var(--accent); color: #fff; border-radius: 8px;
-  font-family: var(--mono); font-size: 0.9rem; font-weight: 600;
-  text-align: center; letter-spacing: 0.04em; line-height: 1.5;
-}
-.tp-ratio-banner .ratio-big {
-  font-size: 2rem; font-weight: 800; display: block;
-  margin-bottom: 4px; letter-spacing: 0.02em;
-}
-
-/* ═══════════════════════════════════════════════════════════════════════════
-   DATA MINIMIZATION PROOF
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#data-min { padding: 4rem 0 5rem; background: var(--bg-section); }
-
-.dm-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
-  margin-top: 2rem;
-}
-.dm-card {
-  border-radius: 10px; padding: 1.5rem; border: 1.5px solid var(--rule);
-}
-.dm-card.collects { background: var(--bg); border-color: var(--green-dark); }
-.dm-card.not-collects { background: var(--bg); border-color: var(--accent); }
-.dm-card h3 {
-  font-family: var(--mono); font-size: 0.78rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  margin: 0 0 1rem; display: flex; align-items: center; gap: 8px;
-}
-.dm-card.collects h3 { color: var(--green-dark); }
-.dm-card.not-collects h3 { color: var(--accent); }
-.dm-card ul { list-style: none; padding: 0; margin: 0; }
-.dm-card li {
-  padding: 8px 0; border-bottom: 1px solid var(--rule-light);
-  font-size: 0.9rem; color: var(--ink-light); line-height: 1.4;
-  display: flex; align-items: flex-start; gap: 8px;
-}
-.dm-card li:last-child { border-bottom: none; }
-.dm-card li .dm-icon {
-  flex-shrink: 0; font-size: 0.85rem; margin-top: 1px;
-}
-.dm-card.collects li .dm-icon { color: var(--green-dark); }
-.dm-card.not-collects li .dm-icon { color: var(--accent); }
-
-.dm-compare-table {
-  margin-top: 2.5rem; width: 100%; border-collapse: collapse;
-  font-size: 0.85rem;
-}
-.dm-compare-table th {
-  font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.08em;
-  text-transform: uppercase; padding: 10px 14px; text-align: left;
-  border-bottom: 2px solid var(--accent); color: var(--ink-muted);
-  font-weight: 500;
-}
-.dm-compare-table td {
-  padding: 10px 14px; border-bottom: 1px solid var(--rule-light);
-  vertical-align: top; color: var(--ink-light); line-height: 1.4;
-}
-.dm-compare-table tr:hover td { background: var(--accent-light); }
-.dm-yes { color: var(--red-dark); font-weight: 600; }
-.dm-no { color: var(--green-dark); font-weight: 600; }
-.dm-na { color: var(--ink-muted); }
-
-/* ── QR PAYLOAD INSPECTOR ──
-   ═══════════════════════════════════════════════════════════════════════════ */
-
-#qr-inspect { padding: 4rem 0 5rem; background: var(--bg); }
-
-.qri-input-wrap {
-  margin-top: 2rem;
-}
-.qri-textarea {
-  width: 100%; min-height: 180px; padding: 1rem;
-  font-family: var(--mono); font-size: 0.82rem; line-height: 1.6;
-  background: #fff; color: var(--ink); border: 1.5px solid var(--rule);
-  border-radius: 6px; resize: vertical;
-  transition: border-color 0.15s;
-}
-.qri-textarea:focus {
-  outline: none; border-color: var(--accent);
-}
-.qri-btn-row {
-  display: flex; gap: 10px; margin-top: 1rem; flex-wrap: wrap;
-}
-.qri-btn {
-  padding: 10px 24px;
-  font-family: var(--mono); font-size: 0.75rem; font-weight: 500;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  border: none; border-radius: 4px; cursor: pointer;
-  transition: background 0.15s, transform 0.1s;
-}
-.qri-btn:active { transform: scale(0.97); }
-.qri-btn-primary {
-  background: var(--accent); color: #fff;
-}
-.qri-btn-primary:hover { background: var(--accent-mid); }
-.qri-btn-secondary {
-  background: var(--gold-light); color: var(--gold); border: 1px solid var(--gold);
-}
-.qri-btn-secondary:hover { background: #efe8d0; }
-
-.qri-error {
-  margin-top: 1rem; padding: 12px 16px;
-  background: #fef2f2; border: 1px solid #fca5a5; border-radius: 6px;
-  font-family: var(--mono); font-size: 0.78rem; color: var(--red-dark);
-  display: none;
-}
-.qri-warnings {
-  margin-top: 1rem; display: none;
-}
-.qri-warning-item {
-  padding: 8px 14px; margin-bottom: 6px;
-  background: #fffbeb; border: 1px solid #fbbf24; border-radius: 5px;
-  font-family: var(--mono); font-size: 0.75rem; color: #92400e;
-}
-
-.qri-results {
-  margin-top: 2rem; display: none;
-}
-.qri-field-card {
-  border: 1px solid var(--rule); border-radius: 8px;
-  margin-bottom: 12px; overflow: hidden;
-  background: #fff;
-}
-.qri-field-header {
-  display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px;
-  background: var(--accent-light); border-bottom: 1px solid var(--rule-light);
-}
-.qri-field-name {
-  font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
-  color: var(--accent); letter-spacing: 0.02em;
-}
-.qri-field-badge {
-  font-family: var(--mono); font-size: 0.6rem; font-weight: 500;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  padding: 2px 8px; border-radius: 3px;
-}
-.qri-badge-required {
-  background: var(--accent); color: #fff;
-}
-.qri-badge-optional {
-  background: var(--gold-light); color: var(--gold);
-}
-.qri-badge-unknown {
-  background: #fef3c7; color: #92400e; border: 1px solid #fbbf24;
-}
-.qri-badge-missing {
-  background: #fef2f2; color: var(--red-dark); border: 1px solid #fca5a5;
-}
-.qri-field-body {
-  padding: 12px 16px;
-}
-.qri-field-value {
-  font-family: var(--mono); font-size: 0.82rem; color: var(--ink);
-  word-break: break-all; margin-bottom: 6px;
-}
-.qri-field-desc {
-  font-size: 0.85rem; color: var(--ink-muted); line-height: 1.5;
-}
-
-@media (max-width: 768px) {
-  .qri-field-header { flex-wrap: wrap; }
-}
 
 /* ── RESPONSIVE ── */
 @media (max-width: 768px) {
-  .two-col, .three-col, .entry-grid, .primitive-grid, .replay-explanation, .bot-calc, .bot-compare, .dm-grid { grid-template-columns: 1fr; }
-  .dm-compare-table { font-size: 0.78rem; }
-  .dm-compare-table th, .dm-compare-table td { padding: 8px 8px; }
-  .rad-grid { grid-template-columns: 1fr; }
+  .two-col, .three-col, .entry-grid, .primitive-grid { grid-template-columns: 1fr; }
   .nav-links { display: none; }
-  .nav-verified { display: none; }
   .container { padding: 0 1.25rem; }
-  #log-tab { display: none; }
-  #log-panel { width: 100%; right: -100%; }
-}
-@media (max-width: 520px) {
-  .rad-grid { grid-template-columns: 1fr; }
 }
 
 /* ── ANIMATIONS ── */
@@ -895,39 +671,205 @@ body.log-open #log-panel { right: 0; }
 .hero-title { animation-delay: 0.05s; }
 .hero-definition { animation-delay: 0.15s; }
 .hero-meta { animation-delay: 0.25s; }
-
-/* ── Session expired overlay ── */
-.expired-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.65);
-  display: flex; align-items: center; justify-content: center; z-index: 999;
-}
-.expired-box {
-  background: var(--bg); border: 1px solid var(--rule);
-  border-radius: 12px; padding: 2rem; max-width: 340px; text-align: center;
-}
-.expired-box h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-.expired-box p { font-size: 0.92rem; color: var(--ink-muted); margin-bottom: 1.25rem; }
-.expired-box a {
-  display: inline-block; background: var(--accent); color: #fff;
-  padding: 10px 24px; border-radius: 6px; text-decoration: none;
-  font-family: var(--mono); font-size: 0.82rem; font-weight: 500;
-}
 </style>
 </head>
 <body>
+
+<!-- ══ HARD GATE PAGE ══ -->
+<div id="gate">
+  <div class="gate-symbol">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Lock body -->
+      <rect x="12" y="28" width="40" height="28" rx="3" fill="none" stroke="#1a3a6b" stroke-width="1.5"/>
+      <!-- Lock shackle -->
+      <path d="M20 28v-8a12 12 0 0 1 24 0v8" fill="none" stroke="#1a3a6b" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- Orbit ring 1 -->
+      <ellipse cx="32" cy="32" rx="26" ry="10" fill="none" stroke="rgba(26,58,107,0.3)" stroke-width="0.75" transform="rotate(-30 32 32)"/>
+      <!-- Orbit ring 2 -->
+      <ellipse cx="32" cy="32" rx="26" ry="10" fill="none" stroke="rgba(26,58,107,0.15)" stroke-width="0.75" transform="rotate(30 32 32)"/>
+      <!-- Keyhole dot -->
+      <circle cx="32" cy="40" r="3" fill="#8b6914"/>
+      <line x1="32" y1="43" x2="32" y2="48" stroke="#8b6914" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <span class="gate-label">Human Presence Protocol</span>
+  <h1 class="gate-title">This site requires cryptographically verifiable human presence to access.</h1>
+  <p class="gate-sub">To continue, complete a Human Presence Protocol (HPP) attestation using a hardware-bound device and biometric confirmation. A single-use access token will be issued upon successful attestation.</p>
+  <div class="gate-divider"></div>
+
+  <p class="gate-instruction">
+    STEP 1 — Download the HPP iPhone app<br>
+    STEP 2 — Complete biometric attestation<br>
+    STEP 3 — Burn 1 Presence Credit<br>
+    STEP 4 — Site unlocks
+  </p>
+
+  <p style="font-family:var(--mono);font-size:0.72rem;color:var(--accent);letter-spacing:0.06em;margin-bottom:1rem;">
+    No identity is disclosed. No behavioral data is collected. Only proof of physical presence is verified.
+  </p>
+
+  
+
+  <div class="qr-block">
+    <div class="qr-placeholder" id="qr-container">
+      <img id="qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%23f0efe9'/%3E%3Ctext x='100' y='105' text-anchor='middle' font-family='monospace' font-size='12' fill='%23777'%3ELoading...%3C/text%3E%3C/svg%3E" alt="Scan this QR code with the HPP iPhone app" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">
+    </div>
+    <span class="qr-caption">Scan with HPP iPhone app</span>
+    <span id="qr-status" style="display:block;font-family:var(--mono);font-size:0.7rem;color:var(--ink-muted);margin-top:0.5rem;">Waiting for phone authentication...</span>
+  </div>
+
+  <a href="#" class="app-store-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    Download on the App Store
+  </a>
+
+  <p style="font-family:var(--mono);font-size:0.62rem;color:var(--ink-muted);margin-top:2rem;">
+    USPTO Customer No. 224891 · 42 Provisional Applications · Patent Pending<br>
+    This gate is a live demonstration of the HPP control primitive.
+  </p>
+
+  <!-- Demo trigger for standalone preview -->
+  <button class="demo-trigger" onclick="showWelcome()">[ preview attestation flow ]</button>
+</div>
+
+<!-- ══ WELCOME MODAL ══ -->
+<div id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div class="modal-inner">
+      <div class="modal-eyebrow">Attestation Complete · Presence Verified</div>
+
+      <div class="modal-body">
+        <p class="opener" id="modal-heading">Human presence verified.</p>
+        <p class="opener" style="margin-top:-0.5rem;">A cryptographic proof of a physically present human has been issued.</p>
+
+        <div class="modal-sep"></div>
+
+        <p>By burning one Presence Credit you have opened the first human-attested website in the history of the internet.</p>
+
+        <div class="trio">
+          <span>Automated systems cannot satisfy the H-Constant.</span>
+          <span style="color:var(--accent);font-style:normal;font-weight:500;">You just did.</span>
+        </div>
+
+        <div class="modal-sep"></div>
+
+        <p>This moment demonstrates the core constraint of the Human Presence Protocol: presence is no longer a policy claim. It is a cryptographic, hardware-enforced property.</p>
+
+        <p class="closing" style="margin-top:1.25rem;">Welcome to the attested internet.</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <p class="modal-legal">
+        All attestations are pseudonymous.<br>
+        No identity disclosure. No data collection.<br>
+        Patent pending · USPTO Customer No. 224891
+      </p>
+      <button class="btn-ok" onclick="proceed()"><span>Proceed</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Verified badge (persists after Proceed) -->
+<div id="verified-badge">HPP Verified</div>
+
+<script>
+  var API_BASE = 'https://hpp-verifier.onrender.com';
+  var RELAY_ID = null;
+  var SESSION_TOKEN = null;
+  var proceedClicked = false;
+  var pollTimer = null;
+
+  function showWelcome() {
+    var overlay = document.getElementById('modal-overlay');
+    overlay.classList.add('active');
+  }
+
+  function proceed() {
+    if (proceedClicked) return;
+    proceedClicked = true;
+    document.getElementById('modal-overlay').classList.remove('active');
+    var badge = document.getElementById('verified-badge');
+    badge.style.display = 'block';
+    badge.style.animation = 'badgeIn 0.4s cubic-bezier(0.16,1,0.3,1) both';
+    // Redirect to the unified site page
+    if (SESSION_TOKEN) {
+      window.location.href = 'site.html?session_token=' + encodeURIComponent(SESSION_TOKEN);
+    } else {
+      window.location.href = 'site.html';
+    }
+  }
+
+  // Request a fresh relay + QR from the backend on page load
+  function initRelay() {
+    var statusEl = document.getElementById('qr-status');
+    var qrImg = document.getElementById('qr-img');
+    if (statusEl) statusEl.textContent = 'Connecting to verifier...';
+
+    fetch(API_BASE + '/challenge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ site: 'humanpresenceprotocol.com', session_duration: 600 })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+      if (data.relay_id) {
+        RELAY_ID = data.relay_id;
+        if (qrImg) qrImg.src = API_BASE + '/qr?relay_id=' + RELAY_ID + '&session_duration=600';
+        if (statusEl) statusEl.textContent = 'Scan with HPP iPhone app';
+        startPolling();
+      } else {
+        if (statusEl) statusEl.textContent = 'Verifier unavailable — tap to enter site';
+        if (qrImg) qrImg.style.cursor = 'pointer';
+        if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
+      }
+    })
+    .catch(function() {
+      if (statusEl) statusEl.textContent = 'Verifier offline — tap to enter site';
+      if (qrImg) qrImg.style.cursor = 'pointer';
+      if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
+    });
+  }
+
+  // Relay polling — check every 2s for attestation token
+  function startPolling() {
+    if (!RELAY_ID) return;
+    var statusEl = document.getElementById('qr-status');
+    pollTimer = setInterval(function() {
+      fetch(API_BASE + '/relay/' + RELAY_ID)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (data.status === 'ready' && data.session_token) {
+            clearInterval(pollTimer);
+            SESSION_TOKEN = data.session_token;
+            if (statusEl) statusEl.textContent = 'Presence verified';
+            showWelcome();
+          } else if (data.status === 'expired' || data.status === 'not_found') {
+            clearInterval(pollTimer);
+            if (statusEl) statusEl.textContent = 'QR expired — refresh this page to try again';
+            var qrImg = document.getElementById('qr-img');
+            if (qrImg) qrImg.style.opacity = '0.3';
+          }
+        })
+        .catch(function() {});
+    }, 2000);
+  }
+
+  initRelay();
+</script>
+
+<!-- ══ FULL SITE (loads after attestation) ══ -->
+<div id="site" style="display:none;width:100%;">
 
 <!-- ══ NAVIGATION ══ -->
 <nav>
   <div class="nav-inner">
     <a class="nav-logo" href="#home">Human Presence Protocol</a>
     <ul class="nav-links">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#demo" style="color:var(--gold);font-weight:500;">Demo</a></li>
-      <li><a href="#replay-demo">Replay Proof</a></li>
-      <li><a href="#bot-cost">Bot Cost</a></li>
-      <li><a href="#throughput">Throughput</a></li>
-      <li><a href="#data-min">Privacy</a></li>
-      <li><a href="#qr-inspect">QR Inspector</a></li>
       <li><a href="#architecture">Architecture</a></li>
       <li><a href="#evidence">Evidence</a></li>
       <li><a href="#remedy">Structural Remedy</a></li>
@@ -937,611 +879,9 @@ body.log-open #log-panel { right: 0; }
       <li><a href="#verification">Verification</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
-    <div class="nav-timer-wrap" style="display:none;">
-      <span class="nav-timer-label">Session</span>
-      <span class="session-timer" id="timer">--:--</span>
-    </div>
-    <div class="nav-verified">&#10003; HPP</div>
   </div>
 </nav>
 
-<main id="main-content">
-
-<!-- ══ HOME / HERO ══ -->
-<section id="home" style="padding-top:5rem;padding-bottom:4rem;">
-  <div class="container">
-    <span class="hero-label">Agile On Target LLC &middot; USPTO Customer No. 224891</span>
-    <h1 class="hero-title">Human Presence Protocol</h1>
-    <p class="hero-definition">
-      HPP is a constraint-based attestation protocol that produces cryptographically verifiable evidence of human presence without requiring identity disclosure. It enforces thermodynamic cost symmetry between humans and bots: the human body is the non-parallelizable substrate; no software substitution is possible at the hardware attestation layer.
-    </p>
-    <p style="font-size:1.05rem;color:var(--ink-muted);font-style:italic;margin-bottom:1.5rem;padding-left:1.25rem;border-left:2px solid var(--rule);">
-      &ldquo;Every machine proof imposes an energy tax; HPP reads a signal existence is already emitting. The human body is the proof. Existence is the work. Presence is the consensus.&rdquo;
-    </p>
-    <div class="warn-box" style="margin-bottom:0;">
-      <strong>Public Domain Release</strong> &mdash; This site releases the Human Presence Protocol (HPP) architecture into the public domain for evaluation, verification, and academic scrutiny. All 42 patent applications remain pending under USPTO Customer No. 224891; this release does not waive any patent rights.
-    </div>
-    <p class="hero-meta" style="margin-top:1.5rem;">
-      <span>42 provisional patent families</span> &middot; Filed February 14 &ndash; March 28, 2026 &middot;
-      <span>1,429 claims</span> &middot; 32 primitives &middot; 15 invariants &middot; 48 capability enablers &middot;
-      NP Deadline: February 14, 2027
-    </p>
-    <div class="warn-box" style="margin-top:2.5rem;">
-      <strong>Patent Pending</strong> &mdash; All 42 provisional families filed under USPTO Customer No. 224891. All materials on this site are provided for evaluation purposes only and do not constitute legal advice. All patent applications are provisional and subject to examination.
-    </div>
-    <div class="entry-grid" style="margin-top:3rem;">
-      <a class="entry-card" href="#remedy">
-        <span class="ec-label">For Regulators</span>
-        <span class="ec-title">Structural Remedy</span>
-        <p class="ec-desc">10-condition Srinivasan map. HPP as architecturally enforceable antitrust remedy. FTC / DOJ / AG entry point.</p>
-      </a>
-      <a class="entry-card" href="#rad">
-        <span class="ec-label">For Counsel</span>
-        <span class="ec-title">RAD Documentation</span>
-        <p class="ec-desc">USPTO filing dates vs. KGM verdict. Six KGM features mapped to HPP applications. MDL 3047 bellwether context.</p>
-      </a>
-      <a class="entry-card" href="#academic">
-        <span class="ec-label">For Academics</span>
-        <span class="ec-title">Formal Model</span>
-        <p class="ec-desc">Three formal notions + one physical assumption. Adversarial games. Necessity theorem. Dependency chain. USENIX NPHT submission.</p>
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- ══ DEMO SECTION ══ -->
-<section id="demo">
-  <div class="container-wide">
-    <span class="section-eyebrow">Live Demonstration</span>
-    <h2 class="section-title">Design Control Demo</h2>
-    <div class="section-rule"></div>
-    <p class="section-lead">Six interaction controls corresponding to the six KGM design findings. Each control triggers a live cryptographic attestation call. Results stream to the Crypto Log panel.</p>
-
-    <div class="rad-mode-bar">
-      <span class="rad-mode-label">Attestation Mode</span>
-      <button class="rad-mode-toggle" id="rad-mode-toggle" onclick="toggleAttestMode()" title="Toggle between iPhone attestation and browser simulation"></button>
-      <span class="rad-mode-desc sim" id="rad-mode-desc">Simulate (WebCrypto)</span>
-    </div>
-
-    <div class="rad-grid">
-      
-    <div class="rad-card locked" id="c1">
-      <div class="rad-card-header">
-        <div class="rad-card-title">Infinite Scroll Boundary</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          
-          <div class="rad-verified-pill" id="c1-pill" style="display:none">&#10003; Verified</div>
-        </div>
-      </div>
-      <div class="rad-card-risk">Continuous passive consumption without a stopping condition.</div>
-      <div class="rad-locked-state" id="c1-locked">
-        <div class="rad-lock-icon">&#128274;</div>
-        <div class="rad-lock-msg">Session boundary reached.</div>
-      </div>
-      <div class="rad-waiting-state" id="c1-waiting" style="display:none">
-        <div class="rad-qr-wrap">
-          <img id="c1-qr" src="" alt="Scan with HPP iPhone app">
-        </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
-        <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
-        <button class="rad-cancel-btn" onclick="cancelCardAttestation('c1')">Cancel</button>
-      </div>
-      <div class="rad-released-state" id="c1-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Continuation granted for this session window. Feed preview unblurred for one bounded interval.</div>
-      </div>
-      <button class="rad-btn" id="c1-btn" data-action="Continue with Human Presence" onclick="releaseCard('c1')">
-        Continue with Human Presence
-      </button>
-      <div class="rad-primitive">P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841</div>
-    </div>
-
-    <div class="rad-card locked" id="c2">
-      <div class="rad-card-header">
-        <div class="rad-card-title">Autoplay Gate</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          
-          <div class="rad-verified-pill" id="c2-pill" style="display:none">&#10003; Verified</div>
-        </div>
-      </div>
-      <div class="rad-card-risk">Content progression without an affirmative moment of human choice.</div>
-      <div class="rad-locked-state" id="c2-locked">
-        <div class="rad-lock-icon">&#128274;</div>
-        <div class="rad-lock-msg">Next item requires confirmation.</div>
-      </div>
-      <div class="rad-waiting-state" id="c2-waiting" style="display:none">
-        <div class="rad-qr-wrap">
-          <img id="c2-qr" src="" alt="Scan with HPP iPhone app">
-        </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
-        <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
-        <button class="rad-cancel-btn" onclick="cancelCardAttestation('c2')">Cancel</button>
-      </div>
-      <div class="rad-released-state" id="c2-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Human choice recorded before progression.</div>
-      </div>
-      <button class="rad-btn" id="c2-btn" data-action="Advance with Human Presence" onclick="releaseCard('c2')">
-        Advance with Human Presence
-      </button>
-      <div class="rad-primitive">P12 — Commitment-Based Presence Proof · Pro-Q 64/018,841</div>
-    </div>
-
-    <div class="rad-card locked" id="c3">
-      <div class="rad-card-header">
-        <div class="rad-card-title">Notification Delivery Gate</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          
-          <div class="rad-verified-pill" id="c3-pill" style="display:none">&#10003; Verified</div>
-        </div>
-      </div>
-      <div class="rad-card-risk">Compulsive re-engagement trigger delivered without verified present intent.</div>
-      <div class="rad-locked-state" id="c3-locked">
-        <div class="rad-lock-icon">&#128274;</div>
-        <div class="rad-lock-msg">Notification held pending presence.</div>
-      </div>
-      <div class="rad-waiting-state" id="c3-waiting" style="display:none">
-        <div class="rad-qr-wrap">
-          <img id="c3-qr" src="" alt="Scan with HPP iPhone app">
-        </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
-        <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
-        <button class="rad-cancel-btn" onclick="cancelCardAttestation('c3')">Cancel</button>
-      </div>
-      <div class="rad-released-state" id="c3-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Notification released after verified presence.</div>
-      </div>
-      <button class="rad-btn" id="c3-btn" data-action="Release Notification" onclick="releaseCard('c3')">
-        Release Notification
-      </button>
-      <div class="rad-primitive">P2 — HW-Bound Attestation Root · Pro-A 63/983,106 · Filed 02/14/2026</div>
-    </div>
-
-    <div class="rad-card locked" id="c4">
-      <div class="rad-card-header">
-        <div class="rad-card-title">Age Gated Feature</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          <div class="rad-sim-badge">Simulated</div>
-          <div class="rad-verified-pill" id="c4-pill" style="display:none">&#10003; Verified</div>
-        </div>
-      </div>
-      <div class="rad-card-risk">Restricted feature access without age-qualified presence verification.</div>
-      <div class="rad-locked-state" id="c4-locked">
-        <div class="rad-lock-icon">&#128274;</div>
-        <div class="rad-lock-msg">Access requires age-qualified presence.</div>
-      </div>
-      <div class="rad-waiting-state" id="c4-waiting" style="display:none">
-        <div class="rad-qr-wrap">
-          <img id="c4-qr" src="" alt="Scan with HPP iPhone app">
-        </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
-        <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
-        <button class="rad-cancel-btn" onclick="cancelCardAttestation('c4')">Cancel</button>
-      </div>
-      <div class="rad-released-state" id="c4-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Age predicate satisfied. Feature unlocked.</div>
-      </div>
-      <button class="rad-btn" id="c4-btn" data-action="Verify Access" onclick="releaseCard('c4')">
-        Verify Access
-      </button>
-      <div class="rad-primitive">P2 + Pro-M 64/018,735 + Pro-P 63/985,418 — Age Verification · Filed 02/18/2026</div>
-    </div>
-
-    <div class="rad-card locked" id="c5">
-      <div class="rad-card-header">
-        <div class="rad-card-title">Reinforcement Control</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          
-          <div class="rad-verified-pill" id="c5-pill" style="display:none">&#10003; Verified</div>
-        </div>
-      </div>
-      <div class="rad-card-risk">Variable reward loop tied to social validation without a deliberate human engagement gate.</div>
-      <div class="rad-locked-state" id="c5-locked">
-        <div class="rad-lock-icon">&#128274;</div>
-        <div class="rad-lock-msg">Reinforcement signal withheld pending presence.</div>
-      </div>
-      <div class="rad-waiting-state" id="c5-waiting" style="display:none">
-        <div class="rad-qr-wrap">
-          <img id="c5-qr" src="" alt="Scan with HPP iPhone app">
-        </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
-        <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
-        <button class="rad-cancel-btn" onclick="cancelCardAttestation('c5')">Cancel</button>
-      </div>
-      <div class="rad-released-state" id="c5-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Reinforcement signal released after deliberate engagement.</div>
-      </div>
-      <button class="rad-btn" id="c5-btn" data-action="Reveal with Human Presence" onclick="releaseCard('c5')">
-        Reveal with Human Presence
-      </button>
-      <div class="rad-primitive">P11 — Tamper-Evident Ledger · Pro-K 63/983,135 · Filed 02/14/2026</div>
-    </div>
-
-    <div class="rad-card locked" id="c6">
-      <div class="rad-card-header">
-        <div class="rad-card-title">Escalation Gate</div>
-        <div style="display:flex;gap:6px;align-items:center;">
-          
-          <div class="rad-verified-pill" id="c6-pill" style="display:none">&#10003; Verified</div>
-        </div>
-      </div>
-      <div class="rad-card-risk">Silent algorithmic progression into stronger content tiers without explicit human confirmation.</div>
-      <div class="rad-locked-state" id="c6-locked">
-        <div class="rad-lock-icon">&#128274;</div>
-        <div class="rad-lock-msg">Escalation paused.</div>
-      </div>
-      <div class="rad-waiting-state" id="c6-waiting" style="display:none">
-        <div class="rad-qr-wrap">
-          <img id="c6-qr" src="" alt="Scan with HPP iPhone app">
-        </div>
-        <div class="rad-waiting-label"><span class="rad-waiting-spinner"></span>Waiting for iPhone...</div>
-        <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
-        <button class="rad-cancel-btn" onclick="cancelCardAttestation('c6')">Cancel</button>
-      </div>
-      <div class="rad-released-state" id="c6-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Escalation resumed after explicit human confirmation.</div>
-      </div>
-      <button class="rad-btn" id="c6-btn" data-action="Continue with Human Presence" onclick="releaseCard('c6')">
-        Continue with Human Presence
-      </button>
-      <div class="rad-primitive">P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841 + INV-08 64/019,933</div>
-    </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ REPLAY ATTACK DEMO ══ -->
-<section id="replay-demo">
-  <div class="container-wide">
-    <span class="section-eyebrow">Security Proof</span>
-    <h2 class="section-title">Replay Attack Demo</h2>
-    <div class="section-rule"></div>
-    <p class="section-lead">Can a captured attestation be reused? This live demo proves that every HPP challenge is single-use. A signature bound to one challenge cannot unlock another &mdash; the server detects the mismatch and returns <code>REPLAY_DETECTED</code> in real time.</p>
-
-    <div class="replay-widget">
-      <ol class="replay-steps" id="replay-steps">
-        <li class="replay-step" id="rs-1">
-          <span class="step-label">Step 1 &mdash; Issue Challenge</span>
-          <span class="step-detail" id="rs-1-detail">Waiting&hellip;</span>
-        </li>
-        <li class="replay-step" id="rs-2">
-          <span class="step-label">Step 2 &mdash; Sign Payload (Demo)</span>
-          <span class="step-detail" id="rs-2-detail">Waiting&hellip;</span>
-        </li>
-        <li class="replay-step" id="rs-3">
-          <span class="step-label">Step 3 &mdash; First Verification Attempt</span>
-          <span class="step-detail" id="rs-3-detail">Waiting&hellip;</span>
-        </li>
-        <li class="replay-step" id="rs-4">
-          <span class="step-label">Step 4 &mdash; Replay with Tampered Nonce</span>
-          <span class="step-detail" id="rs-4-detail">Waiting&hellip;</span>
-        </li>
-      </ol>
-
-      <div class="replay-result" id="replay-result">
-        <div class="result-title" id="replay-result-title"></div>
-        <div id="replay-result-body"></div>
-      </div>
-
-      <button class="replay-btn" id="replay-btn" onclick="runReplayDemo()">Run Demo</button>
-    </div>
-
-    <div class="replay-explanation">
-      <div class="re-cell">
-        <h4>Single-Use Nonce</h4>
-        <p>Each challenge contains a 256-bit random nonce. The server stores it and checks every verification attempt against the stored value. A tampered or reused nonce triggers immediate rejection.</p>
-      </div>
-      <div class="re-cell">
-        <h4>Challenge TTL</h4>
-        <p>Challenges expire after 300 seconds. Even if an attacker captures a valid challenge, they have a narrow window &mdash; and the nonce is already bound to one specific attestation attempt.</p>
-      </div>
-      <div class="re-cell">
-        <h4>P13 &mdash; Replay-Resistant Windows</h4>
-        <p>Patent primitive P13 defines the attestation window as non-reusable. The H-Constant ensures each window requires one human, one device, and ~3 seconds of non-parallelizable time.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ BOT COST CALCULATOR ══ -->
-<section id="bot-cost">
-  <div class="container-wide">
-    <span class="section-eyebrow">Economic Proof</span>
-    <h2 class="section-title">Bot Cost Calculator</h2>
-    <div class="section-rule"></div>
-    <p class="section-lead">HPP makes bot farms uneconomic. Each fake attestation requires one physical iPhone, one human performing biometric auth, and ~3 seconds of non-parallelizable time. This calculator shows the real cost of attacking HPP at scale.</p>
-
-    <div class="bot-calc">
-      <div class="bot-input-panel">
-        <label class="bot-input-label">Fake accounts per day</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="bot-accounts" min="1" max="1000000" value="10000" oninput="updateBotCalc()">
-          <span class="bot-slider-val" id="bot-accounts-val">10,000</span>
-        </div>
-
-        <label class="bot-input-label">Attestation time per attempt</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="bot-time" min="2" max="10" value="3" step="0.5" oninput="updateBotCalc()">
-          <span class="bot-slider-val" id="bot-time-val">3.0s</span>
-        </div>
-
-        <label class="bot-input-label">iPhone cost per device</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="bot-device-cost" min="200" max="1500" value="999" step="1" oninput="updateBotCalc()">
-          <span class="bot-slider-val" id="bot-device-cost-val">$999</span>
-        </div>
-
-        <label class="bot-input-label">Hourly labor cost per worker</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="bot-labor" min="1" max="50" value="7" step="0.5" oninput="updateBotCalc()">
-          <span class="bot-slider-val" id="bot-labor-val">$7.00/hr</span>
-        </div>
-      </div>
-
-      <div class="bot-output-panel">
-        <span class="bot-output-label">iPhones Required</span>
-        <div class="bot-output-val red" id="bot-out-devices">—</div>
-
-        <span class="bot-output-label">Human-Hours per Day</span>
-        <div class="bot-output-val red" id="bot-out-hours">—</div>
-
-        <span class="bot-output-label">Daily Device Cost</span>
-        <div class="bot-output-val gold" id="bot-out-device-cost">—</div>
-
-        <span class="bot-output-label">Daily Labor Cost</span>
-        <div class="bot-output-val gold" id="bot-out-labor-cost">—</div>
-
-        <span class="bot-output-label">Total Daily Attack Cost</span>
-        <div class="bot-output-val red" id="bot-out-total" style="font-size:1.8rem">—</div>
-      </div>
-    </div>
-
-    <div class="bot-compare">
-      <div class="bot-compare-cell">
-        <h4 class="red">Without HPP</h4>
-        <span class="big-num" id="bot-cmp-without">—</span>
-        <p>fake accounts per day using automated scripts. Cost: near zero (one server, no humans required).</p>
-      </div>
-      <div class="bot-compare-cell highlight">
-        <h4 class="green">With HPP</h4>
-        <span class="big-num" id="bot-cmp-with">—</span>
-        <p>requires <span id="bot-cmp-devices-inline">—</span> iPhones + <span id="bot-cmp-workers-inline">—</span> humans working <span id="bot-cmp-shifts-inline">—</span> shifts. Cost: <span id="bot-cmp-cost-inline">—</span>/day.</p>
-      </div>
-    </div>
-
-    <div class="bot-footnote">
-      NPHT (Non-Parallelizable Human Time): 1 attestation = 1 human + 1 device + ~3 seconds of biometric presence.
-      Constraint is physical, not computational &mdash; no amount of GPU or bandwidth reduces the per-attestation cost.
-      Based on P1 (Time-Anchored Biometric Pulse) and the H-Constant from HPP&rsquo;s NCBS framework.
-    </div>
-  </div>
-</section>
-
-<!-- ══ ADVERSARIAL THROUGHPUT CALCULATOR ══ -->
-<section id="throughput">
-  <div class="container-wide">
-    <span class="section-eyebrow">Throughput Constraint</span>
-    <h2 class="section-title">Adversarial Throughput Calculator</h2>
-    <div class="section-rule"></div>
-    <p class="section-lead">Given N workers with iPhones, what is the maximum number of valid attestations per hour? HPP&rsquo;s non-parallelizable biometric gate creates a hard physical ceiling that no amount of compute can bypass.</p>
-
-    <div class="bot-calc">
-      <div class="bot-input-panel">
-        <label class="bot-input-label">Bot farm workers</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="tp-workers" min="1" max="10000" value="1000" oninput="updateThroughput()">
-          <span class="bot-slider-val" id="tp-workers-val">1,000</span>
-        </div>
-
-        <label class="bot-input-label">Seconds per attestation</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="tp-secs" min="2" max="10" value="3" step="0.5" oninput="updateThroughput()">
-          <span class="bot-slider-val" id="tp-secs-val">3.0s</span>
-        </div>
-
-        <label class="bot-input-label">Automated requests/sec (no HPP)</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="tp-rps" min="100" max="100000" value="10000" oninput="updateThroughput()">
-          <span class="bot-slider-val" id="tp-rps-val">10,000</span>
-        </div>
-      </div>
-
-      <div class="bot-output-panel">
-        <span class="bot-output-label">With HPP &mdash; Max Attestations / Hour</span>
-        <div class="bot-output-val green" id="tp-out-hpp">—</div>
-
-        <span class="bot-output-label">Without HPP &mdash; Automated Requests / Hour</span>
-        <div class="bot-output-val red" id="tp-out-no-hpp">—</div>
-
-        <span class="bot-output-label">Reduction Factor</span>
-        <div class="bot-output-val" id="tp-out-factor" style="font-size:1.8rem;color:var(--accent)">—</div>
-      </div>
-    </div>
-
-    <div class="tp-bar-chart">
-      <div class="tp-bar-row">
-        <span class="tp-bar-label">With HPP</span>
-        <div class="tp-bar-track">
-          <div class="tp-bar-fill green" id="tp-bar-hpp" style="width:5%">—</div>
-        </div>
-      </div>
-      <div class="tp-bar-row">
-        <span class="tp-bar-label">Without HPP</span>
-        <div class="tp-bar-track">
-          <div class="tp-bar-fill red" id="tp-bar-no-hpp" style="width:100%">—</div>
-          <span class="tp-bar-overflow" id="tp-bar-overflow"></span>
-        </div>
-      </div>
-    </div>
-
-    <div class="tp-ratio-banner" id="tp-ratio-banner">
-      <span class="ratio-big" id="tp-ratio-big">—</span>
-      <span id="tp-ratio-text">fewer fake attestations per hour with HPP</span>
-    </div>
-
-    <div class="bot-footnote">
-      The constraint is physical: each attestation requires one human holding one iPhone, performing Face ID, for ~3 seconds.
-      1,000 workers &times; 1,200 attestations/hr each = 1.2M/hr maximum. Without HPP, a single server pushes 36M automated requests/hr.
-      The ratio is the moat.
-    </div>
-  </div>
-</section>
-
-<!-- ══ DATA MINIMIZATION PROOF ══ -->
-<section id="data-min">
-  <div class="container-wide">
-    <span class="section-eyebrow">Privacy by Design</span>
-    <h2 class="section-title">What HPP Collects &mdash; and What It Doesn&rsquo;t</h2>
-    <div class="section-rule"></div>
-    <p class="section-lead">HPP proves a human is present without learning who they are. No account, no email, no name, no location. The only data that crosses the network is a cryptographic proof of presence &mdash; a public key, a signature, and a timestamp.</p>
-
-    <div class="dm-grid">
-      <div class="dm-card collects">
-        <h3><span>&#10003;</span> What HPP Transmits</h3>
-        <ul>
-          <li><span class="dm-icon">&#9679;</span><span>Public key (Secure Enclave, device-bound, anonymous)</span></li>
-          <li><span class="dm-icon">&#9679;</span><span>ECDSA signature over a single-use challenge</span></li>
-          <li><span class="dm-icon">&#9679;</span><span>Timestamp (epoch seconds)</span></li>
-          <li><span class="dm-icon">&#9679;</span><span>Biometric assurance level (Face ID / Touch ID / Passcode)</span></li>
-          <li><span class="dm-icon">&#9679;</span><span>PCS band label (Unestablished &ndash; Established)</span></li>
-          <li><span class="dm-icon">&#9679;</span><span>Site identifier (which site is being attested to)</span></li>
-        </ul>
-      </div>
-      <div class="dm-card not-collects">
-        <h3><span>&#10007;</span> What HPP Never Collects</h3>
-        <ul>
-          <li><span class="dm-icon">&#10007;</span><span>Name, email, phone number, or any PII</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Biometric template (Face ID data never leaves Secure Enclave)</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Location, IP address, or geolocation</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Device fingerprint, IDFA, or hardware identifiers</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Browsing history, cookies, or session tracking across sites</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Social graph, contacts, or behavioral profile</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Age, gender, or demographic data</span></li>
-          <li><span class="dm-icon">&#10007;</span><span>Raw PCS score (only the band label is shared)</span></li>
-        </ul>
-      </div>
-    </div>
-
-    <table class="dm-compare-table">
-      <thead>
-        <tr>
-          <th>Data Point</th>
-          <th>HPP</th>
-          <th>Google Sign-In</th>
-          <th>Email + Password</th>
-          <th>Device Fingerprint</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Real name</td>
-          <td class="dm-no">Never</td>
-          <td class="dm-yes">Required</td>
-          <td class="dm-na">Optional</td>
-          <td class="dm-no">No</td>
-        </tr>
-        <tr>
-          <td>Email address</td>
-          <td class="dm-no">Never</td>
-          <td class="dm-yes">Required</td>
-          <td class="dm-yes">Required</td>
-          <td class="dm-no">No</td>
-        </tr>
-        <tr>
-          <td>Password / credential</td>
-          <td class="dm-no">Never</td>
-          <td class="dm-yes">OAuth token</td>
-          <td class="dm-yes">Password hash</td>
-          <td class="dm-no">No</td>
-        </tr>
-        <tr>
-          <td>Biometric template</td>
-          <td class="dm-no">Never leaves SE</td>
-          <td class="dm-no">No</td>
-          <td class="dm-no">No</td>
-          <td class="dm-no">No</td>
-        </tr>
-        <tr>
-          <td>Location data</td>
-          <td class="dm-no">Never</td>
-          <td class="dm-yes">Often</td>
-          <td class="dm-na">IP-inferred</td>
-          <td class="dm-yes">IP-inferred</td>
-        </tr>
-        <tr>
-          <td>Cross-site tracking</td>
-          <td class="dm-no">Impossible</td>
-          <td class="dm-yes">By design</td>
-          <td class="dm-na">Via cookies</td>
-          <td class="dm-yes">By design</td>
-        </tr>
-        <tr>
-          <td>Device fingerprint</td>
-          <td class="dm-no">Never</td>
-          <td class="dm-na">Partial</td>
-          <td class="dm-no">No</td>
-          <td class="dm-yes">By design</td>
-        </tr>
-        <tr>
-          <td>Human presence proof</td>
-          <td class="dm-no" style="color:var(--green-dark);font-weight:700">&#10003; Cryptographic</td>
-          <td class="dm-no">No</td>
-          <td class="dm-no">No</td>
-          <td class="dm-no">No</td>
-        </tr>
-        <tr>
-          <td>Replay-resistant</td>
-          <td class="dm-no" style="color:var(--green-dark);font-weight:700">&#10003; P13</td>
-          <td class="dm-na">N/A</td>
-          <td class="dm-no">No</td>
-          <td class="dm-no">No</td>
-        </tr>
-        <tr>
-          <td>Account required</td>
-          <td class="dm-no" style="color:var(--green-dark);font-weight:700">No</td>
-          <td class="dm-yes">Google account</td>
-          <td class="dm-yes">Site account</td>
-          <td class="dm-no">No</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="bot-footnote" style="margin-top:2rem">
-      HPP&rsquo;s privacy model: the server learns that a human is present, not who they are.
-      The public key is device-bound and anonymous &mdash; it carries no identity.
-      Cross-site correlation is structurally impossible because each site sees only the attestation proof, never a shared identifier.
-      Compliant by design with GDPR data minimization (Art. 5(1)(c)), COPPA (no PII collection from minors), and CCPA (no sale of personal information).
-    </div>
-  </div>
-</section>
-
-<!-- ══ QR PAYLOAD INSPECTOR ══ -->
-<section id="qr-inspect">
-  <div class="container">
-    <span class="section-eyebrow">Developer Tool</span>
-    <h2 class="section-title">QR Payload Inspector</h2>
-    <div class="section-rule"></div>
-    <p class="section-lead">Paste raw HPP QR code JSON to decode and inspect every field. Understand what each parameter does and verify payload integrity before integration.</p>
-
-    <div class="qri-input-wrap">
-      <textarea id="qri-input" class="qri-textarea" placeholder="Paste HPP QR payload JSON here..." spellcheck="false"></textarea>
-      <div class="qri-btn-row">
-        <button class="qri-btn qri-btn-primary" onclick="qriDecode()">Decode</button>
-        <button class="qri-btn qri-btn-secondary" onclick="qriLoadSample()">Load Sample</button>
-      </div>
-    </div>
-
-    <div id="qri-error" class="qri-error"></div>
-    <div id="qri-warnings" class="qri-warnings"></div>
-    <div id="qri-results" class="qri-results"></div>
-  </div>
-</section>
-
-<!-- ══ SITE CONTENT (loaded from welcome-gate.html) ══ -->
 <!-- ══ HOME ══ -->
 <section id="home" style="padding-top:6rem;padding-bottom:4rem;">
   <div class="container">
@@ -2477,847 +1817,6 @@ body.log-open #log-panel { right: 0; }
   </div>
 </footer>
 
-</main>
-
-<!-- ══ SIDE LOG PANEL ══ -->
-<div id="log-tab" onclick="toggleLogPanel()" title="Open Cryptographic Log">C R Y P T O &nbsp; L O G</div>
-
-<div id="log-panel">
-  <div class="log-header">
-    <span class="log-title">Cryptographic Log</span>
-    <button class="log-close" onclick="toggleLogPanel()">&times;</button>
-  </div>
-  <div id="log-entries" class="log-entries"></div>
-  <div class="log-actions">
-    <button onclick="exportLogJSON()">Export JSON</button>
-    <button onclick="copyPubKey()">Copy Public Key</button>
-    <button onclick="clearLog()">Clear Log</button>
-    <button onclick="exportReceiptJSON()">Export Receipt JSON</button>
-    <button onclick="resetCards()" style="background:rgba(139,105,20,0.25);color:#d4a840">Reset Cards</button>
-  </div>
 </div>
-
-<!-- ══ SESSION EXPIRED OVERLAY (hidden until expiry) ══ -->
-<div class="expired-overlay" id="expired-overlay" style="display:none">
-  <div class="expired-box">
-    <h3>Session Expired</h3>
-    <p>Your HPP session has ended. Re-authenticate on your iPhone to start a new session.</p>
-    <a href="/?expired=1">Re-authenticate</a>
-  </div>
-</div>
-
-<script>
-(function() {
-  /* ═══════════════════════════════════════════════════════════════════════
-     Session State
-     ═══════════════════════════════════════════════════════════════════════ */
-  var API_BASE      = "https://hpp-verifier.onrender.com";
-  var EXPIRES_AT    = 2776177806;
-  var SESSION_TOKEN = "static-github-pages";
-  var RECEIPT       = {"event_id":"static-site","timestamp":"2026-04-14T14:43:27.520Z","assurance":"STATIC","outcome":"success","credit_action":"—","challenge_id":"—","nonce":"—","epoch":1776177807,"receipt_id":"static","fingerprint":"—","site":"humanpresenceprotocol.com","session_token":"static"};
-  var logEntries    = [];
-  var released      = {};
-  var demoKeyPair   = null;
-
-  /* ── Strip session_token from URL to prevent leakage via Referer ──── */
-  if (window.history && window.history.replaceState && window.location.search.includes('session_token')) {
-    var cleanUrl = window.location.pathname + window.location.hash;
-    window.history.replaceState({}, '', cleanUrl);
-  }
-
-  /* ── Countdown ─────────────────────────────────────────────────────── */
-  var timerEl    = document.getElementById('timer');
-  var overlayEl  = document.getElementById('expired-overlay');
-
-  function tick() {
-    var rem = EXPIRES_AT - Math.floor(Date.now() / 1000);
-    if (rem <= 0) {
-      timerEl.textContent = '00:00';
-      timerEl.classList.add('expiring');
-      overlayEl.style.display = 'flex';
-      return;
-    }
-    var mm = String(Math.floor(rem / 60)).padStart(2, '0');
-    var ss = String(rem % 60).padStart(2, '0');
-    timerEl.textContent = mm + ':' + ss;
-    if (rem < 60) timerEl.classList.add('expiring');
-    setTimeout(tick, 1000);
-  }
-  tick();
-
-  /* ── Log Panel ─────────────────────────────────────────────────────── */
-  window.toggleLogPanel = function() {
-    document.body.classList.toggle('log-open');
-  };
-
-  function addLogEntry(type, message) {
-    var now = new Date();
-    var ts  = now.toTimeString().slice(0, 8);
-    logEntries.push({ timestamp: ts, type: type, message: message, epoch: now.getTime() });
-    renderLogEntries();
-  }
-
-  function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-  function renderLogEntries() {
-    var el = document.getElementById('log-entries');
-    el.innerHTML = logEntries.map(function(e) {
-      return '<div class="log-entry">'
-        + '<span class="log-ts">[' + esc(e.timestamp) + ']</span> '
-        + '<span class="log-type-' + esc(e.type) + '">' + esc(e.type) + '</span> '
-        + '<span class="log-msg">' + esc(e.message) + '</span>'
-        + '</div>';
-    }).join('');
-    el.scrollTop = el.scrollHeight;
-  }
-
-  // Initial log entry
-  addLogEntry('SYSTEM', 'Session authenticated. Token valid. Expires at ' + new Date(EXPIRES_AT * 1000).toUTCString());
-  if (RECEIPT && RECEIPT.receipt_id && RECEIPT.receipt_id !== '(server-restarted)') {
-    addLogEntry('RECEIPT', 'Attestation receipt loaded: ' + RECEIPT.receipt_id.slice(0, 12) + '...');
-    addLogEntry('RECEIPT', 'Assurance: ' + (RECEIPT.assurance || 'unknown') + ' | Chain: ' + (RECEIPT.prev_receipt_hash === 'GENESIS' ? 'GENESIS' : RECEIPT.prev_receipt_hash ? RECEIPT.prev_receipt_hash.slice(0, 12) + '...' : 'N/A'));
-  }
-
-  /* ── Demo Key Generation (WebCrypto — NOT Secure Enclave) ──────────── */
-  async function ensureDemoKey() {
-    if (demoKeyPair) return demoKeyPair;
-    addLogEntry('DEMO-SIGN', 'Generating P-256 key pair via WebCrypto (DEMO \u2014 NOT Secure Enclave)');
-    demoKeyPair = await crypto.subtle.generateKey(
-      { name: 'ECDSA', namedCurve: 'P-256' },
-      true,
-      ['sign', 'verify']
-    );
-    var exported = await crypto.subtle.exportKey('raw', demoKeyPair.publicKey);
-    var b64 = btoa(String.fromCharCode.apply(null, new Uint8Array(exported)));
-    addLogEntry('DEMO-SIGN', 'Demo public key: ' + b64.slice(0, 24) + '... (browser-generated, not hardware-bound)');
-    return demoKeyPair;
-  }
-
-  /* ── Attestation Mode Toggle ────────────────────────────────────────── */
-  var attestMode = 'simulate'; // 'simulate' or 'iphone'
-  var activePollers = {};       // id -> { interval, timeout, relay_id }
-
-  window.toggleAttestMode = function() {
-    var btn  = document.getElementById('rad-mode-toggle');
-    var desc = document.getElementById('rad-mode-desc');
-    if (attestMode === 'simulate') {
-      attestMode = 'iphone';
-      btn.classList.add('active');
-      desc.textContent = 'Use iPhone (Secure Enclave)';
-      desc.classList.remove('sim');
-      addLogEntry('SYSTEM', 'Attestation mode: iPhone (real Secure Enclave attestation via QR)');
-    } else {
-      attestMode = 'simulate';
-      btn.classList.remove('active');
-      desc.textContent = 'Simulate (WebCrypto)';
-      desc.classList.add('sim');
-      addLogEntry('SYSTEM', 'Attestation mode: Simulate (browser WebCrypto demo)');
-    }
-  };
-
-  /* ── RAD Card Release — Routes to iPhone or Simulate ──────────────── */
-  window.releaseCard = async function(id) {
-    var rem = EXPIRES_AT - Math.floor(Date.now() / 1000);
-    if (rem <= 0) return;
-    if (released[id]) return;
-
-    // Auto-open log panel
-    if (!document.body.classList.contains('log-open')) {
-      document.body.classList.add('log-open');
-    }
-
-    if (attestMode === 'iphone') {
-      await releaseCardIPhone(id);
-    } else {
-      await releaseCardSimulate(id);
-    }
-  };
-
-  /* ── Simulate Mode (existing WebCrypto demo flow) ─────────────────── */
-  async function releaseCardSimulate(id) {
-    addLogEntry('CHALLENGE', 'Requesting challenge from server (POST /challenge)...');
-
-    try {
-      var resp = await fetch(API_BASE + '/challenge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hpp_ver: '2.0', site: window.location.hostname })
-      });
-
-      if (!resp.ok) {
-        addLogEntry('CHALLENGE', 'Server returned ' + resp.status + ' \u2014 challenge failed');
-        return;
-      }
-
-      var data = await resp.json();
-      addLogEntry('CHALLENGE', 'Challenge received: ' + (data.challenge_id || '').slice(0, 12) + '... (nonce: ' + (data.nonce || '').slice(0, 8) + '..., TTL: 300s)');
-      addLogEntry('CHALLENGE', 'Relay ID: ' + (data.relay_id || 'N/A'));
-
-      var kp = await ensureDemoKey();
-      var payload = JSON.stringify({
-        challenge_id: data.challenge_id,
-        nonce: data.nonce,
-        site: window.location.hostname
-      });
-      var encoded = new TextEncoder().encode(payload);
-      addLogEntry('DEMO-SIGN', 'Signing challenge payload (' + encoded.length + ' bytes)...');
-
-      var sig = await crypto.subtle.sign(
-        { name: 'ECDSA', hash: 'SHA-256' },
-        kp.privateKey,
-        encoded
-      );
-      var sigB64 = btoa(String.fromCharCode.apply(null, new Uint8Array(sig)));
-      addLogEntry('DEMO-SIGN', 'Signature: ' + sigB64.slice(0, 32) + '... (' + new Uint8Array(sig).length + ' bytes, IEEE P1363)');
-      addLogEntry('DEMO-SIGN', 'DEMO ONLY \u2014 This signature is NOT from a Secure Enclave. A real attestation requires the HPP iPhone app.');
-
-    } catch (err) {
-      addLogEntry('CHALLENGE', 'Network error: ' + err.message);
-    }
-
-    // Release the card
-    finalizeCardRelease(id, 'DEMO-SIGN');
-  }
-
-  /* ── iPhone Mode (real Secure Enclave attestation via QR relay) ────── */
-  async function releaseCardIPhone(id) {
-    var cardName = (document.getElementById(id).querySelector('.rad-card-title') || {}).textContent || id;
-    addLogEntry('SYSTEM', 'Requesting relay for card: ' + cardName);
-
-    try {
-      var resp = await fetch(API_BASE + '/challenge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hpp_ver: '2.0', site: window.location.hostname })
-      });
-
-      if (!resp.ok) {
-        addLogEntry('CHALLENGE', 'Server returned ' + resp.status + ' \u2014 relay creation failed');
-        return;
-      }
-
-      var data = await resp.json();
-      var relayId = data.relay_id;
-      if (!relayId) {
-        addLogEntry('CHALLENGE', 'No relay_id returned \u2014 server may not support relay mode');
-        return;
-      }
-
-      addLogEntry('CHALLENGE', 'Relay created: ' + relayId.slice(0, 12) + '... \u2014 scan QR with iPhone');
-
-      // Transition card to waiting state
-      var lockedEl  = document.getElementById(id + '-locked');
-      var waitingEl = document.getElementById(id + '-waiting');
-      var btnEl     = document.getElementById(id + '-btn');
-      var qrImg     = document.getElementById(id + '-qr');
-
-      lockedEl.style.display  = 'none';
-      waitingEl.style.display = 'flex';
-      btnEl.style.display     = 'none';
-
-      // Render QR code via existing server endpoint
-      qrImg.src = '/qr?relay_id=' + encodeURIComponent(relayId) + '&session_duration=600';
-
-      // Start polling relay
-      var pollCount = 0;
-      var pollInterval = setInterval(async function() {
-        pollCount++;
-        if (pollCount % 5 === 1) {
-          addLogEntry('SYSTEM', 'Polling relay ' + relayId.slice(0, 8) + '... (attempt ' + pollCount + ')');
-        }
-        try {
-          var pr = await fetch(API_BASE + '/relay/' + encodeURIComponent(relayId));
-          if (pr.ok) {
-            var rd = await pr.json();
-            if (rd.session_token) {
-              // Attestation received!
-              clearCardPoller(id);
-              addLogEntry('ATTESTATION', 'Real attestation received for ' + cardName + ' \u2014 token: ' + rd.session_token.slice(0, 16) + '...');
-
-              // Optional: validate token
-              try {
-                var sv = await fetch(API_BASE + '/session/' + encodeURIComponent(rd.session_token));
-                if (sv.ok) {
-                  var sd = await sv.json();
-                  addLogEntry('ATTESTATION', 'Token validated \u2014 expires: ' + new Date((sd.expires_at || 0) * 1000).toUTCString());
-                }
-              } catch(ve) { /* best effort */ }
-
-              // Hide waiting, release card
-              waitingEl.style.display = 'none';
-              btnEl.style.display     = '';
-              finalizeCardRelease(id, 'ATTESTATION');
-            }
-          }
-        } catch(pe) { /* network hiccup, keep polling */ }
-      }, 2000);
-
-      // Timeout after 60 seconds
-      var pollTimeout = setTimeout(function() {
-        if (activePollers[id]) {
-          clearCardPoller(id);
-          addLogEntry('SYSTEM', 'Attestation timeout for ' + cardName + ' \u2014 no response in 60s');
-          // Return to locked state
-          waitingEl.style.display = 'none';
-          lockedEl.style.display  = 'flex';
-          btnEl.style.display     = '';
-        }
-      }, 60000);
-
-      activePollers[id] = { interval: pollInterval, timeout: pollTimeout, relay_id: relayId };
-
-    } catch (err) {
-      addLogEntry('CHALLENGE', 'Network error: ' + err.message);
-    }
-  }
-
-  /* ── Finalize card release (shared by both modes) ─────────────────── */
-  function finalizeCardRelease(id, logType) {
-    released[id] = true;
-    var card     = document.getElementById(id);
-    var lockedEl = document.getElementById(id + '-locked');
-    var relEl    = document.getElementById(id + '-released');
-    var btnEl    = document.getElementById(id + '-btn');
-    var pillEl   = document.getElementById(id + '-pill');
-
-    lockedEl.style.display  = 'none';
-    relEl.style.display     = 'flex';
-    btnEl.disabled          = true;
-    btnEl.textContent       = 'Presence Verified';
-    pillEl.style.display    = 'inline-flex';
-    card.classList.remove('locked');
-    card.classList.add('released');
-
-    var cardName = (card.querySelector('.rad-card-title') || {}).textContent || id;
-    addLogEntry(logType, 'Card released: ' + id + ' \u2014 ' + cardName);
-  }
-
-  /* ── Cancel a single card's attestation polling ───────────────────── */
-  function clearCardPoller(id) {
-    if (activePollers[id]) {
-      clearInterval(activePollers[id].interval);
-      clearTimeout(activePollers[id].timeout);
-      delete activePollers[id];
-    }
-  }
-
-  window.cancelCardAttestation = function(id) {
-    clearCardPoller(id);
-    var lockedEl  = document.getElementById(id + '-locked');
-    var waitingEl = document.getElementById(id + '-waiting');
-    var btnEl     = document.getElementById(id + '-btn');
-
-    waitingEl.style.display = 'none';
-    lockedEl.style.display  = 'flex';
-    btnEl.style.display     = '';
-
-    var cardName = (document.getElementById(id).querySelector('.rad-card-title') || {}).textContent || id;
-    addLogEntry('SYSTEM', 'Attestation cancelled for ' + cardName);
-  };
-
-  /* ── Export Functions ───────────────────────────────────────────────── */
-  window.exportLogJSON = function() {
-    var blob = new Blob([JSON.stringify(logEntries, null, 2)], { type: 'application/json' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'hpp_crypto_log_' + Date.now() + '.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    addLogEntry('EXPORT', 'Log exported as JSON (' + logEntries.length + ' entries)');
-  };
-
-  window.copyPubKey = function() {
-    var key = RECEIPT.pub_key || RECEIPT.pub_key_fingerprint || '(unavailable)';
-    navigator.clipboard.writeText(key).then(function() {
-      addLogEntry('EXPORT', 'Public key copied to clipboard');
-    }).catch(function() {
-      addLogEntry('EXPORT', 'Copy failed \u2014 key: ' + key);
-    });
-  };
-
-  window.clearLog = function() {
-    logEntries = [];
-    renderLogEntries();
-  };
-
-  window.resetCards = function() {
-    var ids = ["c1","c2","c3","c4","c5","c6"];
-    // Cancel all active polling loops
-    ids.forEach(function(id) { clearCardPoller(id); });
-    // Reset all cards to locked state
-    ids.forEach(function(id) {
-      released[id] = false;
-      var card      = document.getElementById(id);
-      var lockedEl  = document.getElementById(id + '-locked');
-      var waitingEl = document.getElementById(id + '-waiting');
-      var relEl     = document.getElementById(id + '-released');
-      var btnEl     = document.getElementById(id + '-btn');
-      var pillEl    = document.getElementById(id + '-pill');
-      if (lockedEl)  lockedEl.style.display  = 'flex';
-      if (waitingEl) waitingEl.style.display  = 'none';
-      if (relEl)     relEl.style.display      = 'none';
-      if (btnEl)     { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.action || 'Release'; btnEl.style.display = ''; }
-      if (pillEl)    pillEl.style.display     = 'none';
-      if (card)      { card.classList.add('locked'); card.classList.remove('released'); }
-    });
-    addLogEntry('SYSTEM', 'All ' + ids.length + ' RAD cards reset to locked state');
-  };
-
-  /* ── Replay Attack Demo ─────────────────────────────────────────── */
-  var replayRunning = false;
-
-  function replayStep(n, html, cls) {
-    var el = document.getElementById('rs-' + n);
-    var det = document.getElementById('rs-' + n + '-detail');
-    el.classList.add('active', 'done');
-    det.innerHTML = html;
-    if (cls) det.className = 'step-detail ' + cls;
-  }
-
-  function replayActivate(n) {
-    document.getElementById('rs-' + n).classList.add('active');
-  }
-
-  function resetReplayUI() {
-    for (var i = 1; i <= 4; i++) {
-      var el = document.getElementById('rs-' + i);
-      var det = document.getElementById('rs-' + i + '-detail');
-      el.classList.remove('active', 'done');
-      det.innerHTML = 'Waiting\u2026';
-      det.className = 'step-detail';
-    }
-    var res = document.getElementById('replay-result');
-    res.className = 'replay-result';
-    res.style.display = 'none';
-  }
-
-  function showReplayResult(title, body, type) {
-    var res = document.getElementById('replay-result');
-    document.getElementById('replay-result-title').textContent = title;
-    document.getElementById('replay-result-body').textContent = body;
-    res.className = 'replay-result ' + type;
-    res.style.display = 'block';
-  }
-
-  function sleep(ms) { return new Promise(function(r) { setTimeout(r, ms); }); }
-
-  window.runReplayDemo = async function() {
-    if (replayRunning) return; // debounce
-    replayRunning = true;
-    var btn = document.getElementById('replay-btn');
-    btn.disabled = true;
-    btn.textContent = 'Running\u2026';
-    resetReplayUI();
-
-    // Auto-open log panel
-    if (!document.body.classList.contains('log-open')) {
-      document.body.classList.add('log-open');
-    }
-
-    try {
-      // ── Step 1: Request challenge ──────────────────────────────────
-      replayActivate(1);
-      addLogEntry('SYSTEM', 'Replay demo: requesting challenge from server\u2026');
-      var t1 = Date.now();
-      var resp = await fetch(API_BASE + '/challenge', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hpp_ver: '2.0', site: window.location.hostname })
-      });
-      if (!resp.ok) throw new Error('Challenge request failed: HTTP ' + resp.status);
-      var ch = await resp.json();
-      var ms1 = Date.now() - t1;
-      replayStep(1,
-        '\u2713 challenge_id: <b>' + esc(ch.challenge_id.slice(0, 12)) + '\u2026</b><br>'
-        + '\u2713 nonce: <b>' + esc(ch.nonce.slice(0, 12)) + '\u2026</b> (256-bit)<br>'
-        + '\u2713 TTL: 300s'
-        + '<span class="step-time">' + ms1 + 'ms</span>',
-        'step-ok'
-      );
-      addLogEntry('CHALLENGE', 'Replay demo: challenge issued \u2014 ' + ch.challenge_id.slice(0, 12) + '\u2026 (nonce: ' + ch.nonce.slice(0, 8) + '\u2026)');
-      await sleep(600);
-
-      // ── Step 2: Demo sign ──────────────────────────────────────────
-      replayActivate(2);
-      var kp = await ensureDemoKey();
-      var payload = JSON.stringify({
-        assurance: 'BIOMETRIC_FACE',
-        challenge_id: ch.challenge_id,
-        epoch: ch.epoch || Math.floor(Date.now() / 1000),
-        hpp_ver: '2.0',
-        nonce: ch.nonce,
-        pub_key: 'DEMO_KEY',
-        site: window.location.hostname
-      });
-      var encoded = new TextEncoder().encode(payload);
-      var sig = await crypto.subtle.sign(
-        { name: 'ECDSA', hash: 'SHA-256' },
-        kp.privateKey,
-        encoded
-      );
-      var sigB64 = btoa(String.fromCharCode.apply(null, new Uint8Array(sig)));
-      replayStep(2,
-        '\u2713 Payload signed with demo P-256 key (' + encoded.length + ' bytes)<br>'
-        + '\u2713 Signature: <b>' + esc(sigB64.slice(0, 20)) + '\u2026</b><br>'
-        + '<span class="step-expected">[DEMO \u2014 Secure Enclave requires iPhone app]</span>',
-        'step-ok'
-      );
-      addLogEntry('DEMO-SIGN', 'Replay demo: payload signed (demo WebCrypto, NOT Secure Enclave)');
-      await sleep(600);
-
-      // ── Step 3: First verification attempt ─────────────────────────
-      replayActivate(3);
-      addLogEntry('SYSTEM', 'Replay demo: attempting first verification\u2026');
-      var t3 = Date.now();
-      var verifyBody = { payload: JSON.parse(payload), signature: sigB64 };
-      var resp3 = await fetch(API_BASE + '/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(verifyBody)
-      });
-      var data3 = await resp3.json();
-      var ms3 = Date.now() - t3;
-
-      // Expected: INVALID_SIG (demo key, not SE). This is correct behavior.
-      replayStep(3,
-        '\u2713 POST /verify \u2192 HTTP ' + resp3.status + '<br>'
-        + '\u2713 Server response: <b>' + esc(data3.reason || data3.status) + '</b><br>'
-        + '<span class="step-expected">Expected: demo key is not Secure Enclave \u2014 server correctly rejects non-hardware signature</span>'
-        + '<span class="step-time">' + ms3 + 'ms</span>',
-        'step-ok'
-      );
-      addLogEntry('SYSTEM', 'Replay demo: first attempt \u2192 ' + (data3.reason || 'rejected') + ' (expected \u2014 demo key)');
-      await sleep(800);
-
-      // ── Step 4: Replay with tampered nonce ─────────────────────────
-      replayActivate(4);
-      addLogEntry('SYSTEM', 'Replay demo: attempting replay with tampered nonce\u2026');
-
-      // Tamper the nonce: flip first character
-      var tamperedNonce = (ch.nonce[0] === 'a' ? 'b' : 'a') + ch.nonce.slice(1);
-      var replayPayload = JSON.parse(payload);
-      replayPayload.nonce = tamperedNonce;
-
-      var t4 = Date.now();
-      var resp4 = await fetch(API_BASE + '/verify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ payload: replayPayload, signature: sigB64 })
-      });
-      var data4 = await resp4.json();
-      var ms4 = Date.now() - t4;
-
-      var isReplayDetected = (data4.reason === 'REPLAY_DETECTED');
-      var reasonText = data4.reason || 'REJECTED';
-
-      replayStep(4,
-        '\u2717 POST /verify with tampered nonce \u2192 <b>HTTP ' + resp4.status + '</b><br>'
-        + '\u2717 Server: <b class="step-fail">' + esc(reasonText) + '</b>'
-        + (data4.primitive ? ' (Primitive: ' + esc(data4.primitive) + ')' : '')
-        + (data4.invariant_ref ? ' [' + esc(data4.invariant_ref) + ']' : '') + '<br>'
-        + '\u2717 Nonce mismatch: server stored <b>' + esc(ch.nonce.slice(0, 8)) + '\u2026</b>, attacker sent <b>' + esc(tamperedNonce.slice(0, 8)) + '\u2026</b>'
-        + '<span class="step-time">' + ms4 + 'ms</span>',
-        'step-fail'
-      );
-
-      addLogEntry('ATTESTATION', 'REPLAY BLOCKED \u2014 Server returned ' + reasonText
-        + (data4.primitive ? ' (P13 \u2014 Replay-Resistant Attestation Windows)' : '')
-        + ' \u2014 HTTP ' + resp4.status);
-
-      // Show result
-      showReplayResult(
-        '\u2717 REPLAY BLOCKED',
-        isReplayDetected
-          ? 'The server detected the tampered nonce and returned REPLAY_DETECTED (P13). The H-Constant holds \u2014 each attestation window is non-reusable.'
-          : 'The server rejected the replay attempt: ' + reasonText + '. Challenge nonces are single-use and bound to specific attestation attempts.',
-        'blocked'
-      );
-
-    } catch (err) {
-      addLogEntry('SYSTEM', 'Replay demo error: ' + err.message);
-      showReplayResult('Demo Error', err.message + ' \u2014 the backend may be waking up (Render cold start ~30s). Try again.', 'error');
-    }
-
-    btn.disabled = false;
-    btn.textContent = 'Run Again';
-    replayRunning = false;
-  };
-
-  /* ── Bot Cost Calculator ────────────────────────────────────────── */
-  function fmtNum(n) {
-    if (n >= 1e9)  return (n / 1e9).toFixed(1)  + 'B';
-    if (n >= 1e6)  return (n / 1e6).toFixed(1)  + 'M';
-    if (n >= 1e3)  return (n / 1e3).toFixed(1)  + 'K';
-    return n.toLocaleString();
-  }
-  function fmtDollar(n) {
-    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
-    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
-    if (n >= 1e3) return '$' + (n / 1e3).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return '$' + n.toFixed(2);
-  }
-
-  window.updateBotCalc = function() {
-    var accounts   = parseInt(document.getElementById('bot-accounts').value);
-    var timePerSec = parseFloat(document.getElementById('bot-time').value);
-    var deviceCost = parseInt(document.getElementById('bot-device-cost').value);
-    var laborHr    = parseFloat(document.getElementById('bot-labor').value);
-
-    // Display slider values
-    document.getElementById('bot-accounts-val').textContent    = accounts.toLocaleString();
-    document.getElementById('bot-time-val').textContent        = timePerSec.toFixed(1) + 's';
-    document.getElementById('bot-device-cost-val').textContent = '$' + deviceCost.toLocaleString();
-    document.getElementById('bot-labor-val').textContent       = '$' + laborHr.toFixed(2) + '/hr';
-
-    // NPHT calculation
-    var secondsPerDay   = 8 * 3600;  // 8-hour work day
-    var attestsPerDevice = Math.floor(secondsPerDay / timePerSec);
-    var devicesNeeded    = Math.ceil(accounts / attestsPerDevice);
-    var humanHours       = (accounts * timePerSec) / 3600;
-    var workersNeeded    = Math.ceil(humanHours / 8); // 8-hr shifts
-    var shiftsNeeded     = Math.ceil(humanHours / (workersNeeded * 8)) || 1;
-
-    var dailyDeviceCost  = devicesNeeded * (deviceCost / 365); // amortized over 1 year
-    var dailyLaborCost   = humanHours * laborHr;
-    var totalDailyCost   = dailyDeviceCost + dailyLaborCost;
-
-    // Update outputs
-    document.getElementById('bot-out-devices').textContent     = fmtNum(devicesNeeded) + ' devices';
-    document.getElementById('bot-out-hours').textContent       = fmtNum(Math.round(humanHours)) + ' hours';
-    document.getElementById('bot-out-device-cost').textContent = fmtDollar(dailyDeviceCost) + ' / day (amortized)';
-    document.getElementById('bot-out-labor-cost').textContent  = fmtDollar(dailyLaborCost) + ' / day';
-    document.getElementById('bot-out-total').textContent       = fmtDollar(totalDailyCost) + ' / day';
-
-    // Comparison
-    document.getElementById('bot-cmp-without').textContent      = fmtNum(accounts) + ' fake accounts';
-    document.getElementById('bot-cmp-with').textContent         = fmtNum(accounts) + ' fake accounts';
-    document.getElementById('bot-cmp-devices-inline').textContent = fmtNum(devicesNeeded);
-    document.getElementById('bot-cmp-workers-inline').textContent = fmtNum(workersNeeded);
-    document.getElementById('bot-cmp-shifts-inline').textContent  = shiftsNeeded > 1 ? shiftsNeeded + ' x 8hr' : '8hr';
-    document.getElementById('bot-cmp-cost-inline').textContent    = fmtDollar(totalDailyCost);
-  };
-
-  // Initialize on load
-  if (document.getElementById('bot-accounts')) {
-    updateBotCalc();
-  }
-
-  /* ── Adversarial Throughput Calculator ─────────────────────────── */
-  window.updateThroughput = function() {
-    var workers = parseInt(document.getElementById('tp-workers').value);
-    var secs    = parseFloat(document.getElementById('tp-secs').value);
-    var rps     = parseInt(document.getElementById('tp-rps').value);
-
-    // Display slider values
-    document.getElementById('tp-workers-val').textContent = workers.toLocaleString();
-    document.getElementById('tp-secs-val').textContent    = secs.toFixed(1) + 's';
-    document.getElementById('tp-rps-val').textContent     = rps.toLocaleString();
-
-    // With HPP: workers × (3600 / secs_per_attest)
-    var hppPerHour   = Math.floor(workers * (3600 / secs));
-    // Without HPP: rps × 3600
-    var noHppPerHour = rps * 3600;
-    // Reduction factor
-    var factor = Math.round(noHppPerHour / Math.max(1, hppPerHour));
-
-    document.getElementById('tp-out-hpp').textContent    = fmtNum(hppPerHour) + ' / hour';
-    document.getElementById('tp-out-no-hpp').textContent = fmtNum(noHppPerHour) + ' / hour';
-    document.getElementById('tp-out-factor').textContent = fmtNum(factor) + 'x reduction';
-
-    // Bar chart (hpp is baseline width, no-hpp overflows)
-    var maxVal   = Math.max(hppPerHour, noHppPerHour);
-    var hppPct   = Math.max(3, (hppPerHour / maxVal) * 100);
-    var noHppPct = Math.max(3, (noHppPerHour / maxVal) * 100);
-
-    var barHpp   = document.getElementById('tp-bar-hpp');
-    var barNoHpp = document.getElementById('tp-bar-no-hpp');
-    barHpp.style.width      = hppPct + '%';
-    barHpp.textContent      = fmtNum(hppPerHour);
-    barNoHpp.style.width    = noHppPct + '%';
-    barNoHpp.textContent    = fmtNum(noHppPerHour);
-
-    var overflow = document.getElementById('tp-bar-overflow');
-    overflow.textContent = noHppPerHour > hppPerHour * 2 ? fmtNum(factor) + 'x more \u2192' : '';
-
-    // Ratio banner
-    document.getElementById('tp-ratio-big').textContent  = fmtNum(factor) + 'x';
-    document.getElementById('tp-ratio-text').textContent  = 'fewer fake attestations per hour with HPP (' + fmtNum(hppPerHour) + ' vs ' + fmtNum(noHppPerHour) + ')';
-  };
-
-  if (document.getElementById('tp-workers')) {
-    updateThroughput();
-  }
-
-  window.exportReceiptJSON = function() {
-    if (!RECEIPT || !RECEIPT.receipt_id) {
-      addLogEntry('EXPORT', 'No receipt data available');
-      return;
-    }
-    var blob = new Blob([JSON.stringify(RECEIPT, null, 2)], { type: 'application/json' });
-    var a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'hpp_receipt_' + RECEIPT.receipt_id + '.json';
-    a.click();
-    URL.revokeObjectURL(a.href);
-    addLogEntry('EXPORT', 'Receipt exported as JSON: ' + RECEIPT.receipt_id.slice(0, 12) + '...');
-  };
-
-  /* ── Fetch full receipt chain on load ──────────────────────────────── */
-  if (RECEIPT && RECEIPT.pub_key_fingerprint && RECEIPT.pub_key_fingerprint !== '(server-restarted)') {
-    fetch(API_BASE + '/receipts/' + encodeURIComponent(RECEIPT.pub_key_fingerprint), {
-      headers: { 'Authorization': 'Bearer ' + SESSION_TOKEN }
-    })
-    .then(function(r) { return r.ok ? r.json() : null; })
-    .then(function(chain) {
-      if (chain && chain.length) {
-        addLogEntry('RECEIPT', 'Receipt chain loaded: ' + chain.length + ' receipt(s) for key ' + RECEIPT.pub_key_fingerprint.slice(0, 8) + '...');
-      }
-    })
-    .catch(function() { /* best effort */ });
-  }
-
-  /* ═══════════════════════════════════════════════════════════════════════
-     QR Payload Inspector
-     ═══════════════════════════════════════════════════════════════════════ */
-
-  var QRI_FIELD_META = {
-    verifier_url:     { required: true,  desc: 'The HPP verifier backend URL. The iPhone app sends attestation proofs here.' },
-    site:             { required: true,  desc: 'The requesting website\u2019s domain. Bound to the session \u2014 prevents cross-site replay.' },
-    hpp_ver:          { required: false, desc: 'Protocol version. Current: 1.0. Ensures client/server compatibility.' },
-    relay_id:         { required: true,  desc: 'Unique relay channel ID. The browser polls this endpoint to receive the attestation result.' },
-    session_duration: { required: false, desc: 'Session length in seconds (default 600 = 10 minutes). Site-defined, not user-defined.' },
-    challenge_id:     { required: false, desc: 'Server-generated challenge identifier. Binds the attestation to a specific request.' },
-    nonce:            { required: false, desc: 'Cryptographic nonce. Used exactly once \u2014 replay of a used nonce returns REPLAY_DETECTED.' }
-  };
-
-  var QRI_SAMPLE = JSON.stringify({
-    verifier_url: 'https://hpp-verifier.onrender.com',
-    site: 'demo.example.com',
-    hpp_ver: '1.0',
-    relay_id: 'rel_abc123def456',
-    session_duration: 600,
-    challenge_id: 'ch_7f8a9b0c1d2e',
-    nonce: 'n_x4k9m2p7q1w8'
-  }, null, 2);
-
-  window.qriLoadSample = function() {
-    document.getElementById('qri-input').value = QRI_SAMPLE;
-    qriDecode();
-  };
-
-  window.qriDecode = function() {
-    var errorEl    = document.getElementById('qri-error');
-    var warningsEl = document.getElementById('qri-warnings');
-    var resultsEl  = document.getElementById('qri-results');
-    var raw        = document.getElementById('qri-input').value.trim();
-
-    errorEl.style.display    = 'none';
-    warningsEl.style.display = 'none';
-    resultsEl.style.display  = 'none';
-    warningsEl.innerHTML     = '';
-    resultsEl.innerHTML      = '';
-
-    if (!raw) {
-      errorEl.textContent    = 'No input. Paste an HPP QR payload JSON above.';
-      errorEl.style.display  = 'block';
-      return;
-    }
-
-    var parsed;
-    try {
-      parsed = JSON.parse(raw);
-    } catch (e) {
-      errorEl.textContent    = 'Invalid JSON: ' + e.message;
-      errorEl.style.display  = 'block';
-      return;
-    }
-
-    if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
-      errorEl.textContent    = 'Expected a JSON object, got ' + (Array.isArray(parsed) ? 'array' : typeof parsed) + '.';
-      errorEl.style.display  = 'block';
-      return;
-    }
-
-    // Check for missing required fields
-    var warnings = [];
-    var requiredKeys = Object.keys(QRI_FIELD_META).filter(function(k) { return QRI_FIELD_META[k].required; });
-    requiredKeys.forEach(function(k) {
-      if (!(k in parsed)) {
-        warnings.push('Missing required field: <strong>' + k + '</strong>');
-      }
-    });
-
-    if (warnings.length) {
-      warningsEl.innerHTML = warnings.map(function(w) {
-        return '<div class="qri-warning-item">' + w + '</div>';
-      }).join('');
-      warningsEl.style.display = 'block';
-    }
-
-    // Build field cards
-    var html = '';
-    var allKeys = Object.keys(parsed);
-    // Show known fields first (in defined order), then unknown fields
-    var orderedKeys = Object.keys(QRI_FIELD_META).filter(function(k) { return k in parsed; });
-    var unknownKeys = allKeys.filter(function(k) { return !(k in QRI_FIELD_META); });
-    var displayKeys = orderedKeys.concat(unknownKeys);
-
-    // Also show missing required fields at the end
-    var missingRequired = requiredKeys.filter(function(k) { return !(k in parsed); });
-
-    displayKeys.forEach(function(key) {
-      var meta    = QRI_FIELD_META[key];
-      var value   = parsed[key];
-      var valStr  = (typeof value === 'string') ? value : JSON.stringify(value);
-      var isKnown = !!meta;
-      var badgeClass, badgeLabel;
-
-      if (!isKnown) {
-        badgeClass = 'qri-badge-unknown';
-        badgeLabel = 'Unknown field';
-      } else if (meta.required) {
-        badgeClass = 'qri-badge-required';
-        badgeLabel = 'Required';
-      } else {
-        badgeClass = 'qri-badge-optional';
-        badgeLabel = 'Optional';
-      }
-
-      html += '<div class="qri-field-card">'
-            + '  <div class="qri-field-header">'
-            + '    <span class="qri-field-name">' + key + '</span>'
-            + '    <span class="qri-field-badge ' + badgeClass + '">' + badgeLabel + '</span>'
-            + '  </div>'
-            + '  <div class="qri-field-body">'
-            + '    <div class="qri-field-value">' + escapeHtml(valStr) + '</div>'
-            + '    <div class="qri-field-desc">' + (isKnown ? meta.desc : 'This field is not part of the standard HPP QR payload specification.') + '</div>'
-            + '  </div>'
-            + '</div>';
-    });
-
-    missingRequired.forEach(function(key) {
-      var meta = QRI_FIELD_META[key];
-      html += '<div class="qri-field-card">'
-            + '  <div class="qri-field-header">'
-            + '    <span class="qri-field-name">' + key + '</span>'
-            + '    <span class="qri-field-badge qri-badge-missing">Missing</span>'
-            + '  </div>'
-            + '  <div class="qri-field-body">'
-            + '    <div class="qri-field-value" style="color:var(--red-dark);font-style:italic;">(not present in payload)</div>'
-            + '    <div class="qri-field-desc">' + meta.desc + '</div>'
-            + '  </div>'
-            + '</div>';
-    });
-
-    resultsEl.innerHTML     = html;
-    resultsEl.style.display = 'block';
-  };
-
-  function escapeHtml(str) {
-    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-})();
-</script>
 </body>
 </html>
