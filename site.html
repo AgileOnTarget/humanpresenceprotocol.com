@@ -2535,17 +2535,22 @@ body.log-open #log-panel { right: 0; }
   var released      = {};
   var demoKeyPair   = null;
 
+  /* ── Read session_token from URL before stripping ────────────────── */
+  var urlParams = new URLSearchParams(window.location.search);
+  SESSION_TOKEN = urlParams.get('session_token') || null;
+
   /* ── Strip session_token from URL to prevent leakage via Referer ──── */
   if (window.history && window.history.replaceState && window.location.search.includes('session_token')) {
     var cleanUrl = window.location.pathname + window.location.hash;
     window.history.replaceState({}, '', cleanUrl);
   }
 
-  /* ── Countdown ─────────────────────────────────────────────────────── */
+  /* ── Validate session with backend and start countdown ─────────── */
   var timerEl    = document.getElementById('timer');
   var overlayEl  = document.getElementById('expired-overlay');
 
   function tick() {
+    if (!EXPIRES_AT) return; // No session — skip timer entirely
     var rem = EXPIRES_AT - Math.floor(Date.now() / 1000);
     if (rem <= 0) {
       timerEl.textContent = '00:00';
@@ -2559,7 +2564,27 @@ body.log-open #log-panel { right: 0; }
     if (rem < 60) timerEl.classList.add('expiring');
     setTimeout(tick, 1000);
   }
-  tick();
+
+  // If we have a session token, validate it and start countdown
+  if (SESSION_TOKEN) {
+    fetch(API_BASE + '/session?session_token=' + encodeURIComponent(SESSION_TOKEN))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.expires_at) {
+          EXPIRES_AT = data.expires_at;
+          if (data.receipt_id) {
+            // Fetch full receipt for QR Inspector
+            fetch(API_BASE + '/receipts/' + encodeURIComponent(data.receipt_id))
+              .then(function(r) { return r.ok ? r.json() : null; })
+              .then(function(r) { if (r) RECEIPT = r; })
+              .catch(function() {});
+          }
+          tick();
+        }
+      })
+      .catch(function() { /* No valid session — site works without timer */ });
+  }
+  // No session token — site is freely viewable (gate was the entry control)
 
   /* ── Log Panel ─────────────────────────────────────────────────────── */
   window.toggleLogPanel = function() {
