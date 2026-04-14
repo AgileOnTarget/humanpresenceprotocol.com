@@ -2565,26 +2565,36 @@ body.log-open #log-panel { right: 0; }
     setTimeout(tick, 1000);
   }
 
-  // If we have a session token, validate it and start countdown
-  if (SESSION_TOKEN) {
+  // No session token — redirect to gate immediately
+  if (!SESSION_TOKEN) {
+    window.location.href = '/';
+  } else {
+    // Validate session with backend
     fetch(API_BASE + '/session?session_token=' + encodeURIComponent(SESSION_TOKEN))
-      .then(function(res) { return res.json(); })
+      .then(function(res) {
+        if (!res.ok) throw new Error('invalid');
+        return res.json();
+      })
       .then(function(data) {
         if (data.expires_at) {
           EXPIRES_AT = data.expires_at;
           if (data.receipt_id) {
-            // Fetch full receipt for QR Inspector
             fetch(API_BASE + '/receipts/' + encodeURIComponent(data.receipt_id))
               .then(function(r) { return r.ok ? r.json() : null; })
               .then(function(r) { if (r) RECEIPT = r; })
               .catch(function() {});
           }
           tick();
+        } else {
+          // Invalid session — back to gate
+          window.location.href = '/';
         }
       })
-      .catch(function() { /* No valid session — site works without timer */ });
+      .catch(function() {
+        // Backend unreachable or session invalid — back to gate
+        window.location.href = '/';
+      });
   }
-  // No session token — site is freely viewable (gate was the entry control)
 
   /* ── Log Panel ─────────────────────────────────────────────────────── */
   window.toggleLogPanel = function() {
