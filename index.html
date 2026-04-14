@@ -808,7 +808,19 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
   function initRelay() {
     var statusEl = document.getElementById('qr-status');
     var qrImg = document.getElementById('qr-img');
-    if (statusEl) statusEl.textContent = 'Connecting to verifier...';
+    if (statusEl) statusEl.textContent = 'Waking verifier — first load may take ~30s...';
+
+    // Show a pulsing animation on the placeholder while loading
+    if (qrImg) qrImg.style.animation = 'pulse-timer 2s infinite';
+
+    // Timeout: if backend doesn't respond in 45s, offer fallback
+    var timeout = setTimeout(function() {
+      if (!RELAY_ID) {
+        if (statusEl) statusEl.textContent = 'Verifier is waking up — tap QR to enter site now';
+        if (qrImg) { qrImg.style.cursor = 'pointer'; qrImg.style.animation = 'none'; }
+        if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
+      }
+    }, 45000);
 
     fetch(API_BASE + '/challenge', {
       method: 'POST',
@@ -817,20 +829,22 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
     })
     .then(function(res) { return res.json(); })
     .then(function(data) {
+      clearTimeout(timeout);
       if (data.relay_id) {
         RELAY_ID = data.relay_id;
-        if (qrImg) qrImg.src = API_BASE + '/qr?relay_id=' + RELAY_ID + '&session_duration=600';
+        if (qrImg) { qrImg.src = API_BASE + '/qr?relay_id=' + RELAY_ID + '&session_duration=600'; qrImg.style.animation = 'none'; }
         if (statusEl) statusEl.textContent = 'Scan with HPP iPhone app';
         startPolling();
       } else {
         if (statusEl) statusEl.textContent = 'Verifier unavailable — tap to enter site';
-        if (qrImg) qrImg.style.cursor = 'pointer';
+        if (qrImg) { qrImg.style.cursor = 'pointer'; qrImg.style.animation = 'none'; }
         if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
       }
     })
     .catch(function() {
+      clearTimeout(timeout);
       if (statusEl) statusEl.textContent = 'Verifier offline — tap to enter site';
-      if (qrImg) qrImg.style.cursor = 'pointer';
+      if (qrImg) { qrImg.style.cursor = 'pointer'; qrImg.style.animation = 'none'; }
       if (qrImg) qrImg.onclick = function() { window.location.href = 'site.html'; };
     });
   }
