@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Support — Human Presence Protocol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a1a; --ink-light: #444; --ink-muted: #777;
+  --bg: #fafaf8; --bg-section: #f0efe9;
+  --accent: #1a3a6b; --accent-mid: #2c5282; --accent-light: #e8eef7;
+  --gold: #8b6914; --gold-light: #f7f2e4;
+  --rule: #ccc; --rule-light: #e8e8e8;
+  --green-dark: #1a6b3a;
+  --serif: 'EB Garamond', Georgia, serif;
+  --mono: 'DM Mono', monospace;
+  --body: 'Crimson Pro', Georgia, serif;
+  --nav-h: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 17px; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--body); font-weight: 300;
+  line-height: 1.7; -webkit-font-smoothing: antialiased;
+}
+
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250,250,248,0.97);
+  border-bottom: 1px solid var(--rule);
+  backdrop-filter: blur(8px);
+  height: var(--nav-h); display: flex; align-items: center;
+}
+.nav-inner {
+  max-width: 860px; margin: 0 auto; padding: 0 2rem;
+  display: flex; align-items: center; width: 100%;
+}
+.nav-logo {
+  font-family: var(--serif); font-size: 1rem; font-weight: 500;
+  color: var(--accent); text-decoration: none; letter-spacing: 0.02em;
+}
+
+.container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
+
+.hero { padding: 4rem 0 2rem; }
+.hero-eyebrow {
+  font-family: var(--mono); font-size: 0.72rem; font-weight: 400;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+  margin-bottom: 1rem; display: block;
+}
+.hero-title {
+  font-family: var(--serif); font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 500; line-height: 1.2; color: var(--accent);
+  margin-bottom: 1rem;
+}
+.hero-lead {
+  font-size: 1.1rem; color: var(--ink-light); max-width: 600px;
+  line-height: 1.6;
+}
+
+section { padding: 2rem 0; }
+h2 {
+  font-family: var(--serif); font-size: 1.4rem; font-weight: 500;
+  color: var(--accent); margin-bottom: 0.75rem; line-height: 1.3;
+}
+h3 {
+  font-family: var(--serif); font-size: 1.15rem; font-weight: 500;
+  color: var(--ink); margin: 1.5rem 0 0.5rem;
+}
+p { margin-bottom: 1rem; font-size: 1rem; color: var(--ink-light); }
+
+.section-rule { width: 48px; height: 2px; background: var(--accent); margin: 2rem 0; }
+
+.contact-card {
+  background: var(--bg-section); border: 1px solid var(--rule);
+  border-radius: 8px; padding: 1.5rem; margin: 1rem 0;
+}
+.contact-card .label {
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem;
+}
+.contact-card .value {
+  font-family: var(--mono); font-size: 0.9rem; color: var(--accent);
+}
+.contact-card .value a { color: var(--accent); text-decoration: none; }
+.contact-card .value a:hover { text-decoration: underline; }
+.contact-card .desc {
+  font-size: 0.88rem; color: var(--ink-muted); margin-top: 0.3rem;
+}
+
+.faq-item { margin-bottom: 1.5rem; }
+.faq-q {
+  font-family: var(--serif); font-size: 1.05rem; font-weight: 500;
+  color: var(--ink); margin-bottom: 0.3rem;
+}
+.faq-a { font-size: 0.95rem; color: var(--ink-light); line-height: 1.55; }
+
+.flow-steps {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem; margin: 1.5rem 0;
+}
+.flow-step {
+  background: var(--bg-section); border: 1px solid var(--rule);
+  border-radius: 8px; padding: 1.25rem; text-align: center;
+}
+.flow-step .step-num {
+  font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 0.4rem;
+}
+.flow-step .step-title {
+  font-family: var(--serif); font-size: 1rem; font-weight: 500;
+  color: var(--accent); margin-bottom: 0.3rem;
+}
+.flow-step .step-desc {
+  font-size: 0.82rem; color: var(--ink-muted); line-height: 1.4;
+}
+
+.status-banner {
+  background: #e8f0e8; border: 1px solid var(--green-dark);
+  border-radius: 8px; padding: 1rem 1.5rem; margin: 1.5rem 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.status-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--green-dark); flex-shrink: 0;
+}
+.status-text {
+  font-family: var(--mono); font-size: 0.78rem; color: var(--green-dark);
+  letter-spacing: 0.02em;
+}
+
+footer {
+  background: var(--ink); color: rgba(255,255,255,0.6);
+  padding: 2rem 0; margin-top: 3rem;
+  font-size: 0.78rem; font-family: var(--mono);
+  letter-spacing: 0.04em; text-align: center;
+}
+footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
+
+@media (max-width: 600px) {
+  .container { padding: 0 1.25rem; }
+  .flow-steps { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">Human Presence Protocol</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="hero">
+    <span class="hero-eyebrow">Support</span>
+    <h1 class="hero-title">Help &amp; Support</h1>
+    <p class="hero-lead">Resources for using the Human Presence Protocol app and verification system.</p>
+  </div>
+
+  <div class="status-banner">
+    <div class="status-dot"></div>
+    <div class="status-text">System Status: All services operational &middot; hpp-verifier.onrender.com</div>
+  </div>
+
+  <div class="section-rule"></div>
+
+  <section>
+    <h2>How HPP Works</h2>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="step-num">Step 1</div>
+        <div class="step-title">Open the App</div>
+        <div class="step-desc">Launch HPP on your iPhone and tap "Scan Site QR"</div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">Step 2</div>
+        <div class="step-title">Scan QR Code</div>
+        <div class="step-desc">Point your camera at the QR code shown on the website</div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">Step 3</div>
+        <div class="step-title">Authenticate</div>
+        <div class="step-desc">Confirm with Face ID or Touch ID to prove you are present</div>
+      </div>
+      <div class="flow-step">
+        <div class="step-num">Step 4</div>
+        <div class="step-title">Access Granted</div>
+        <div class="step-desc">The website unlocks. Your session timer starts counting down.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-rule"></div>
+
+  <section>
+    <h2>Frequently Asked Questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">What data does HPP collect?</div>
+      <div class="faq-a">HPP transmits only a cryptographic proof of presence: a public key, a digital signature, and a timestamp. No name, email, location, or browsing data is ever collected. See our <a href="/privacy" style="color:var(--accent)">Privacy Policy</a> for full details.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Does HPP access my Face ID or Touch ID data?</div>
+      <div class="faq-a">No. Biometric authentication is handled entirely by Apple's Secure Enclave hardware. HPP receives only a pass/fail result. Your biometric templates never leave the chip and are never accessible to any app.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What happens when my session expires?</div>
+      <div class="faq-a">Sessions have a default duration of 10 minutes (configurable by the website). When your session expires, access to the verified content ends. You can extend your session from the app before it expires, or start a new attestation.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What are Presence Credits?</div>
+      <div class="faq-a">Presence Credits are an on-device currency that prevents attestation spam. You earn credits over time (+10 every 30 minutes of active use) and spend them on attestations (-1 per attestation). You start with 25 credits.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What is the Presence Continuity Score?</div>
+      <div class="faq-a">The PCS is a 0-850 score (similar to a credit score) that reflects how consistently you attest over time. It's computed entirely on your device from your attestation history. Only the score band (e.g., "Emerging" or "Consistent") is shared with websites — never the raw score.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">How does age verification work?</div>
+      <div class="faq-a">If a website requires age-qualified access, the HPP app checks your locally-stored date of birth against the site's minimum age. Only a yes/no result is sent to the server. Your date of birth never leaves your device.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Can I use HPP on multiple websites at the same time?</div>
+      <div class="faq-a">Yes. HPP supports multiple simultaneous sessions. Each website gets its own session card in the app with independent timers and controls.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">What happens if I close the browser?</div>
+      <div class="faq-a">When you close the browser tab or window, the session automatically disconnects. The HPP app detects this within 10 seconds and cleans up the session on your device.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Which devices are supported?</div>
+      <div class="faq-a">HPP requires an iPhone running iOS 17.0 or later with a Secure Enclave (iPhone 5s and later). Face ID or Touch ID must be configured. The browser-side experience works on any modern desktop or mobile browser.</div>
+    </div>
+
+    <div class="faq-item">
+      <div class="faq-q">Is HPP open source?</div>
+      <div class="faq-a">The HPP protocol specification and verification backend are available for review. The iOS app is distributed via TestFlight (beta) and the App Store. The protocol is covered by multiple provisional patent applications.</div>
+    </div>
+  </section>
+
+  <div class="section-rule"></div>
+
+  <section>
+    <h2>Troubleshooting</h2>
+
+    <h3>QR code not scanning</h3>
+    <p>Ensure camera permissions are enabled for HPP in Settings &gt; HPP &gt; Camera. Hold the phone steady, 6-12 inches from the screen. If the QR code appears small, try zooming in on the website first.</p>
+
+    <h3>Face ID / Touch ID not working</h3>
+    <p>Verify that biometric authentication is set up in Settings &gt; Face ID &amp; Passcode. If biometric fails, HPP will fall back to device passcode. If all authentication fails, restart the attestation by scanning the QR code again.</p>
+
+    <h3>Website says "Waiting for iPhone..."</h3>
+    <p>The website is waiting for your attestation. Open the HPP app, tap "Approve" on the site offer card, and complete biometric authentication. If the QR code has expired (60-second timeout), refresh the website page to generate a new one.</p>
+
+    <h3>Session disconnected unexpectedly</h3>
+    <p>Sessions disconnect when: the timer expires, you tap "Disconnect" in the app, or you close the browser tab. To reconnect, scan the website's QR code again for a new session.</p>
+  </section>
+
+  <div class="section-rule"></div>
+
+  <section>
+    <h2>Contact Us</h2>
+
+    <div class="contact-card">
+      <div class="label">General Support</div>
+      <div class="value"><a href="mailto:support@humanpresenceprotocol.com">support@humanpresenceprotocol.com</a></div>
+      <div class="desc">Bug reports, feature requests, and general questions</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="label">Privacy Inquiries</div>
+      <div class="value"><a href="mailto:privacy@humanpresenceprotocol.com">privacy@humanpresenceprotocol.com</a></div>
+      <div class="desc">Data handling questions and privacy policy inquiries</div>
+    </div>
+
+    <div class="contact-card">
+      <div class="label">Partnership &amp; Integration</div>
+      <div class="value"><a href="mailto:partnerships@humanpresenceprotocol.com">partnerships@humanpresenceprotocol.com</a></div>
+      <div class="desc">Integration inquiries, licensing, and corporate development</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Additional Resources</h2>
+    <p><a href="/" style="color:var(--accent)">Home</a> &mdash; Verify your presence and access the HPP demo</p>
+    <p><a href="/privacy" style="color:var(--accent)">Privacy Policy</a> &mdash; What HPP collects and does not collect</p>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    Human Presence Protocol &middot; <a href="/">Home</a> &middot; <a href="/privacy">Privacy</a> &middot; <a href="/support">Support</a>
+  </div>
+</footer>
+
+</body>
+</html>
