@@ -478,6 +478,125 @@ footer .footer-title {
 .rad-cancel-btn:hover { border-color: var(--red-dark); color: var(--red-dark); }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   INTERACTIVE CARD DEMOS — Post-Attestation Content
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.rad-released-state.rad-interactive {
+  display: none; flex-direction: column; padding: 0;
+  background: transparent; border: none;
+}
+.rad-released-state.rad-interactive.active { display: block !important; }
+
+/* ── CARD 1: Infinite Scroll Feed ── */
+.c1-feed-wrap { position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg); }
+.c1-feed { max-height: 320px; overflow-y: auto; padding: 8px; }
+.c1-post { padding: 10px 12px; border-bottom: 1px solid var(--rule-light); transition: filter 0.6s ease, opacity 0.6s ease; }
+.c1-post:last-child { border-bottom: none; }
+.c1-post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.c1-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--mono); font-size: 0.7rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.c1-post-meta { display: flex; align-items: baseline; gap: 6px; }
+.c1-username { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; color: var(--ink); }
+.c1-time { font-family: var(--mono); font-size: 0.62rem; color: var(--ink-muted); }
+.c1-post-body { font-size: 0.85rem; color: var(--ink-light); line-height: 1.45; margin-bottom: 6px; }
+.c1-post-actions { display: flex; gap: 14px; font-family: var(--mono); font-size: 0.65rem; color: var(--ink-muted); }
+.c1-was-blurred { filter: blur(6px); opacity: 0.5; }
+.c1-was-blurred.c1-unblurred { filter: blur(0); opacity: 1; }
+.c1-blur-overlay { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to bottom, rgba(250,250,248,0) 0%, rgba(250,250,248,0.95) 40%, rgba(250,250,248,1) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.6s ease; pointer-events: none; }
+.c1-blur-overlay.c1-lifted { opacity: 0; }
+.c1-blur-msg { font-family: var(--mono); font-size: 0.78rem; font-weight: 500; color: var(--accent); letter-spacing: 0.04em; }
+.c1-countdown { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-muted); }
+.c1-unlock-toast { position: absolute; top: 8px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #fff; font-family: var(--mono); font-size: 0.65rem; padding: 5px 14px; border-radius: 20px; z-index: 5; opacity: 0; transition: opacity 0.3s ease; white-space: nowrap; pointer-events: none; }
+.c1-unlock-toast.c1-toast-show { opacity: 1; }
+
+/* ── CARD 2: Autoplay Carousel ── */
+.c2-carousel-wrap { position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg); }
+.c2-viewport { overflow: hidden; }
+.c2-track { display: flex; transition: transform 0.5s ease; }
+.c2-frame { min-width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; }
+.c2-frame span { font-family: var(--serif); font-size: 1.15rem; font-weight: 500; color: #fff; text-shadow: 0 1px 4px rgba(0,0,0,0.3); letter-spacing: 0.02em; }
+.c2-lock-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(26,58,107,0.85); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; transition: opacity 0.5s ease; z-index: 3; }
+.c2-lock-overlay.c2-lifted { opacity: 0; pointer-events: none; }
+.c2-dots { display: flex; justify-content: center; gap: 6px; padding: 8px 0; }
+.c2-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); transition: background 0.3s; }
+.c2-dot.active { background: var(--accent); }
+.c2-arrows { display: flex; justify-content: center; gap: 12px; padding: 6px 0; }
+.c2-arrow { background: var(--accent); color: #fff; border: none; border-radius: 4px; padding: 4px 14px; font-size: 0.85rem; cursor: pointer; font-family: var(--mono); }
+.c2-arrow:hover { opacity: 0.8; }
+.c2-status { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-muted); padding: 6px 12px 10px; text-align: center; letter-spacing: 0.02em; }
+.c2-choice-badge { position: absolute; top: 8px; right: 8px; background: var(--accent); color: #fff; font-family: var(--mono); font-size: 0.6rem; padding: 4px 10px; border-radius: 20px; z-index: 5; opacity: 0; transition: opacity 0.3s ease; pointer-events: none; }
+.c2-choice-badge.c2-badge-show { opacity: 1; }
+
+/* ── CARD 3: Notification Stack ── */
+.c3-notif-wrap { border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg); padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.c3-notif { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px; background: #f5f5f5; border: 1px solid var(--rule-light); opacity: 0.45; transform: translateY(-8px); transition: opacity 0.4s ease, transform 0.4s ease, background 0.4s ease, border-color 0.4s ease; }
+.c3-notif.c3-released { opacity: 1; transform: translateY(0); background: #fff; border-color: var(--accent); }
+.c3-notif-icon { font-size: 14px; flex-shrink: 0; padding-top: 2px; transition: opacity 0.3s; }
+.c3-notif.c3-released .c3-notif-icon { color: var(--green-dark); }
+.c3-notif-content { flex: 1; min-width: 0; }
+.c3-notif-sender { font-family: var(--mono); font-size: 0.7rem; font-weight: 500; color: var(--ink); letter-spacing: 0.02em; }
+.c3-notif-msg { font-size: 0.82rem; color: var(--ink-muted); line-height: 1.4; margin-top: 2px; }
+.c3-notif-stamp { font-family: var(--mono); font-size: 0.6rem; color: var(--green-dark); margin-top: 4px; letter-spacing: 0.02em; }
+.c3-held-label { font-family: var(--mono); font-size: 0.65rem; color: var(--ink-muted); text-align: center; padding: 4px 0 2px; letter-spacing: 0.02em; transition: opacity 0.4s; }
+.c3-held-label.c3-hidden { opacity: 0; }
+@keyframes c3-pulse { 0%,100% { opacity: 0.45; } 50% { opacity: 0.7; } }
+.c3-notif.c3-held { animation: c3-pulse 2s ease-in-out infinite; }
+.c3-notif.c3-released { animation: none; }
+
+/* ── CARD 4: Feature Toggles ── */
+.c4-toggle-wrap { border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg); }
+.c4-feature { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--rule-light); }
+.c4-feature:last-of-type { border-bottom: none; }
+.c4-feature-info { flex: 1; min-width: 0; }
+.c4-feature-name { font-family: var(--mono); font-size: 0.75rem; font-weight: 500; color: var(--ink); letter-spacing: 0.02em; }
+.c4-feature-desc { font-size: 0.72rem; color: var(--ink-muted); margin-top: 1px; }
+.c4-age-badge { font-family: var(--mono); font-size: 0.6rem; font-weight: 600; color: var(--accent); background: var(--accent-light); padding: 2px 7px; border-radius: 10px; flex-shrink: 0; }
+.c4-age-badge-amber { color: #92400e; background: #fef3c7; }
+.c4-toggle { width: 40px; height: 22px; border-radius: 11px; background: var(--rule); position: relative; flex-shrink: 0; transition: background 0.4s ease; cursor: default; }
+.c4-toggle-knob { width: 18px; height: 18px; border-radius: 50%; background: #fff; position: absolute; top: 2px; left: 2px; transition: transform 0.4s ease; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+.c4-toggle.c4-on { background: #27AE60; }
+.c4-toggle.c4-on .c4-toggle-knob { transform: translateX(18px); }
+.c4-toggle.c4-amber { background: #d97706; }
+.c4-toggle.c4-amber .c4-toggle-knob { transform: translateX(18px); }
+.c4-feature.c4-locked-amber { background: #fefce8; }
+.c4-feature.c4-locked-amber .c4-feature-desc { color: #92400e; }
+.c4-result { font-family: var(--mono); font-size: 0.65rem; padding: 8px 14px; text-align: center; letter-spacing: 0.02em; }
+.c4-result.c4-result-amber { color: #92400e; background: #fef3c7; }
+
+/* ── CARD 5: Social Metrics ── */
+.c5-post-wrap { border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg); padding: 14px; }
+.c5-post { }
+.c5-post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.c5-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--mono); font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.c5-post-meta { display: flex; align-items: baseline; gap: 6px; }
+.c5-username { font-family: var(--mono); font-size: 0.75rem; font-weight: 500; color: var(--ink); }
+.c5-time { font-family: var(--mono); font-size: 0.62rem; color: var(--ink-muted); }
+.c5-post-body { font-size: 0.92rem; color: var(--ink); line-height: 1.5; margin-bottom: 12px; font-style: italic; }
+.c5-metrics { display: flex; gap: 18px; padding: 8px 0; border-top: 1px solid var(--rule-light); border-bottom: 1px solid var(--rule-light); }
+.c5-metric { display: flex; align-items: center; gap: 4px; }
+.c5-metric-icon { font-size: 14px; color: var(--ink-muted); }
+.c5-metric-val { font-family: var(--mono); font-size: 0.75rem; font-weight: 500; color: var(--ink-muted); transition: color 0.4s ease; }
+.c5-withheld { font-family: var(--mono); font-size: 0.65rem; color: var(--ink-muted); margin-top: 8px; letter-spacing: 0.02em; transition: opacity 0.4s; }
+.c5-withheld.c5-hidden { opacity: 0; }
+.c5-choice-line { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-muted); margin-top: 8px; letter-spacing: 0.02em; font-style: italic; }
+
+/* ── CARD 6: Tier Meter ── */
+.c6-tier-wrap { border-radius: 6px; overflow: hidden; border: 1px solid var(--rule); background: var(--bg); padding: 14px; }
+.c6-tier-labels { display: flex; justify-content: space-between; margin-bottom: 8px; }
+.c6-label { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.04em; color: var(--ink-muted); }
+.c6-l1 { color: #27AE60; } .c6-l2 { color: #F39C12; } .c6-l3 { color: #E74C3C; }
+.c6-track { width: 100%; height: 12px; background: #eee; border-radius: 6px; position: relative; margin-bottom: 12px; }
+.c6-fill { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #27AE60, #F39C12); width: 30%; transition: width 0.8s ease; }
+.c6-boundary { position: absolute; top: -4px; width: 2px; height: 20px; background: #fff; box-shadow: 0 0 0 1px var(--rule); }
+.c6-b1 { left: 33.33%; } .c6-b2 { left: 66.66%; }
+.c6-arrow { position: absolute; top: -20px; left: 31%; font-size: 12px; color: var(--accent); transition: left 0.8s ease; }
+.c6-arrow::after { content: '\25BC'; }
+@keyframes c6-pulse-arrow { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }
+.c6-arrow { animation: c6-pulse-arrow 1.5s ease-in-out infinite; }
+.c6-status { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-light); line-height: 1.4; letter-spacing: 0.02em; }
+.c6-note { font-family: var(--mono); font-size: 0.62rem; color: var(--ink-muted); margin-top: 4px; font-style: italic; }
+.c6-punchline { font-family: var(--mono); font-size: 0.75rem; font-weight: 500; color: var(--accent); margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule-light); letter-spacing: 0.02em; }
+
+/* ═══════════════════════════════════════════════════════════════════════════
    SIDE LOG PANEL
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -1090,9 +1209,23 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c1')">Cancel</button>
       </div>
-      <div class="rad-released-state" id="c1-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Continuation granted for this session window. Feed preview unblurred for one bounded interval.</div>
+      <div class="rad-released-state rad-interactive" id="c1-released" style="display:none">
+      <div class="c1-feed-wrap">
+        <div class="c1-unlock-toast" id="c1-unlock-toast">&#10003; Human choice recorded &middot; <span id="c1-toast-time"></span></div>
+        <div class="c1-feed" id="c1-feed">
+          <div class="c1-post"><div class="c1-post-header"><div class="c1-avatar">M</div><div class="c1-post-meta"><span class="c1-username">@maya_r</span><span class="c1-time">2m</span></div></div><div class="c1-post-body">The light this morning was unreal. Some days the world just decides to be beautiful.</div><div class="c1-post-actions"><span>&#9825; 247</span><span>&#128172; 18</span><span>&#8635; 5</span></div></div>
+          <div class="c1-post"><div class="c1-post-header"><div class="c1-avatar">D</div><div class="c1-post-meta"><span class="c1-username">@devnotes</span><span class="c1-time">5m</span></div></div><div class="c1-post-body">Finally shipped the feature after 3 weeks. Sleep is theoretical at this point.</div><div class="c1-post-actions"><span>&#9825; 412</span><span>&#128172; 33</span><span>&#8635; 12</span></div></div>
+          <div class="c1-post"><div class="c1-post-header"><div class="c1-avatar">Q</div><div class="c1-post-meta"><span class="c1-username">@quiethours</span><span class="c1-time">8m</span></div></div><div class="c1-post-body">Reminder that taking a walk is still the best debugging tool ever invented.</div><div class="c1-post-actions"><span>&#9825; 89</span><span>&#128172; 7</span><span>&#8635; 3</span></div></div>
+          <div class="c1-post"><div class="c1-post-header"><div class="c1-avatar">A</div><div class="c1-post-meta"><span class="c1-username">@atlas_feed</span><span class="c1-time">12m</span></div></div><div class="c1-post-body">Three cities in four days. The espresso in Lisbon is genuinely different.</div><div class="c1-post-actions"><span>&#9825; 156</span><span>&#128172; 22</span><span>&#8635; 8</span></div></div>
+          <div class="c1-post c1-was-blurred"><div class="c1-post-header"><div class="c1-avatar">S</div><div class="c1-post-meta"><span class="c1-username">@signal_co</span><span class="c1-time">15m</span></div></div><div class="c1-post-body">[Session boundary &mdash; content held pending presence verification]</div><div class="c1-post-actions"><span>&#9825; 31</span><span>&#128172; 4</span><span>&#8635; 1</span></div></div>
+          <div class="c1-post c1-was-blurred"><div class="c1-post-header"><div class="c1-avatar">O</div><div class="c1-post-meta"><span class="c1-username">@open_loop</span><span class="c1-time">18m</span></div></div><div class="c1-post-body">The algorithm knows what you want before you do. That should terrify you.</div><div class="c1-post-actions"><span>&#9825; 502</span><span>&#128172; 47</span><span>&#8635; 19</span></div></div>
+          <div class="c1-post c1-was-blurred"><div class="c1-post-header"><div class="c1-avatar">G</div><div class="c1-post-meta"><span class="c1-username">@groundwork</span><span class="c1-time">22m</span></div></div><div class="c1-post-body">Shipped. Sleeping. Do not disturb.</div><div class="c1-post-actions"><span>&#9825; 73</span><span>&#128172; 2</span><span>&#8635; 1</span></div></div>
+        </div>
+        <div class="c1-blur-overlay" id="c1-blur-overlay">
+          <div class="c1-blur-msg">Session boundary reached.</div>
+          <div class="c1-countdown" id="c1-countdown"></div>
+        </div>
+      </div>
       </div>
       <div class="rad-age-not-met-state" id="c1-age-not-met" style="display:none">
         <div class="rad-lock-icon">&#9888;</div>
@@ -1127,9 +1260,26 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c2')">Cancel</button>
       </div>
-      <div class="rad-released-state" id="c2-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Human choice recorded before progression.</div>
+      <div class="rad-released-state rad-interactive" id="c2-released" style="display:none">
+      <div class="c2-carousel-wrap">
+        <div class="c2-choice-badge" id="c2-choice-badge">&#10003; Human choice &middot; <span id="c2-choice-time"></span></div>
+        <div class="c2-viewport">
+          <div class="c2-track" id="c2-track">
+            <div class="c2-frame" style="background:linear-gradient(135deg,#667eea,#764ba2)"><span>Coastal Morning</span></div>
+            <div class="c2-frame" style="background:linear-gradient(135deg,#f093fb,#f5576c)"><span>Urban Dusk</span></div>
+            <div class="c2-frame" style="background:linear-gradient(135deg,#4facfe,#00f2fe)"><span>Forest Light</span></div>
+            <div class="c2-frame" style="background:linear-gradient(135deg,#43e97b,#38f9d7)"><span>Desert Noon</span></div>
+            <div class="c2-frame" style="background:linear-gradient(135deg,#fa709a,#fee140)"><span>Mountain Blue</span></div>
+          </div>
+        </div>
+        <div class="c2-lock-overlay" id="c2-lock-overlay">&#9208; Next item requires confirmation</div>
+        <div class="c2-dots" id="c2-dots"><span class="c2-dot"></span><span class="c2-dot"></span><span class="c2-dot active"></span><span class="c2-dot"></span><span class="c2-dot"></span></div>
+        <div class="c2-arrows" id="c2-arrows" style="display:none">
+          <button class="c2-arrow" onclick="c2Prev()">&#8592;</button>
+          <button class="c2-arrow" onclick="c2Next()">&#8594;</button>
+        </div>
+        <div class="c2-status" id="c2-status" style="display:none">Human choice recorded before progression. <span id="c2-remaining">3</span> items remaining.</div>
+      </div>
       </div>
       <div class="rad-age-not-met-state" id="c2-age-not-met" style="display:none">
         <div class="rad-lock-icon">&#9888;</div>
@@ -1164,9 +1314,32 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c3')">Cancel</button>
       </div>
-      <div class="rad-released-state" id="c3-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Notification released after verified presence.</div>
+      <div class="rad-released-state rad-interactive" id="c3-released" style="display:none">
+      <div class="c3-notif-wrap">
+        <div class="c3-notif c3-held" id="c3-n1">
+          <div class="c3-notif-icon">&#128274;</div>
+          <div class="c3-notif-content">
+            <div class="c3-notif-sender">HPP System</div>
+            <div class="c3-notif-msg">Your presence was requested 2 minutes ago.</div>
+            <div class="c3-notif-stamp" id="c3-stamp" style="display:none"></div>
+          </div>
+        </div>
+        <div class="c3-notif c3-held" id="c3-n2">
+          <div class="c3-notif-icon">&#128274;</div>
+          <div class="c3-notif-content">
+            <div class="c3-notif-sender">Session Gate</div>
+            <div class="c3-notif-msg">Session boundary requires re-attestation.</div>
+          </div>
+        </div>
+        <div class="c3-notif c3-held" id="c3-n3">
+          <div class="c3-notif-icon">&#128274;</div>
+          <div class="c3-notif-content">
+            <div class="c3-notif-sender">Presence Required</div>
+            <div class="c3-notif-msg">Action pending verified human presence.</div>
+          </div>
+        </div>
+        <div class="c3-held-label" id="c3-held-label">3 notifications held pending presence verification</div>
+      </div>
       </div>
       <div class="rad-age-not-met-state" id="c3-age-not-met" style="display:none">
         <div class="rad-lock-icon">&#9888;</div>
@@ -1201,9 +1374,30 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c4')">Cancel</button>
       </div>
-      <div class="rad-released-state" id="c4-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Age predicate satisfied. Feature unlocked.</div>
+      <div class="rad-released-state rad-interactive" id="c4-released" style="display:none">
+      <div class="c4-toggle-wrap">
+        <div class="c4-feature" id="c4-f1">
+          <div class="c4-feature-info"><div class="c4-feature-name">Direct Messages</div><div class="c4-feature-desc">Send and receive private messages</div></div>
+          <div class="c4-age-badge">13+</div>
+          <div class="c4-toggle" id="c4-t1"><div class="c4-toggle-knob"></div></div>
+        </div>
+        <div class="c4-feature" id="c4-f2">
+          <div class="c4-feature-info"><div class="c4-feature-name">Live Video</div><div class="c4-feature-desc">Watch and broadcast live streams</div></div>
+          <div class="c4-age-badge">13+</div>
+          <div class="c4-toggle" id="c4-t2"><div class="c4-toggle-knob"></div></div>
+        </div>
+        <div class="c4-feature" id="c4-f3">
+          <div class="c4-feature-info"><div class="c4-feature-name">Marketplace</div><div class="c4-feature-desc">Buy and sell items</div></div>
+          <div class="c4-age-badge">13+</div>
+          <div class="c4-toggle" id="c4-t3"><div class="c4-toggle-knob"></div></div>
+        </div>
+        <div class="c4-feature" id="c4-f4">
+          <div class="c4-feature-info"><div class="c4-feature-name">Location Sharing</div><div class="c4-feature-desc">Share your real-time location</div></div>
+          <div class="c4-age-badge c4-age-badge-amber">16+</div>
+          <div class="c4-toggle" id="c4-t4"><div class="c4-toggle-knob"></div></div>
+        </div>
+        <div class="c4-result" id="c4-result" style="display:none"></div>
+      </div>
       </div>
       <div class="rad-age-not-met-state" id="c4-age-not-met" style="display:none">
         <div class="rad-lock-icon">&#9888;</div>
@@ -1238,9 +1432,24 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c5')">Cancel</button>
       </div>
-      <div class="rad-released-state" id="c5-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Reinforcement signal released after deliberate engagement.</div>
+      <div class="rad-released-state rad-interactive" id="c5-released" style="display:none">
+      <div class="c5-post-wrap">
+        <div class="c5-post">
+          <div class="c5-post-header">
+            <div class="c5-avatar">P</div>
+            <div class="c5-post-meta"><span class="c5-username">@presence_daily</span><span class="c5-time">1h</span></div>
+          </div>
+          <div class="c5-post-body">The most radical act online is choosing when to pay attention.</div>
+          <div class="c5-metrics">
+            <span class="c5-metric"><span class="c5-metric-icon">&#9825;</span> <span class="c5-metric-val" id="c5-m1">&mdash;</span></span>
+            <span class="c5-metric"><span class="c5-metric-icon">&#128172;</span> <span class="c5-metric-val" id="c5-m2">&mdash;</span></span>
+            <span class="c5-metric"><span class="c5-metric-icon">&#8635;</span> <span class="c5-metric-val" id="c5-m3">&mdash;</span></span>
+            <span class="c5-metric"><span class="c5-metric-icon">&#128065;</span> <span class="c5-metric-val" id="c5-m4">&mdash;</span></span>
+          </div>
+          <div class="c5-withheld" id="c5-withheld">Reinforcement signals withheld pending presence</div>
+          <div class="c5-choice-line" id="c5-choice-line" style="display:none">You chose to receive this. Most people don&rsquo;t get that choice.</div>
+        </div>
+      </div>
       </div>
       <div class="rad-age-not-met-state" id="c5-age-not-met" style="display:none">
         <div class="rad-lock-icon">&#9888;</div>
@@ -1275,9 +1484,19 @@ body.log-open #log-panel { right: 0; }
         <div class="rad-waiting-hint">Scan this QR code with the HPP app to attest your presence</div>
         <button class="rad-cancel-btn" onclick="cancelCardAttestation('c6')">Cancel</button>
       </div>
-      <div class="rad-released-state" id="c6-released" style="display:none">
-        <div class="rad-check-icon">&#10003;</div>
-        <div class="rad-released-msg">Escalation resumed after explicit human confirmation.</div>
+      <div class="rad-released-state rad-interactive" id="c6-released" style="display:none">
+      <div class="c6-tier-wrap">
+        <div class="c6-tier-labels"><span class="c6-label c6-l1">Tier 1 &middot; Standard</span><span class="c6-label c6-l2">Tier 2 &middot; Elevated</span><span class="c6-label c6-l3">Tier 3 &middot; Intensive</span></div>
+        <div class="c6-track">
+          <div class="c6-fill" id="c6-fill"></div>
+          <div class="c6-boundary c6-b1"></div>
+          <div class="c6-boundary c6-b2"></div>
+          <div class="c6-arrow" id="c6-arrow"></div>
+        </div>
+        <div class="c6-status" id="c6-status">Escalation paused at Tier 1 boundary. Algorithm requested Tier 2.</div>
+        <div class="c6-note" id="c6-note">Without HPP, this progression is automatic.</div>
+        <div class="c6-punchline" id="c6-punchline" style="display:none">Algorithm wanted Tier 3. You authorized Tier 2.</div>
+      </div>
       </div>
       <div class="rad-age-not-met-state" id="c6-age-not-met" style="display:none">
         <div class="rad-lock-icon">&#9888;</div>
@@ -2908,14 +3127,17 @@ body.log-open #log-panel { right: 0; }
     var btnEl    = document.getElementById(id + '-btn');
     var pillEl   = document.getElementById(id + '-pill');
     var ageNotMetEl = document.getElementById(id + '-age-not-met');
+    var waitingEl = document.getElementById(id + '-waiting');
 
     var cardDef = RAD_CARDS_CLIENT.find(function(c) { return c.id === id; });
     var agePred = cardDef ? cardDef.age_predicate : null;
     var isSimulated = (logType === 'DEMO-SIGN');
 
     lockedEl.style.display  = 'none';
+    if (waitingEl) waitingEl.style.display = 'none';
     if (ageNotMetEl) ageNotMetEl.style.display = 'none';
-    relEl.style.display     = 'flex';
+    relEl.style.display     = 'block';
+    relEl.classList.add('active');
     btnEl.disabled          = true;
     if (agePred && isSimulated) {
       btnEl.textContent  = 'Age Verified (Simulated)';
@@ -2931,6 +3153,9 @@ body.log-open #log-panel { right: 0; }
 
     var cardName = (card.querySelector('.rad-card-title') || {}).textContent || id;
     addLogEntry(logType, 'Card released: ' + id + ' \u2014 ' + cardName);
+
+    // Initialize interactive content
+    initCardInteraction(id, logType);
   }
 
   /* ── Finalize card age-not-met (presence confirmed, age threshold not met) */
@@ -2941,12 +3166,21 @@ body.log-open #log-panel { right: 0; }
     var relEl    = document.getElementById(id + '-released');
     var btnEl    = document.getElementById(id + '-btn');
     var pillEl   = document.getElementById(id + '-pill');
+    var waitingEl = document.getElementById(id + '-waiting');
     var ageNotMetEl   = document.getElementById(id + '-age-not-met');
     var ageNotMetPill = document.getElementById(id + '-age-not-met-pill');
 
     lockedEl.style.display  = 'none';
-    relEl.style.display     = 'none';
-    if (ageNotMetEl) ageNotMetEl.style.display = 'flex';
+    if (waitingEl) waitingEl.style.display = 'none';
+    if (id === 'c4') {
+      relEl.style.display = 'block';
+      relEl.classList.add('active');
+      if (ageNotMetEl) ageNotMetEl.style.display = 'none';
+      initCardAgeNotMet(id, logType);
+    } else {
+      relEl.style.display     = 'none';
+      if (ageNotMetEl) ageNotMetEl.style.display = 'flex';
+    }
     btnEl.disabled          = true;
     btnEl.textContent       = 'Age Not Met';
     pillEl.style.display    = 'none';
@@ -2956,6 +3190,285 @@ body.log-open #log-panel { right: 0; }
 
     var cardName = (card.querySelector('.rad-card-title') || {}).textContent || id;
     addLogEntry(logType, 'Card age not met: ' + id + ' \u2014 ' + cardName + ' \u2014 presence confirmed but age threshold not satisfied');
+  }
+
+  /* ═══════════════════════════════════════════════════════════════════════
+     Interactive Card Initialization — Post-Attestation Animations
+     ═══════════════════════════════════════════════════════════════════════ */
+
+  var cardTimers = {};
+
+  function initCardInteraction(id, logType) {
+    switch (id) {
+      case 'c1': initC1(logType); break;
+      case 'c2': initC2(logType); break;
+      case 'c3': initC3(logType); break;
+      case 'c4': initC4(logType); break;
+      case 'c5': initC5(logType); break;
+      case 'c6': initC6(logType); break;
+    }
+  }
+
+  function initCardAgeNotMet(id, logType) {
+    if (id === 'c4') initC4AgeNotMet(logType);
+  }
+
+  function initC1(logType) {
+    var overlay = document.getElementById('c1-blur-overlay');
+    var toast   = document.getElementById('c1-unlock-toast');
+    var timeEl  = document.getElementById('c1-toast-time');
+    var countdown = document.getElementById('c1-countdown');
+    var blurred = document.querySelectorAll('.c1-was-blurred');
+
+    var c1CountdownInterval = setInterval(function() {
+      var rem = EXPIRES_AT - Math.floor(Date.now() / 1000);
+      if (rem <= 0) { countdown.textContent = 'Expired'; clearInterval(c1CountdownInterval); return; }
+      var mm = String(Math.floor(rem / 60)).padStart(2, '0');
+      var ss = String(rem % 60).padStart(2, '0');
+      countdown.textContent = '\u23F1 Session expires in ' + mm + ':' + ss;
+    }, 1000);
+    cardTimers.c1 = cardTimers.c1 || [];
+    cardTimers.c1.push(c1CountdownInterval);
+
+    var t1 = setTimeout(function() {
+      overlay.classList.add('c1-lifted');
+      blurred.forEach(function(el) { el.classList.add('c1-unblurred'); });
+      addLogEntry(logType, 'Card c1: blur wall lifted \u2014 feed content revealed');
+
+      timeEl.textContent = new Date().toLocaleTimeString();
+      toast.classList.add('c1-toast-show');
+      var t2 = setTimeout(function() { toast.classList.remove('c1-toast-show'); }, 2500);
+      cardTimers.c1.push(t2);
+    }, 800);
+    cardTimers.c1.push(t1);
+  }
+
+  var c2CurrentFrame = 2;
+
+  function initC2(logType) {
+    var track      = document.getElementById('c2-track');
+    var overlay    = document.getElementById('c2-lock-overlay');
+    var arrows     = document.getElementById('c2-arrows');
+    var status     = document.getElementById('c2-status');
+    var badge      = document.getElementById('c2-choice-badge');
+    var badgeTime  = document.getElementById('c2-choice-time');
+    var dots       = document.querySelectorAll('#c2-dots .c2-dot');
+
+    track.style.transform = 'translateX(-200%)';
+    c2CurrentFrame = 2;
+    updateC2Dots(dots, c2CurrentFrame);
+
+    var t1 = setTimeout(function() {
+      overlay.classList.add('c2-lifted');
+      arrows.style.display = 'flex';
+      status.style.display = 'block';
+      addLogEntry(logType, 'Card c2: autoplay gate cleared \u2014 manual navigation enabled');
+
+      badgeTime.textContent = new Date().toLocaleTimeString();
+      badge.classList.add('c2-badge-show');
+      var t2 = setTimeout(function() { badge.classList.remove('c2-badge-show'); }, 2500);
+      cardTimers.c2 = cardTimers.c2 || [];
+      cardTimers.c2.push(t2);
+    }, 800);
+    cardTimers.c2 = cardTimers.c2 || [];
+    cardTimers.c2.push(t1);
+  }
+
+  function updateC2Dots(dots, idx) {
+    for (var i = 0; i < dots.length; i++) {
+      dots[i].classList.toggle('active', i === idx);
+    }
+  }
+
+  window.c2Next = function() {
+    if (c2CurrentFrame >= 4) return;
+    c2CurrentFrame++;
+    var track = document.getElementById('c2-track');
+    var dots  = document.querySelectorAll('#c2-dots .c2-dot');
+    var remaining = document.getElementById('c2-remaining');
+    track.style.transform = 'translateX(-' + (c2CurrentFrame * 100) + '%)';
+    updateC2Dots(dots, c2CurrentFrame);
+    remaining.textContent = String(4 - c2CurrentFrame);
+    addLogEntry('INTERACT', 'Card c2: advanced to frame ' + (c2CurrentFrame + 1) + '/5');
+  };
+
+  window.c2Prev = function() {
+    if (c2CurrentFrame <= 0) return;
+    c2CurrentFrame--;
+    var track = document.getElementById('c2-track');
+    var dots  = document.querySelectorAll('#c2-dots .c2-dot');
+    var remaining = document.getElementById('c2-remaining');
+    track.style.transform = 'translateX(-' + (c2CurrentFrame * 100) + '%)';
+    updateC2Dots(dots, c2CurrentFrame);
+    remaining.textContent = String(4 - c2CurrentFrame);
+  };
+
+  function playChime() {
+    try {
+      var ctx = new (window.AudioContext || window.webkitAudioContext)();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 523;
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+      osc.start(); osc.stop(ctx.currentTime + 0.3);
+    } catch(e) {}
+  }
+
+  function initC3(logType) {
+    var notifs = [document.getElementById('c3-n1'), document.getElementById('c3-n2'), document.getElementById('c3-n3')];
+    var label  = document.getElementById('c3-held-label');
+    var stamp  = document.getElementById('c3-stamp');
+
+    cardTimers.c3 = cardTimers.c3 || [];
+
+    notifs.forEach(function(el, i) {
+      var t = setTimeout(function() {
+        el.classList.remove('c3-held');
+        el.classList.add('c3-released');
+        el.querySelector('.c3-notif-icon').innerHTML = '&#10003;';
+        playChime();
+        addLogEntry(logType, 'Card c3: notification ' + (i + 1) + '/3 released');
+
+        if (i === 2) {
+          label.classList.add('c3-hidden');
+          var t2 = setTimeout(function() {
+            var tokenFragment = SESSION_TOKEN ? SESSION_TOKEN.slice(0, 8) : 'bccad4f5';
+            stamp.textContent = '\u2713 Presence verified \u00B7 ' + new Date().toLocaleTimeString() + ' \u00B7 Receipt: ' + tokenFragment + '\u2026';
+            stamp.style.display = 'block';
+          }, 400);
+          cardTimers.c3.push(t2);
+        }
+      }, 500 + (i * 300));
+      cardTimers.c3.push(t);
+    });
+  }
+
+  function initC4(logType) {
+    var toggles = ['c4-t1', 'c4-t2', 'c4-t3'];
+    var result  = document.getElementById('c4-result');
+    var f4      = document.getElementById('c4-f4');
+    var t4      = document.getElementById('c4-t4');
+
+    cardTimers.c4 = cardTimers.c4 || [];
+
+    toggles.forEach(function(tid, i) {
+      var t = setTimeout(function() {
+        var toggleEl = document.getElementById(tid);
+        toggleEl.classList.add('c4-on');
+        addLogEntry(logType, 'Card c4: feature ' + (i + 1) + '/4 unlocked');
+      }, 400 + (i * 300));
+      cardTimers.c4.push(t);
+    });
+
+    var t5 = setTimeout(function() {
+      f4.classList.add('c4-locked-amber');
+      t4.classList.add('c4-amber');
+      result.style.display = 'block';
+      result.classList.add('c4-result-amber');
+      result.textContent = 'Location Sharing: age threshold (16+) not satisfied for this feature';
+      addLogEntry(logType, 'Card c4: Location Sharing remains locked \u2014 age threshold 16+ not met (dual-gate demo)');
+    }, 400 + (toggles.length * 300) + 200);
+    cardTimers.c4.push(t5);
+  }
+
+  function initC4AgeNotMet(logType) {
+    var result = document.getElementById('c4-result');
+    cardTimers.c4 = cardTimers.c4 || [];
+
+    var t = setTimeout(function() {
+      result.style.display = 'block';
+      result.classList.add('c4-result-amber');
+      result.textContent = 'Presence confirmed \u00B7 Age threshold (13+) not satisfied \u2014 all features locked';
+      addLogEntry(logType, 'Card c4: all features remain locked \u2014 age threshold not met');
+    }, 600);
+    cardTimers.c4.push(t);
+  }
+
+  function flashMetric(el, finalValue) {
+    el.style.color = '#E74C3C';
+    el.textContent = finalValue;
+    setTimeout(function() {
+      el.style.transition = 'color 0.4s ease';
+      el.style.color = '#1a1a1a';
+    }, 150);
+  }
+
+  function initC5(logType) {
+    var m1 = document.getElementById('c5-m1');
+    var m2 = document.getElementById('c5-m2');
+    var m3 = document.getElementById('c5-m3');
+    var m4 = document.getElementById('c5-m4');
+    var withheld  = document.getElementById('c5-withheld');
+    var choiceLine = document.getElementById('c5-choice-line');
+
+    var metrics = [
+      { el: m1, val: '2,847' },
+      { el: m2, val: '341' },
+      { el: m3, val: '128' },
+      { el: m4, val: '14.2K' },
+    ];
+
+    cardTimers.c5 = cardTimers.c5 || [];
+
+    metrics.forEach(function(m, i) {
+      var t = setTimeout(function() {
+        flashMetric(m.el, m.val);
+        addLogEntry(logType, 'Card c5: metric ' + (i + 1) + '/4 revealed');
+      }, 600 + (i * 200));
+      cardTimers.c5.push(t);
+    });
+
+    var t2 = setTimeout(function() {
+      withheld.classList.add('c5-hidden');
+      choiceLine.style.display = 'block';
+      addLogEntry(logType, 'Card c5: all reinforcement signals revealed \u2014 deliberate choice recorded');
+    }, 600 + (metrics.length * 200) + 300);
+    cardTimers.c5.push(t2);
+  }
+
+  function initC6(logType) {
+    var fill      = document.getElementById('c6-fill');
+    var arrow     = document.getElementById('c6-arrow');
+    var status    = document.getElementById('c6-status');
+    var note      = document.getElementById('c6-note');
+    var punchline = document.getElementById('c6-punchline');
+
+    cardTimers.c6 = cardTimers.c6 || [];
+
+    var t1 = setTimeout(function() {
+      fill.style.width = '50%';
+      arrow.style.left = '64%';
+      status.textContent = 'You authorized Tier 2.';
+      note.style.display = 'none';
+      addLogEntry(logType, 'Card c6: escalation advanced to Tier 2 with human confirmation');
+    }, 800);
+    cardTimers.c6.push(t1);
+
+    var transitionDone = false;
+    fill.addEventListener('transitionend', function onTrans() {
+      if (transitionDone) return;
+      transitionDone = true;
+      fill.removeEventListener('transitionend', onTrans);
+      punchline.style.display = 'block';
+      addLogEntry(logType, 'Card c6: tier meter settled \u2014 algorithm wanted Tier 3, user authorized Tier 2');
+    });
+
+    var t2 = setTimeout(function() {
+      if (!transitionDone) {
+        transitionDone = true;
+        punchline.style.display = 'block';
+      }
+    }, 2000);
+    cardTimers.c6.push(t2);
+  }
+
+  function cleanupCardTimers(id) {
+    if (cardTimers[id]) {
+      cardTimers[id].forEach(function(t) { clearTimeout(t); clearInterval(t); });
+      delete cardTimers[id];
+    }
   }
 
   /* ── Cancel a single card's attestation polling ───────────────────── */
@@ -3008,9 +3521,7 @@ body.log-open #log-panel { right: 0; }
 
   window.resetCards = function() {
     var ids = ["c1","c2","c3","c4","c5","c6"];
-    // Cancel all active polling loops
-    ids.forEach(function(id) { clearCardPoller(id); });
-    // Reset all cards to locked state
+    ids.forEach(function(id) { clearCardPoller(id); cleanupCardTimers(id); });
     ids.forEach(function(id) {
       released[id] = false;
       var card      = document.getElementById(id);
@@ -3023,13 +3534,72 @@ body.log-open #log-panel { right: 0; }
       var ageNotMetPill = document.getElementById(id + '-age-not-met-pill');
       if (lockedEl)  lockedEl.style.display  = 'flex';
       if (waitingEl) waitingEl.style.display  = 'none';
-      if (relEl)     relEl.style.display      = 'none';
+      if (relEl)     { relEl.style.display = 'none'; relEl.classList.remove('active'); }
       if (ageNotMetEl)   ageNotMetEl.style.display   = 'none';
       if (ageNotMetPill) ageNotMetPill.style.display  = 'none';
       if (btnEl)     { btnEl.disabled = false; btnEl.textContent = btnEl.dataset.action || 'Release'; btnEl.style.display = ''; }
       if (pillEl)    pillEl.style.display     = 'none';
       if (card)      { card.classList.add('locked'); card.classList.remove('released', 'age-not-met'); }
     });
+
+    var c1Overlay = document.getElementById('c1-blur-overlay');
+    var c1Toast = document.getElementById('c1-unlock-toast');
+    if (c1Overlay) c1Overlay.classList.remove('c1-lifted');
+    if (c1Toast) c1Toast.classList.remove('c1-toast-show');
+    document.querySelectorAll('.c1-was-blurred').forEach(function(el) { el.classList.remove('c1-unblurred'); });
+
+    var c2Track = document.getElementById('c2-track');
+    var c2Overlay = document.getElementById('c2-lock-overlay');
+    var c2Arrows = document.getElementById('c2-arrows');
+    var c2Status = document.getElementById('c2-status');
+    var c2Badge = document.getElementById('c2-choice-badge');
+    if (c2Track) c2Track.style.transform = '';
+    if (c2Overlay) c2Overlay.classList.remove('c2-lifted');
+    if (c2Arrows) c2Arrows.style.display = 'none';
+    if (c2Status) c2Status.style.display = 'none';
+    if (c2Badge) c2Badge.classList.remove('c2-badge-show');
+    c2CurrentFrame = 2;
+    var c2Dots = document.querySelectorAll('#c2-dots .c2-dot');
+    updateC2Dots(c2Dots, 2);
+
+    ['c3-n1','c3-n2','c3-n3'].forEach(function(nid) {
+      var n = document.getElementById(nid);
+      if (n) { n.classList.remove('c3-released'); n.classList.add('c3-held'); n.querySelector('.c3-notif-icon').innerHTML = '&#128274;'; }
+    });
+    var c3Label = document.getElementById('c3-held-label');
+    var c3Stamp = document.getElementById('c3-stamp');
+    if (c3Label) c3Label.classList.remove('c3-hidden');
+    if (c3Stamp) c3Stamp.style.display = 'none';
+
+    ['c4-t1','c4-t2','c4-t3','c4-t4'].forEach(function(tid) {
+      var t = document.getElementById(tid);
+      if (t) { t.classList.remove('c4-on', 'c4-amber'); }
+    });
+    var c4f4 = document.getElementById('c4-f4');
+    var c4Result = document.getElementById('c4-result');
+    if (c4f4) c4f4.classList.remove('c4-locked-amber');
+    if (c4Result) { c4Result.style.display = 'none'; c4Result.classList.remove('c4-result-amber'); }
+
+    ['c5-m1','c5-m2','c5-m3','c5-m4'].forEach(function(mid) {
+      var m = document.getElementById(mid);
+      if (m) { m.textContent = '\u2014'; m.style.color = ''; m.style.transition = ''; }
+    });
+    var c5Withheld = document.getElementById('c5-withheld');
+    var c5Choice = document.getElementById('c5-choice-line');
+    if (c5Withheld) c5Withheld.classList.remove('c5-hidden');
+    if (c5Choice) c5Choice.style.display = 'none';
+
+    var c6Fill = document.getElementById('c6-fill');
+    var c6Arrow = document.getElementById('c6-arrow');
+    var c6Status = document.getElementById('c6-status');
+    var c6Note = document.getElementById('c6-note');
+    var c6Punch = document.getElementById('c6-punchline');
+    if (c6Fill) c6Fill.style.width = '30%';
+    if (c6Arrow) c6Arrow.style.left = '31%';
+    if (c6Status) c6Status.textContent = 'Escalation paused at Tier 1 boundary. Algorithm requested Tier 2.';
+    if (c6Note) c6Note.style.display = '';
+    if (c6Punch) c6Punch.style.display = 'none';
+
     addLogEntry('SYSTEM', 'All ' + ids.length + ' RAD cards reset to locked state');
   };
 
