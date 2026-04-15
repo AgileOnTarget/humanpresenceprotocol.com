@@ -47,7 +47,6 @@ nav {
   max-width: 1200px; margin: 0 auto; padding: 0 2rem;
   display: flex; align-items: center; gap: 0; width: 100%;
 }
-/* ── Session status (left-pinned) ── */
 .nav-session {
   display: flex; align-items: center; gap: 0.5rem;
   margin-right: 1.25rem; flex-shrink: 0;
@@ -75,13 +74,11 @@ nav {
 }
 .session-timer.expiring { color: var(--red-dark); animation: pulse-timer 1s infinite; }
 @keyframes pulse-timer { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
-/* ── Logo ── */
 .nav-logo {
   font-family: var(--serif); font-size: 1rem; font-weight: 500;
   color: var(--accent); text-decoration: none; letter-spacing: 0.02em;
   white-space: nowrap;
 }
-/* ── Primary links ── */
 .nav-links { display: flex; gap: 0; list-style: none; margin-left: auto; }
 .nav-links a {
   display: block; padding: 0 0.85rem;
@@ -92,10 +89,7 @@ nav {
 }
 .nav-links li:first-child a { border-left: 1px solid var(--rule-light); }
 .nav-links a:hover { color: var(--accent); }
-/* ── More dropdown ── */
-.nav-more {
-  position: relative;
-}
+.nav-more { position: relative; }
 .nav-more-btn {
   display: block; padding: 0 0.85rem;
   font-family: var(--mono); font-size: 0.68rem; font-weight: 400;
@@ -111,8 +105,7 @@ nav {
   background: rgba(250,250,248,0.98); backdrop-filter: blur(12px);
   border: 1px solid var(--rule); border-radius: 4px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-  min-width: 200px; padding: 6px 0; z-index: 200;
-  list-style: none;
+  min-width: 200px; padding: 6px 0; z-index: 200; list-style: none;
 }
 .nav-more:hover .nav-more-menu { display: block; }
 .nav-more-menu a {
@@ -122,9 +115,7 @@ nav {
   letter-spacing: 0.06em; text-transform: uppercase;
   transition: background 0.12s, color 0.12s;
 }
-.nav-more-menu a:hover {
-  background: rgba(26,58,107,0.06); color: var(--accent);
-}
+.nav-more-menu a:hover { background: rgba(26,58,107,0.06); color: var(--accent); }
 
 /* ── LAYOUT ── */
 .container { max-width: 860px; margin: 0 auto; padding: 0 2rem; }
@@ -2576,7 +2567,7 @@ body.log-open #log-panel { right: 0; }
   var EXPIRES_AT    = null;
   var SESSION_TOKEN = null;
   var RECEIPT       = null;
-    var API_BASE      = "https://hpp-verifier.onrender.com";
+    var API_BASE = "https://hpp-verifier.onrender.com";
   var RAD_CARDS_CLIENT = [{"id":"c1","title":"Infinite Scroll Boundary","risk":"Continuous passive consumption without a stopping condition.","locked":"Session boundary reached.","action":"Continue with Human Presence","released":"Continuation granted for this session window. Feed preview unblurred for one bounded interval.","primitive":"P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841","simulated":false},{"id":"c2","title":"Autoplay Gate","risk":"Content progression without an affirmative moment of human choice.","locked":"Next item requires confirmation.","action":"Advance with Human Presence","released":"Human choice recorded before progression.","primitive":"P12 — Commitment-Based Presence Proof · Pro-Q 64/018,841","simulated":false},{"id":"c3","title":"Notification Delivery Gate","risk":"Compulsive re-engagement trigger delivered without verified present intent.","locked":"Notification held pending presence.","action":"Release Notification","released":"Notification released after verified presence.","primitive":"P2 — HW-Bound Attestation Root · Pro-A 63/983,106 · Filed 02/14/2026","simulated":false},{"id":"c4","title":"Age Gated Feature","risk":"Restricted feature access without age-qualified presence verification.","locked":"Access requires age-qualified presence.","action":"Verify Access","released":"Age predicate satisfied. Feature unlocked.","primitive":"P2 + Pro-M 64/018,735 + Pro-P 63/985,418 — Age Verification · Filed 02/18/2026","simulated":false,"age_predicate":{"min_age":13}},{"id":"c5","title":"Reinforcement Control","risk":"Variable reward loop tied to social validation without a deliberate human engagement gate.","locked":"Reinforcement signal withheld pending presence.","action":"Reveal with Human Presence","released":"Reinforcement signal released after deliberate engagement.","primitive":"P11 — Tamper-Evident Ledger · Pro-K 63/983,135 · Filed 02/14/2026","simulated":false},{"id":"c6","title":"Escalation Gate","risk":"Silent algorithmic progression into stronger content tiers without explicit human confirmation.","locked":"Escalation paused.","action":"Continue with Human Presence","released":"Escalation resumed after explicit human confirmation.","primitive":"P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841 + INV-08 64/019,933","simulated":false}];
   var logEntries    = [];
   var released      = {};
@@ -2607,7 +2598,7 @@ body.log-open #log-panel { right: 0; }
   var overlayEl  = document.getElementById('expired-overlay');
 
   function tick() {
-    if (!EXPIRES_AT) return; // No session — skip timer entirely
+    if (!EXPIRES_AT) return;
     var rem = EXPIRES_AT - Math.floor(Date.now() / 1000);
     if (rem <= 0) {
       timerEl.textContent = '00:00';
@@ -2622,11 +2613,9 @@ body.log-open #log-panel { right: 0; }
     setTimeout(tick, 1000);
   }
 
-  // No session token — redirect to gate immediately
   if (!SESSION_TOKEN) {
     window.location.href = '/';
   } else {
-    // Validate session with backend
     fetch(API_BASE + '/session?session_token=' + encodeURIComponent(SESSION_TOKEN))
       .then(function(res) {
         if (!res.ok) throw new Error('invalid');
@@ -2643,12 +2632,10 @@ body.log-open #log-panel { right: 0; }
           }
           tick();
         } else {
-          // Invalid session — back to gate
           window.location.href = '/';
         }
       })
       .catch(function() {
-        // Backend unreachable or session invalid — back to gate
         window.location.href = '/';
       });
   }
@@ -3234,10 +3221,10 @@ body.log-open #log-panel { right: 0; }
     return n.toLocaleString();
   }
   function fmtDollar(n) {
-    if (n >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
-    if (n >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
-    if (n >= 1e3) return '$' + (n / 1e3).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return '$' + n.toFixed(2);
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(1) + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return '$' + Math.round(n).toLocaleString();
+    return '$' + n.toFixed(0);
   }
 
   window.updateBotCalc = function() {
