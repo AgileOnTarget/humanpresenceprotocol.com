@@ -3010,6 +3010,29 @@ body.log-open #log-panel { right: 0; }
     }
 
     try {
+      // ── Step 1: Create a relay slot (server-authoritative session bridge) ──
+      // The server's POST /challenge does NOT return relay_id by design;
+      // relay creation is a separate endpoint that returns a dedicated UUID
+      // for this card's attestation. This mirrors the unified-site server
+      // architecture where the /site page has relay_id baked in at render
+      // time by the server. Static sites must request the relay themselves.
+      var relayResp = await fetch(API_BASE + '/relay/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!relayResp.ok) {
+        addLogEntry('CHALLENGE', 'Server returned ' + relayResp.status + ' on /relay/create \u2014 cannot create attestation session');
+        return;
+      }
+      var relayData = await relayResp.json();
+      var relayId = relayData.relay_id;
+      if (!relayId) {
+        addLogEntry('CHALLENGE', 'Server returned OK but no relay_id \u2014 malformed response');
+        return;
+      }
+      addLogEntry('SYSTEM', 'Relay created: ' + relayId.slice(0, 12) + '... for card ' + cardName);
+
+      // ── Step 2: Request a fresh challenge (optional age predicate) ────────
       var challengeBody = { hpp_ver: '2.0', site: window.location.hostname };
       if (agePred) {
         challengeBody.age_predicate = agePred;
@@ -3019,22 +3042,14 @@ body.log-open #log-panel { right: 0; }
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(challengeBody)
       });
-
       if (!resp.ok) {
-        addLogEntry('CHALLENGE', 'Server returned ' + resp.status + ' \u2014 relay creation failed');
+        addLogEntry('CHALLENGE', 'Server returned ' + resp.status + ' on /challenge \u2014 cannot issue challenge');
         return;
       }
-
       var data = await resp.json();
-      var relayId = data.relay_id;
-      if (!relayId) {
-        addLogEntry('CHALLENGE', 'No relay_id returned \u2014 server may not support relay mode');
-        return;
-      }
+      addLogEntry('CHALLENGE', 'Challenge issued: ' + (data.challenge_id || '').slice(0, 12) + '... (nonce: ' + (data.nonce || '').slice(0, 8) + '..., TTL: 300s) \u2014 scan QR with iPhone');
 
-      addLogEntry('CHALLENGE', 'Relay created: ' + relayId.slice(0, 12) + '... \u2014 scan QR with iPhone');
-
-      // Transition card to waiting state
+      // ── Step 3: Transition card to waiting state ─────────────────────────
       var lockedEl  = document.getElementById(id + '-locked');
       var waitingEl = document.getElementById(id + '-waiting');
       var btnEl     = document.getElementById(id + '-btn');
@@ -3044,8 +3059,10 @@ body.log-open #log-panel { right: 0; }
       waitingEl.style.display = 'flex';
       btnEl.style.display     = 'none';
 
-      // Render QR code via existing server endpoint
-      var qrUrl = '/qr?relay_id=' + encodeURIComponent(relayId) + '&session_duration=600';
+      // ── Step 4: Render QR code via server's /qr endpoint ─────────────────
+      // Absolute URL via API_BASE \u2014 this site is hosted on GitHub Pages and
+      // has no local /qr handler; the verifier backend on Render renders it.
+      var qrUrl = API_BASE + '/qr?relay_id=' + encodeURIComponent(relayId) + '&session_duration=600';
       if (agePred) {
         qrUrl += '&age_predicate_min_age=' + agePred.min_age;
       }
@@ -3098,17 +3115,22 @@ body.log-open #log-panel { right: 0; }
         } catch(pe) { /* network hiccup, keep polling */ }
       }, 2000);
 
-      // Timeout after 60 seconds
+      // Timeout after 300 seconds (matches server-side relay TTL so the
+      // browser stops polling when the server has dropped the slot anyway).
       var pollTimeout = setTimeout(function() {
         if (activePollers[id]) {
           clearCardPoller(id);
-          addLogEntry('SYSTEM', 'Attestation timeout for ' + cardName + ' \u2014 no response in 60s');
+          addLogEntry('SYSTEM', 'Attestation timeout for ' + cardName + ' \u2014 no response in 300s');
+          // Best-effort server-side cleanup \u2014 relay has likely already expired
+          // but we DELETE explicitly in case the server is using a longer TTL.
+          fetch(API_BASE + '/relay/' + encodeURIComponent(relayId), { method: 'DELETE' })
+            .catch(function(){ /* best effort */ });
           // Return to locked state
           waitingEl.style.display = 'none';
           lockedEl.style.display  = 'flex';
           btnEl.style.display     = '';
         }
-      }, 60000);
+      }, 300000);
 
       activePollers[id] = { interval: pollInterval, timeout: pollTimeout, relay_id: relayId };
 
@@ -3480,7 +3502,17 @@ body.log-open #log-panel { right: 0; }
   }
 
   window.cancelCardAttestation = function(id) {
+    // Capture relay_id BEFORE clearCardPoller() deletes the activePollers entry
+    var relayId = (activePollers[id] || {}).relay_id;
     clearCardPoller(id);
+
+    // Best-effort server-side cleanup: free the relay slot so it does not
+    // sit idle on the verifier backend until TTL expiry.
+    if (relayId) {
+      fetch(API_BASE + '/relay/' + encodeURIComponent(relayId), { method: 'DELETE' })
+        .catch(function(){ /* best effort */ });
+    }
+
     var lockedEl  = document.getElementById(id + '-locked');
     var waitingEl = document.getElementById(id + '-waiting');
     var btnEl     = document.getElementById(id + '-btn');
@@ -3490,7 +3522,7 @@ body.log-open #log-panel { right: 0; }
     btnEl.style.display     = '';
 
     var cardName = (document.getElementById(id).querySelector('.rad-card-title') || {}).textContent || id;
-    addLogEntry('SYSTEM', 'Attestation cancelled for ' + cardName);
+    addLogEntry('SYSTEM', 'Attestation cancelled for ' + cardName + (relayId ? ' (relay ' + relayId.slice(0, 8) + '... released)' : ''));
   };
 
   /* ── Export Functions ───────────────────────────────────────────────── */
