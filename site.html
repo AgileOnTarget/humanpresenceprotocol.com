@@ -385,6 +385,36 @@ footer .footer-title {
   border: 1px solid #d97706;
 }
 .rad-card-risk { font-size: 0.88rem; color: var(--ink-muted); line-height: 1.4; }
+/* ── KGM Finding + Jury Finding + RAD Remediation (verdict-mapped surfaces) ── */
+.rad-kgm-label {
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.14em;
+  color: var(--gold); margin-bottom: 4px;
+}
+.rad-jury-finding,
+.rad-remediation {
+  font-size: 0.85rem; line-height: 1.5;
+  padding: 10px 12px; border-radius: 6px;
+  margin-top: 8px;
+}
+.rad-jury-finding {
+  background: rgba(191, 55, 55, 0.06);
+  border-left: 3px solid #bf3737;
+  color: var(--ink-light, var(--ink-muted));
+}
+.rad-remediation {
+  background: rgba(26, 58, 107, 0.05);
+  border-left: 3px solid var(--accent);
+  color: var(--ink);
+}
+.rad-field-label {
+  display: block;
+  font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+.rad-jury-finding .rad-field-label { color: #bf3737; }
+.rad-remediation .rad-field-label { color: var(--accent); }
 .rad-locked-state, .rad-released-state {
   border-radius: 6px; padding: 0.75rem;
   display: flex; align-items: flex-start; gap: 8px;
@@ -1188,14 +1218,17 @@ body.log-open #log-panel { right: 0; }
       
     <div class="rad-card locked" id="c1">
       <div class="rad-card-header">
-        <div class="rad-card-title">Infinite Scroll Boundary</div>
+        <div style="flex:1;">
+          <div class="rad-kgm-label">KGM Finding 1</div>
+          <div class="rad-card-title">Infinite Scroll</div>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
-          
-          
           <div class="rad-verified-pill" id="c1-pill" style="display:none">&#10003; Verified</div>
           <div class="rad-age-not-met-pill" id="c1-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
+      <div class="rad-jury-finding"><span class="rad-field-label">Jury Finding</span>No stopping condition; designed for continuous passive consumption.</div>
+      <div class="rad-remediation"><span class="rad-field-label">RAD Remediation</span>Session boundaries with time-bounded presence windows. Continuation conditioned on biometric re-attestation at configurable intervals. Cryptographically enforced boundary condition &mdash; the protocol cannot continue without confirmed human presence.</div>
       <div class="rad-card-risk">Continuous passive consumption without a stopping condition.</div>
       <div class="rad-locked-state" id="c1-locked">
         <div class="rad-lock-icon">&#128274;</div>
@@ -1234,19 +1267,22 @@ body.log-open #log-panel { right: 0; }
       <button class="rad-btn" id="c1-btn" data-action="Continue with Human Presence" onclick="releaseCard('c1')">
         Continue with Human Presence
       </button>
-      <div class="rad-primitive">P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841</div>
+      <div class="rad-primitive">Pro-Q (64/018,841) &middot; Filed 03/27/2026 &middot; P1 Time-Anchored Biometric Pulse</div>
     </div>
 
     <div class="rad-card locked" id="c2">
       <div class="rad-card-header">
-        <div class="rad-card-title">Autoplay Gate</div>
+        <div style="flex:1;">
+          <div class="rad-kgm-label">KGM Finding 2</div>
+          <div class="rad-card-title">Autoplay</div>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
-          
-          
           <div class="rad-verified-pill" id="c2-pill" style="display:none">&#10003; Verified</div>
           <div class="rad-age-not-met-pill" id="c2-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
+      <div class="rad-jury-finding"><span class="rad-field-label">Jury Finding</span>Passive content progression without affirmative user action; dissolves moment of human choice.</div>
+      <div class="rad-remediation"><span class="rad-field-label">RAD Remediation</span>Tier 2 proximate presence required before next content unit advances. Hardware-enforced confirmation gate. Passive progression cannot occur without a verified human intent signal within a server-controlled timeframe.</div>
       <div class="rad-card-risk">Content progression without an affirmative moment of human choice.</div>
       <div class="rad-locked-state" id="c2-locked">
         <div class="rad-lock-icon">&#128274;</div>
@@ -1288,19 +1324,22 @@ body.log-open #log-panel { right: 0; }
       <button class="rad-btn" id="c2-btn" data-action="Advance with Human Presence" onclick="releaseCard('c2')">
         Advance with Human Presence
       </button>
-      <div class="rad-primitive">P12 — Commitment-Based Presence Proof · Pro-Q 64/018,841</div>
+      <div class="rad-primitive">Pro-Q (64/018,841) &middot; Filed 03/27/2026 &middot; P12 Commitment-Based Presence Proof</div>
     </div>
 
     <div class="rad-card locked" id="c3">
       <div class="rad-card-header">
-        <div class="rad-card-title">Notification Delivery Gate</div>
+        <div style="flex:1;">
+          <div class="rad-kgm-label">KGM Finding 3</div>
+          <div class="rad-card-title">Notifications</div>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
-          
-          
           <div class="rad-verified-pill" id="c3-pill" style="display:none">&#10003; Verified</div>
           <div class="rad-age-not-met-pill" id="c3-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
+      <div class="rad-jury-finding"><span class="rad-field-label">Jury Finding</span>Compulsive pull-back triggers designed to interrupt and re-engage without user consent.</div>
+      <div class="rad-remediation"><span class="rad-field-label">RAD Remediation</span>Presence-gated delivery: notifications queue silently without confirmed presence. Pro-A (filed 39 days before verdict) names the hardware root of trust. Compulsive interrupt mechanism conditioned on verified human presence at point of delivery.</div>
       <div class="rad-card-risk">Compulsive re-engagement trigger delivered without verified present intent.</div>
       <div class="rad-locked-state" id="c3-locked">
         <div class="rad-lock-icon">&#128274;</div>
@@ -1348,19 +1387,23 @@ body.log-open #log-panel { right: 0; }
       <button class="rad-btn" id="c3-btn" data-action="Release Notification" onclick="releaseCard('c3')">
         Release Notification
       </button>
-      <div class="rad-primitive">P2 — HW-Bound Attestation Root · Pro-A 63/983,106 · Filed 02/14/2026</div>
+      <div class="rad-primitive">Pro-Q (64/018,841) + Pro-A (63/983,106) &middot; Pro-A filed 02/14/2026 &middot; P2 HW-Bound Attestation Root</div>
     </div>
 
     <div class="rad-card locked" id="c4">
       <div class="rad-card-header">
-        <div class="rad-card-title">Age Gated Feature</div>
+        <div style="flex:1;">
+          <div class="rad-kgm-label">KGM Finding 4</div>
+          <div class="rad-card-title">Beauty Filters</div>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
-          
           <div class="rad-age-badge">13+</div>
           <div class="rad-verified-pill" id="c4-pill" style="display:none">&#10003; Age Verified</div>
           <div class="rad-age-not-met-pill" id="c4-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
+      <div class="rad-jury-finding"><span class="rad-field-label">Jury Finding</span>Appearance manipulation deployed against minors; no age-based access control.</div>
+      <div class="rad-remediation"><span class="rad-field-label">RAD Remediation</span>Age-gated feature access with Tier 3 attestation and zero-knowledge age predicate. Minor accounts cannot access flagged features without cryptographic age predicate satisfaction. No identity disclosure required &mdash; compliance without surveillance.</div>
       <div class="rad-card-risk">Restricted feature access without age-qualified presence verification.</div>
       <div class="rad-locked-state" id="c4-locked">
         <div class="rad-lock-icon">&#128274;</div>
@@ -1406,19 +1449,22 @@ body.log-open #log-panel { right: 0; }
       <button class="rad-btn" id="c4-btn" data-action="Verify Access" onclick="releaseCard('c4')">
         Verify Access
       </button>
-      <div class="rad-primitive">P2 + Pro-M 64/018,735 + Pro-P 63/985,418 — Age Verification · Filed 02/18/2026</div>
+      <div class="rad-primitive">Pro-M (64/018,735) + Pro-P (63/985,418) &middot; Pro-P filed 02/18/2026 &middot; Age Verification ZKP</div>
     </div>
 
     <div class="rad-card locked" id="c5">
       <div class="rad-card-header">
-        <div class="rad-card-title">Reinforcement Control</div>
+        <div style="flex:1;">
+          <div class="rad-kgm-label">KGM Finding 5</div>
+          <div class="rad-card-title">Like Counts</div>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
-          
-          
           <div class="rad-verified-pill" id="c5-pill" style="display:none">&#10003; Verified</div>
           <div class="rad-age-not-met-pill" id="c5-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
+      <div class="rad-jury-finding"><span class="rad-field-label">Jury Finding</span>Variable-ratio reinforcement tied to social validation; engineered compulsive engagement loop.</div>
+      <div class="rad-remediation"><span class="rad-field-label">RAD Remediation</span>Pro-K (filed 39 days before verdict): tamper-evident hash-chained ledger records every interaction boundary. Each reinforcement event conditioned on verified human presence. The ledger is independently auditable and non-repudiable &mdash; generates the evidentiary record that deliberate engagement was required.</div>
       <div class="rad-card-risk">Variable reward loop tied to social validation without a deliberate human engagement gate.</div>
       <div class="rad-locked-state" id="c5-locked">
         <div class="rad-lock-icon">&#128274;</div>
@@ -1458,19 +1504,22 @@ body.log-open #log-panel { right: 0; }
       <button class="rad-btn" id="c5-btn" data-action="Reveal with Human Presence" onclick="releaseCard('c5')">
         Reveal with Human Presence
       </button>
-      <div class="rad-primitive">P11 — Tamper-Evident Ledger · Pro-K 63/983,135 · Filed 02/14/2026</div>
+      <div class="rad-primitive">Pro-K (63/983,135) + Pro-Q (64/018,841) &middot; Pro-K filed 02/14/2026 &middot; P11 Tamper-Evident Ledger</div>
     </div>
 
     <div class="rad-card locked" id="c6">
       <div class="rad-card-header">
-        <div class="rad-card-title">Escalation Gate</div>
+        <div style="flex:1;">
+          <div class="rad-kgm-label">KGM Finding 6</div>
+          <div class="rad-card-title">Algorithmic Amplification</div>
+        </div>
         <div style="display:flex;gap:6px;align-items:center;">
-          
-          
           <div class="rad-verified-pill" id="c6-pill" style="display:none">&#10003; Verified</div>
           <div class="rad-age-not-met-pill" id="c6-age-not-met-pill" style="display:none">Presence &#10003; &middot; Age Not Met</div>
         </div>
       </div>
+      <div class="rad-jury-finding"><span class="rad-field-label">Jury Finding</span>Silent content escalation without user awareness or control; override of human agency.</div>
+      <div class="rad-remediation"><span class="rad-field-label">RAD Remediation</span>Escalation interruption: algorithmic progression paused at configurable thresholds. Presence re-attestation required before continued escalation. Explicit human confirmation at each boundary. The architecture enforces what the jury found absent: a moment of human choice.</div>
       <div class="rad-card-risk">Silent algorithmic progression into stronger content tiers without explicit human confirmation.</div>
       <div class="rad-locked-state" id="c6-locked">
         <div class="rad-lock-icon">&#128274;</div>
@@ -1505,7 +1554,7 @@ body.log-open #log-panel { right: 0; }
       <button class="rad-btn" id="c6-btn" data-action="Continue with Human Presence" onclick="releaseCard('c6')">
         Continue with Human Presence
       </button>
-      <div class="rad-primitive">P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841 + INV-08 64/019,933</div>
+      <div class="rad-primitive">Pro-Q (64/018,841) + INV-08 (64/019,933) &middot; INV-08 filed 03/28/2026 &middot; P1 Time-Anchored Biometric Pulse</div>
     </div>
     </div>
   </div>
@@ -2786,7 +2835,7 @@ body.log-open #log-panel { right: 0; }
   var SESSION_TOKEN = null;
   var RECEIPT       = null;
     var API_BASE = "https://hpp-verifier.onrender.com";
-  var RAD_CARDS_CLIENT = [{"id":"c1","title":"Infinite Scroll Boundary","risk":"Continuous passive consumption without a stopping condition.","locked":"Session boundary reached.","action":"Continue with Human Presence","released":"Continuation granted for this session window. Feed preview unblurred for one bounded interval.","primitive":"P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841","simulated":false},{"id":"c2","title":"Autoplay Gate","risk":"Content progression without an affirmative moment of human choice.","locked":"Next item requires confirmation.","action":"Advance with Human Presence","released":"Human choice recorded before progression.","primitive":"P12 — Commitment-Based Presence Proof · Pro-Q 64/018,841","simulated":false},{"id":"c3","title":"Notification Delivery Gate","risk":"Compulsive re-engagement trigger delivered without verified present intent.","locked":"Notification held pending presence.","action":"Release Notification","released":"Notification released after verified presence.","primitive":"P2 — HW-Bound Attestation Root · Pro-A 63/983,106 · Filed 02/14/2026","simulated":false},{"id":"c4","title":"Age Gated Feature","risk":"Restricted feature access without age-qualified presence verification.","locked":"Access requires age-qualified presence.","action":"Verify Access","released":"Age predicate satisfied. Feature unlocked.","primitive":"P2 + Pro-M 64/018,735 + Pro-P 63/985,418 — Age Verification · Filed 02/18/2026","simulated":false,"age_predicate":{"min_age":13}},{"id":"c5","title":"Reinforcement Control","risk":"Variable reward loop tied to social validation without a deliberate human engagement gate.","locked":"Reinforcement signal withheld pending presence.","action":"Reveal with Human Presence","released":"Reinforcement signal released after deliberate engagement.","primitive":"P11 — Tamper-Evident Ledger · Pro-K 63/983,135 · Filed 02/14/2026","simulated":false},{"id":"c6","title":"Escalation Gate","risk":"Silent algorithmic progression into stronger content tiers without explicit human confirmation.","locked":"Escalation paused.","action":"Continue with Human Presence","released":"Escalation resumed after explicit human confirmation.","primitive":"P1 — Time-Anchored Biometric Pulse · Pro-Q 64/018,841 + INV-08 64/019,933","simulated":false}];
+  var RAD_CARDS_CLIENT = [{"id":"c1","kgmLabel":"KGM Finding 1","title":"Infinite Scroll","juryFinding":"No stopping condition; designed for continuous passive consumption.","remediation":"Session boundaries with time-bounded presence windows. Continuation conditioned on biometric re-attestation at configurable intervals. Cryptographically enforced boundary condition — the protocol cannot continue without confirmed human presence.","risk":"Continuous passive consumption without a stopping condition.","locked":"Session boundary reached.","action":"Continue with Human Presence","released":"Continuation granted for this session window. Feed preview unblurred for one bounded interval.","primitive":"Pro-Q (64/018,841) · Filed 03/27/2026 · P1 Time-Anchored Biometric Pulse","simulated":false},{"id":"c2","kgmLabel":"KGM Finding 2","title":"Autoplay","juryFinding":"Passive content progression without affirmative user action; dissolves moment of human choice.","remediation":"Tier 2 proximate presence required before next content unit advances. Hardware-enforced confirmation gate. Passive progression cannot occur without a verified human intent signal within a server-controlled timeframe.","risk":"Content progression without an affirmative moment of human choice.","locked":"Next item requires confirmation.","action":"Advance with Human Presence","released":"Human choice recorded before progression.","primitive":"Pro-Q (64/018,841) · Filed 03/27/2026 · P12 Commitment-Based Presence Proof","simulated":false},{"id":"c3","kgmLabel":"KGM Finding 3","title":"Notifications","juryFinding":"Compulsive pull-back triggers designed to interrupt and re-engage without user consent.","remediation":"Presence-gated delivery: notifications queue silently without confirmed presence. Pro-A (filed 39 days before verdict) names the hardware root of trust. Compulsive interrupt mechanism conditioned on verified human presence at point of delivery.","risk":"Compulsive re-engagement trigger delivered without verified present intent.","locked":"Notification held pending presence.","action":"Release Notification","released":"Notification released after verified presence.","primitive":"Pro-Q (64/018,841) + Pro-A (63/983,106) · Pro-A filed 02/14/2026 · P2 HW-Bound Attestation Root","simulated":false},{"id":"c4","kgmLabel":"KGM Finding 4","title":"Beauty Filters","juryFinding":"Appearance manipulation deployed against minors; no age-based access control.","remediation":"Age-gated feature access with Tier 3 attestation and zero-knowledge age predicate. Minor accounts cannot access flagged features without cryptographic age predicate satisfaction. No identity disclosure required — compliance without surveillance.","risk":"Restricted feature access without age-qualified presence verification.","locked":"Access requires age-qualified presence.","action":"Verify Access","released":"Age predicate satisfied. Feature unlocked.","primitive":"Pro-M (64/018,735) + Pro-P (63/985,418) · Pro-P filed 02/18/2026 · Age Verification ZKP","simulated":false,"age_predicate":{"min_age":13}},{"id":"c5","kgmLabel":"KGM Finding 5","title":"Like Counts","juryFinding":"Variable-ratio reinforcement tied to social validation; engineered compulsive engagement loop.","remediation":"Pro-K (filed 39 days before verdict): tamper-evident hash-chained ledger records every interaction boundary. Each reinforcement event conditioned on verified human presence. The ledger is independently auditable and non-repudiable — generates the evidentiary record that deliberate engagement was required.","risk":"Variable reward loop tied to social validation without a deliberate human engagement gate.","locked":"Reinforcement signal withheld pending presence.","action":"Reveal with Human Presence","released":"Reinforcement signal released after deliberate engagement.","primitive":"Pro-K (63/983,135) + Pro-Q (64/018,841) · Pro-K filed 02/14/2026 · P11 Tamper-Evident Ledger","simulated":false},{"id":"c6","kgmLabel":"KGM Finding 6","title":"Algorithmic Amplification","juryFinding":"Silent content escalation without user awareness or control; override of human agency.","remediation":"Escalation interruption: algorithmic progression paused at configurable thresholds. Presence re-attestation required before continued escalation. Explicit human confirmation at each boundary. The architecture enforces what the jury found absent: a moment of human choice.","risk":"Silent algorithmic progression into stronger content tiers without explicit human confirmation.","locked":"Escalation paused.","action":"Continue with Human Presence","released":"Escalation resumed after explicit human confirmation.","primitive":"Pro-Q (64/018,841) + INV-08 (64/019,933) · INV-08 filed 03/28/2026 · P1 Time-Anchored Biometric Pulse","simulated":false}];
   var logEntries    = [];
   var released      = {};
   var demoKeyPair   = null;
