@@ -957,7 +957,7 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
     <div class="entry-grid">
 
       <!-- 1. Notifications -->
-      <a class="entry-card" href="https://hpp-verifier.onrender.com/" target="_blank" rel="noopener">
+      <a class="entry-card" href="https://hpp-verifier.onrender.com/site#demo" target="_blank" rel="noopener">
         <span class="ec-label">KGM Finding 1 · Notifications</span>
         <span class="ec-title">Engagement-Maximizing Notifications</span>
         <p class="ec-desc">Each attestation requires a Biometric Burn — a signed proof of present human consent on a hardware-bound device. The verifier rate-limits per device pub_key (default 30/min); exceeding the bound returns <span style="font-family:var(--mono);font-size:0.9em;">429 NPHT_RATE_EXCEEDED</span>. No engagement-multiplier is possible.</p>
@@ -965,7 +965,7 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
       </a>
 
       <!-- 2. Like Counts -->
-      <a class="entry-card" href="https://hpp-verifier.onrender.com/" target="_blank" rel="noopener">
+      <a class="entry-card" href="https://hpp-verifier.onrender.com/site#demo" target="_blank" rel="noopener">
         <span class="ec-label">KGM Finding 2 · Like Counts</span>
         <span class="ec-title">Social-Validation Amplification</span>
         <p class="ec-desc">Every attestation is bound to an ECDSA P-256 private key generated inside the iPhone's Secure Enclave. The key is non-exportable; the device that holds it cannot be cloned. A million inauthentic likes would require a million physical devices, each running a real human attestation.</p>
@@ -981,7 +981,7 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
       </a>
 
       <!-- 4. Beauty Filters -->
-      <a class="entry-card" href="https://hpp-verifier.onrender.com/" target="_blank" rel="noopener">
+      <a class="entry-card" href="https://hpp-verifier.onrender.com/site#demo" target="_blank" rel="noopener">
         <span class="ec-label">KGM Finding 4 · Beauty Filters</span>
         <span class="ec-title">Minor-Harm Without Identity Disclosure</span>
         <p class="ec-desc">An age-gated site requests a min-age predicate (e.g. <span style="font-family:var(--mono);font-size:0.9em;">min_age=18</span>). The device evaluates locally against a stored DOB and returns only the boolean <span style="font-family:var(--mono);font-size:0.9em;">age_qualified</span>. The site never learns the user's date of birth, name, or any identifier.</p>
@@ -989,7 +989,7 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
       </a>
 
       <!-- 5. Infinite Scroll -->
-      <a class="entry-card" href="https://hpp-verifier.onrender.com/" target="_blank" rel="noopener">
+      <a class="entry-card" href="https://hpp-verifier.onrender.com/site#demo" target="_blank" rel="noopener">
         <span class="ec-label">KGM Finding 5 · Infinite Scroll</span>
         <span class="ec-title">Window-Bounded Engagement</span>
         <p class="ec-desc">Each session is window-bounded by a server-issued TTL. The Biometric Burn closes the attestation window when the token expires. Continued engagement requires a fresh attestation; sessions cannot run unattended past their TTL. There is no "logged in forever" state.</p>
@@ -997,7 +997,7 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
       </a>
 
       <!-- 6. Autoplay -->
-      <a class="entry-card" href="https://hpp-verifier.onrender.com/" target="_blank" rel="noopener">
+      <a class="entry-card" href="https://hpp-verifier.onrender.com/site#demo" target="_blank" rel="noopener">
         <span class="ec-label">KGM Finding 6 · Autoplay</span>
         <span class="ec-title">Passive-Consumption Signals</span>
         <p class="ec-desc">Per-action attestation gates separate active human consent from passive consumption. Each unlock is bound to a single attestation event and a single session window. There is no autoplay-equivalent signal in the protocol — passive viewing produces no receipt and no presence credit.</p>
@@ -1011,7 +1011,7 @@ footer .footer-title { color: rgba(255,255,255,0.9); font-size: 0.95rem; font-fa
       Looking for a specific cut? &nbsp;<a href="#remedy" style="color:var(--accent);">Structural Remedy</a> for regulators &middot; <a href="#rad" style="color:var(--accent);">KGM Filing Map</a> for counsel (full RAD chronology) &middot; <a href="#academic" style="color:var(--accent);">Formal Model</a> for academics.
     </p>
     <p style="margin-top:0.5rem;font-size:0.78rem;color:var(--ink-muted);font-style:italic;">
-      Phase 1: each card links to the live production verifier; the round-trip is real but currently lands on a generic gate / chain page. Phase 2 (planned): in-gate KGM-defect framing so the round-trip itself shows the specific remediation outcome.
+      How a card works: tap the CTA, scan the QR with an iPhone, complete Face ID. After the verifier issues a receipt, the unified site loads with a collapsible <strong>CRYPTO LOG</strong> side panel that streams the actual <span style="font-family:var(--mono);">/challenge</span> · <span style="font-family:var(--mono);">/verify</span> · receipt-issuance calls in real time, and the six RAD demo cards let you re-run the round-trip in either iPhone or WebCrypto-simulation mode. Phase 2 (planned): in-gate KGM-defect framing so each card pre-loads the matching demo and the post-attestation page surfaces a per-defect "what this proves" outcome panel.
     </p>
   </div>
 </section>
