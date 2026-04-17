@@ -135,7 +135,7 @@ footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
   <div class="hero">
     <span class="hero-eyebrow">Legal</span>
     <h1 class="hero-title">Privacy Policy</h1>
-    <div class="hero-meta">Effective Date: April 14, 2026 &middot; Last Updated: April 14, 2026</div>
+    <div class="hero-meta">Effective Date: April 14, 2026 &middot; Last Updated: April 17, 2026</div>
   </div>
 
   <section>
@@ -191,7 +191,7 @@ footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
 
     <h3>On Your Device</h3>
     <p>Your private key is generated inside the iPhone Secure Enclave — a dedicated hardware security chip. It cannot be exported, copied, or read by any software, including HPP itself. Biometric authentication (Face ID or Touch ID) is handled entirely by Apple's LocalAuthentication framework; HPP receives only a pass/fail result.</p>
-    <p>Your date of birth (if provided during onboarding) is stored in the app's local UserDefaults. It is used solely to evaluate age predicates on-device. It is never transmitted to any server.</p>
+    <p>Your date of birth (if provided during onboarding or later via the Verified Attributes detail sheet) is stored in the app's local UserDefaults. You can provide it by typing or by scanning the front of a driver's license. The license-scan flow uses Apple's Vision framework for on-device OCR — it captures a single frame from the camera, parses the date of birth from the recognised text, and discards the image immediately. The image is never written to disk and never transmitted. The date of birth itself is used solely to evaluate age predicates on-device. It is never transmitted to any server.</p>
 
     <h3>In Transit</h3>
     <p>All communication between the HPP app and the verification server uses HTTPS (TLS 1.2+). Challenge-response payloads are cryptographically signed before transmission.</p>
@@ -204,6 +204,7 @@ footer a { color: rgba(255,255,255,0.4); text-decoration: none; }
       <li>Attestation receipts — chain-linked cryptographic records containing: receipt ID, public key fingerprint, timestamp, site, assurance level, and hash chain pointer. No personal information is included in receipts.</li>
     </ul>
     <p>The server does not store IP addresses, user agents, or any data beyond what is listed above.</p>
+    <p><strong>Reading your own receipts.</strong> Receipts are made available for you to read back via an authenticated request to the verifier. Opening Session History &rarr; Receipts in the app triggers a <code>GET /receipts/:pubkey</code> read; only receipts belonging to your device's Secure Enclave public key are returned (cross-tenant isolation is enforced server-side &mdash; a session token bound to a different key cannot fetch your receipts). The read is rate-limited (default 30 requests per minute per key) and never modifies the receipt chain.</p>
   </section>
 
   <section>
