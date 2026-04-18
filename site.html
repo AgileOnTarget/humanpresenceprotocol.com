@@ -3151,11 +3151,24 @@ body.log-open #log-panel { right: 0; }
                 }
               } catch(ve) { /* best effort */ }
 
-              // Hide waiting, release card (age-aware)
+              // Hide waiting, release card (age-aware, fail-CLOSED)
               waitingEl.style.display = 'none';
               btnEl.style.display     = '';
-              if (agePred && ageResult === false) {
-                finalizeCardAgeNotMet(id, 'ATTESTATION');
+              if (agePred) {
+                // Age-gated card: REQUIRE explicit age_qualified === true.
+                // Treat null / undefined / false / missing as "not met."
+                // This prevents the failure mode where the iPhone's challenge
+                // is constructed without age_predicate (server then doesn't
+                // store age context, /verify skips the age check, /session
+                // returns age_qualified=null, and the card would otherwise
+                // release on the absence of a "no" instead of the presence
+                // of a "yes."
+                if (ageResult === true) {
+                  finalizeCardRelease(id, 'ATTESTATION');
+                } else {
+                  addLogEntry('ATTESTATION', 'Card ' + id + ': age_qualified is ' + (ageResult === false ? 'false' : 'missing/null') + ' \u2014 fail-closed');
+                  finalizeCardAgeNotMet(id, 'ATTESTATION');
+                }
               } else {
                 finalizeCardRelease(id, 'ATTESTATION');
               }
