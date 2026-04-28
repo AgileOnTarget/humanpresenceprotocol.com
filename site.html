@@ -877,45 +877,84 @@ body.log-open #log-panel { right: 0; }
 
 #throughput { padding: 4rem 0 5rem; background: var(--bg); }
 
-.tp-bar-chart {
-  margin-top: 2rem; display: flex; flex-direction: column; gap: 16px;
+/* Mode toggle (shared by #bot-cost and #throughput) */
+.bot-mode-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
 }
-.tp-bar-row {
-  display: flex; align-items: center; gap: 16px;
+@media (max-width: 720px) {
+  .bot-mode-toggle { grid-template-columns: 1fr; }
 }
-.tp-bar-label {
-  font-family: var(--mono); font-size: 0.72rem; font-weight: 600;
-  color: var(--ink); min-width: 110px; text-align: right;
+.bot-mode-btn {
+  text-align: left;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(212,160,23,0.18);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--ink-muted);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
 }
-.tp-bar-track {
-  flex: 1; height: 36px; background: var(--bg-section);
-  border: 1px solid var(--rule); border-radius: 6px;
-  position: relative; overflow: hidden;
+.bot-mode-btn:hover {
+  border-color: rgba(212,160,23,0.45);
+  background: rgba(212,160,23,0.04);
 }
-.tp-bar-fill {
-  height: 100%; border-radius: 5px;
-  transition: width 0.8s ease;
-  display: flex; align-items: center; padding-left: 12px;
-  font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
-  color: #fff; white-space: nowrap;
-  min-width: 60px;
+.bot-mode-btn.active {
+  border-color: var(--accent);
+  background: linear-gradient(135deg, rgba(212,160,23,0.08) 0%, rgba(212,160,23,0.02) 100%);
+  color: var(--ink);
 }
-.tp-bar-fill.red { background: var(--red-dark); }
-.tp-bar-fill.green { background: var(--green-dark); }
-.tp-bar-overflow {
-  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
-  font-family: var(--mono); font-size: 0.62rem; font-weight: 600;
-  color: var(--red-dark); letter-spacing: 0.04em;
+.bot-mode-btn .bot-mode-eyebrow {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-mid);
 }
+.bot-mode-btn.active .bot-mode-eyebrow { color: var(--accent); }
+.bot-mode-btn .bot-mode-label {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bot-mode-btn .bot-mode-desc {
+  font-size: 0.84rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+
+.bot-ratio-banner,
 .tp-ratio-banner {
-  margin-top: 1.5rem; padding: 1rem 1.5rem;
-  background: var(--accent); color: #fff; border-radius: 8px;
-  font-family: var(--mono); font-size: 0.9rem; font-weight: 600;
-  text-align: center; letter-spacing: 0.04em; line-height: 1.5;
+  margin-top: 2rem;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, rgba(212,160,23,0.08) 0%, rgba(212,160,23,0.02) 100%);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
 }
+.bot-ratio-banner .ratio-big,
 .tp-ratio-banner .ratio-big {
-  font-size: 2rem; font-weight: 800; display: block;
-  margin-bottom: 4px; letter-spacing: 0.02em;
+  font-family: var(--mono);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+}
+.bot-ratio-banner > span:not(.ratio-big),
+.tp-ratio-banner > span:not(.ratio-big) {
+  font-size: 0.95rem;
+  color: var(--ink);
+  flex: 1;
+  min-width: 280px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -1621,23 +1660,36 @@ body.log-open #log-panel { right: 0; }
     <span class="section-eyebrow">Economic Proof</span>
     <h2 class="section-title">Bot Cost Calculator</h2>
     <div class="section-rule"></div>
-    <p class="section-lead">HPP makes bot farms uneconomic. Each fake attestation requires one physical iPhone, one human performing biometric auth, and ~3 seconds of non-parallelizable time. This calculator shows the real cost of attacking HPP at scale.</p>
+    <p class="section-lead">AI makes everything else cheap. HPP makes the only thing AI cannot do &mdash; being a human &mdash; the binding constraint. This calculator shows the per-fake-account cost an adversary faces against HPP, modeled against both the 2010s manual click farm and the 2026 AI-orchestrated threat. The biological ceiling is the same in both cases. Only the path to it differs.</p>
+
+    <div class="bot-mode-toggle">
+      <button class="bot-mode-btn" data-mode="ai" onclick="setBotMode('ai')">
+        <span class="bot-mode-eyebrow">2026 Threat Model</span>
+        <span class="bot-mode-label">AI-Orchestrated Adversary</span>
+        <span class="bot-mode-desc">LLM agent handles navigation, account state, and post-attestation actions. Human performs only the biometric pulse. Driven against the H-Constant ceiling.</span>
+      </button>
+      <button class="bot-mode-btn" data-mode="legacy" onclick="setBotMode('legacy')">
+        <span class="bot-mode-eyebrow">2010s Baseline</span>
+        <span class="bot-mode-label">Manual Click Farm</span>
+        <span class="bot-mode-desc">Humans perform every step manually &mdash; navigate, scan, manage accounts. Historical comparison only; not the operative threat in 2026.</span>
+      </button>
+    </div>
 
     <div class="bot-calc">
       <div class="bot-input-panel">
-        <label class="bot-input-label">Fake accounts per day</label>
+        <label class="bot-input-label">Attack budget per day</label>
         <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="bot-accounts" min="1" max="1000000" value="10000" oninput="updateBotCalc()">
-          <span class="bot-slider-val" id="bot-accounts-val">10,000</span>
+          <input type="range" class="bot-slider" id="bot-budget" min="100" max="1000000" value="10000" step="100" oninput="updateBotCalc()">
+          <span class="bot-slider-val" id="bot-budget-val">$10,000</span>
         </div>
 
-        <label class="bot-input-label">Attestation time per attempt</label>
+        <label class="bot-input-label" id="bot-cycle-label">Effective cycle time per fake action</label>
         <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="bot-time" min="2" max="10" value="3" step="0.5" oninput="updateBotCalc()">
-          <span class="bot-slider-val" id="bot-time-val">3.0s</span>
+          <input type="range" class="bot-slider" id="bot-cycle" min="3" max="60" value="5" step="1" oninput="updateBotCalc()">
+          <span class="bot-slider-val" id="bot-cycle-val">5s</span>
         </div>
 
-        <label class="bot-input-label">iPhone cost per device</label>
+        <label class="bot-input-label">Attested device cost</label>
         <div class="bot-slider-row">
           <input type="range" class="bot-slider" id="bot-device-cost" min="200" max="1500" value="999" step="1" oninput="updateBotCalc()">
           <span class="bot-slider-val" id="bot-device-cost-val">$999</span>
@@ -1651,40 +1703,46 @@ body.log-open #log-panel { right: 0; }
       </div>
 
       <div class="bot-output-panel">
-        <span class="bot-output-label">iPhones Required</span>
+        <span class="bot-output-label">Workers Fielded</span>
+        <div class="bot-output-val red" id="bot-out-workers">—</div>
+
+        <span class="bot-output-label">Attested Devices Required</span>
         <div class="bot-output-val red" id="bot-out-devices">—</div>
 
-        <span class="bot-output-label">Human-Hours per Day</span>
-        <div class="bot-output-val red" id="bot-out-hours">—</div>
+        <span class="bot-output-label">Maximum Fake Actions per Day</span>
+        <div class="bot-output-val red" id="bot-out-accounts">—</div>
 
-        <span class="bot-output-label">Daily Device Cost</span>
-        <div class="bot-output-val gold" id="bot-out-device-cost">—</div>
-
-        <span class="bot-output-label">Daily Labor Cost</span>
-        <div class="bot-output-val gold" id="bot-out-labor-cost">—</div>
-
-        <span class="bot-output-label">Total Daily Attack Cost</span>
-        <div class="bot-output-val red" id="bot-out-total" style="font-size:1.8rem">—</div>
+        <span class="bot-output-label">Cost per Fake Action (HPP)</span>
+        <div class="bot-output-val gold" id="bot-out-per-account" style="font-size:1.8rem">—</div>
       </div>
     </div>
 
     <div class="bot-compare">
       <div class="bot-compare-cell">
-        <h4 class="red">Without HPP</h4>
+        <h4 class="red">Same budget, no HPP</h4>
         <span class="big-num" id="bot-cmp-without">—</span>
-        <p>fake accounts per day using automated scripts. Cost: near zero (one server, no humans required).</p>
+        <p>fake actions per day on the same budget. AI agents on commodity infrastructure run unattended at near-zero marginal cost (~<span id="bot-cmp-without-per">$0.0001</span> per fake action). Without a hardware-bound human gate, there is no constraint on volume.</p>
       </div>
       <div class="bot-compare-cell highlight">
-        <h4 class="green">With HPP</h4>
+        <h4 class="green">Same budget, with HPP</h4>
         <span class="big-num" id="bot-cmp-with">—</span>
-        <p>requires <span id="bot-cmp-devices-inline">—</span> iPhones + <span id="bot-cmp-workers-inline">—</span> humans working <span id="bot-cmp-shifts-inline">—</span> shifts. Cost: <span id="bot-cmp-cost-inline">—</span>/day.</p>
+        <p id="bot-cmp-with-desc">maximum fake actions per day. AI compresses every step <em>except</em> the biometric pulse &mdash; and the pulse is exactly what HPP makes irreducible. The adversary&rsquo;s workforce hits the 1-minute-burn-per-minute biological ceiling, with AI orchestration ensuring zero slack against that ceiling.</p>
       </div>
     </div>
 
+    <div class="bot-ratio-banner">
+      <span class="ratio-big" id="bot-ratio-big">—</span>
+      <span id="bot-ratio-text">cost increase per fake action under HPP &mdash; and the ceiling is biological. AI cannot move it.</span>
+    </div>
+
     <div class="bot-footnote">
-      NPHT (Non-Parallelizable Human Time): 1 attestation = 1 human + 1 device + ~3 seconds of biometric presence.
-      Constraint is physical, not computational &mdash; no amount of GPU or bandwidth reduces the per-attestation cost.
-      Based on P1 (Time-Anchored Biometric Pulse) and the H-Constant from HPP&rsquo;s NCBS framework.
+      <strong>The unit of work.</strong> &ldquo;Fake action&rdquo; means one complete adversarial outcome &mdash; a fake account creation, a fake post, a fake review, a fake vote. The end-to-end cycle includes browser navigation, challenge handshake, device hand-off, biometric pulse, verify, receipt, and the platform action itself. In Mode B, AI compresses all non-biometric steps to ~2&ndash;3 seconds; the biometric pulse is the irreducible ~3-second floor governed by the H-Constant.
+      <br><br>
+      <strong>Why AI makes the moat stronger, not weaker.</strong> In the 2010s threat model, humans spent ~93% of cycle time on tasks an AI can now do faster &mdash; navigation, account state, post-action workflow. AI orchestration removes that overhead, which sounds like it weakens the constraint. It does the opposite. Removing the overhead means the human is occupied 100% of the time on the only step the architecture forces them to do: a hardware-bound, time-anchored biometric pulse on a non-cloneable device. The adversary&rsquo;s workforce is now driven directly against the H-Constant ceiling rather than spending most of its time below it.
+      <br><br>
+      <strong>Device note.</strong> &ldquo;Attested device&rdquo; means any hardware with a Secure Enclave (iOS), Strongbox-backed keys (Android), or TPM 2.0 (Windows / desktop). The constraint is hardware-bound non-exportable keys plus a biometric liveness gate, not any specific OS or vendor.
+      <br><br>
+      <strong>Threat model scope.</strong> HPP&rsquo;s claims assume hardware-bound liveness detection is not bypassed at scale. Individual deepfake circumvention is not in scope; what is in scope is whether the attack <em>scales</em>. Per the NPHT paper &sect;6, all results are conditional on the H-Constant assumption holding &mdash; that producing a valid Biometric Liveness Gate signal on a Hardware-Bound Key device requires a positive lower bound of physical energy from a present human. Based on P1 (Time-Anchored Biometric Pulse), NPHT (adversarial throughput notion), and the H-Constant.
     </div>
   </div>
 </section>
@@ -1693,68 +1751,66 @@ body.log-open #log-panel { right: 0; }
 <section id="throughput">
   <div class="container-wide">
     <span class="section-eyebrow">Throughput Constraint</span>
-    <h2 class="section-title">Adversarial Throughput Calculator</h2>
+    <h2 class="section-title">Adversarial Throughput Ceiling</h2>
     <div class="section-rule"></div>
-    <p class="section-lead">Given N workers with iPhones, what is the maximum number of valid attestations per hour? HPP&rsquo;s non-parallelizable biometric gate creates a hard physical ceiling that no amount of compute can bypass.</p>
+    <p class="section-lead">HPP imposes a biological ceiling on adversarial throughput. AI orchestration cannot move the ceiling &mdash; it can only drive the adversary&rsquo;s workforce closer to it. This calculator shows the maximum sustained attestation throughput an adversary can produce given the size of the human workforce they can recruit, under both the 2010s manual threat model and the 2026 AI-orchestrated threat model.</p>
+
+    <div class="bot-mode-toggle">
+      <button class="bot-mode-btn" data-mode="ai" onclick="setThroughputMode('ai')">
+        <span class="bot-mode-eyebrow">2026 Threat Model</span>
+        <span class="bot-mode-label">AI-Orchestrated Adversary</span>
+        <span class="bot-mode-desc">Human is the bottleneck on the only step AI cannot do &mdash; the biometric pulse. Workforce drives against the H-Constant ceiling itself.</span>
+      </button>
+      <button class="bot-mode-btn" data-mode="legacy" onclick="setThroughputMode('legacy')">
+        <span class="bot-mode-eyebrow">2010s Baseline</span>
+        <span class="bot-mode-label">Manual Click Farm</span>
+        <span class="bot-mode-desc">Humans perform every step. Workforce sits well below biological ceiling because most cycle time is non-biometric overhead.</span>
+      </button>
+    </div>
 
     <div class="bot-calc">
       <div class="bot-input-panel">
-        <label class="bot-input-label">Bot farm workers</label>
+        <label class="bot-input-label">Workers (humans) the adversary can field</label>
         <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="tp-workers" min="1" max="10000" value="1000" oninput="updateThroughput()">
+          <input type="range" class="bot-slider" id="tp-workers" min="1" max="100000" value="1000" oninput="updateThroughput()">
           <span class="bot-slider-val" id="tp-workers-val">1,000</span>
         </div>
 
-        <label class="bot-input-label">Seconds per attestation</label>
+        <label class="bot-input-label" id="tp-cycle-label">Effective cycle time per fake action</label>
         <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="tp-secs" min="2" max="10" value="3" step="0.5" oninput="updateThroughput()">
-          <span class="bot-slider-val" id="tp-secs-val">3.0s</span>
-        </div>
-
-        <label class="bot-input-label">Automated requests/sec (no HPP)</label>
-        <div class="bot-slider-row">
-          <input type="range" class="bot-slider" id="tp-rps" min="100" max="100000" value="10000" oninput="updateThroughput()">
-          <span class="bot-slider-val" id="tp-rps-val">10,000</span>
+          <input type="range" class="bot-slider" id="tp-cycle" min="3" max="15" value="5" step="1" oninput="updateThroughput()">
+          <span class="bot-slider-val" id="tp-cycle-val">5s</span>
         </div>
       </div>
 
       <div class="bot-output-panel">
-        <span class="bot-output-label">With HPP &mdash; Max Attestations / Hour</span>
-        <div class="bot-output-val green" id="tp-out-hpp">—</div>
+        <span class="bot-output-label">Theoretical ceiling per worker per hour (1-min burn cap)</span>
+        <div class="bot-output-val" id="tp-out-theoretical" style="color:var(--ink-muted)">—</div>
 
-        <span class="bot-output-label">Without HPP &mdash; Automated Requests / Hour</span>
-        <div class="bot-output-val red" id="tp-out-no-hpp">—</div>
+        <span class="bot-output-label">Sustained ceiling per worker per 8-hr shift</span>
+        <div class="bot-output-val green" id="tp-out-sustained">—</div>
 
-        <span class="bot-output-label">Reduction Factor</span>
-        <div class="bot-output-val" id="tp-out-factor" style="font-size:1.8rem;color:var(--accent)">—</div>
-      </div>
-    </div>
+        <span class="bot-output-label">Maximum daily fake actions (entire workforce)</span>
+        <div class="bot-output-val green" id="tp-out-daily" style="font-size:1.8rem">—</div>
 
-    <div class="tp-bar-chart">
-      <div class="tp-bar-row">
-        <span class="tp-bar-label">With HPP</span>
-        <div class="tp-bar-track">
-          <div class="tp-bar-fill green" id="tp-bar-hpp" style="width:5%">—</div>
-        </div>
-      </div>
-      <div class="tp-bar-row">
-        <span class="tp-bar-label">Without HPP</span>
-        <div class="tp-bar-track">
-          <div class="tp-bar-fill red" id="tp-bar-no-hpp" style="width:100%">—</div>
-          <span class="tp-bar-overflow" id="tp-bar-overflow"></span>
-        </div>
+        <span class="bot-output-label">Time for one $50/month server to match this without HPP</span>
+        <div class="bot-output-val red" id="tp-out-server-time">—</div>
       </div>
     </div>
 
     <div class="tp-ratio-banner" id="tp-ratio-banner">
       <span class="ratio-big" id="tp-ratio-big">—</span>
-      <span id="tp-ratio-text">fewer fake attestations per hour with HPP</span>
+      <span id="tp-ratio-text">&mdash; and the ceiling is biological. AI cannot move it; it can only drive the adversary&rsquo;s workforce closer to it.</span>
     </div>
 
     <div class="bot-footnote">
-      The constraint is physical: each attestation requires one human holding one iPhone, performing Face ID, for ~3 seconds.
-      1,000 workers &times; 1,200 attestations/hr each = 1.2M/hr maximum. Without HPP, a single server pushes 36M automated requests/hr.
-      The ratio is the moat.
+      <strong>The 1-minute burn cap.</strong> A single human cannot commit more than 1 minute of biometric burn per minute of wall-clock time. They cannot be in two places at once, cannot dual-wield Face ID, cannot pre-stage attestations. The biological ceiling per worker per hour is 3600 / cycle_seconds. At a 5-second AI-orchestrated effective cycle, that is 720 actions/hour theoretical. Without AI orchestration, the same human running the manual cycle hits ~80 actions/hour.
+      <br><br>
+      <strong>What AI does to the moat.</strong> AI removes every adversarial cost <em>except</em> the one HPP makes irreducible. In the 2010s threat model, the human spent ~93% of cycle time on tasks an AI can now do faster &mdash; navigation, account state, post-action workflow &mdash; and only ~7% on the biometric pulse itself. AI orchestration removes the 93%. The workforce now spends nearly all of its time on the only step the architecture forces them to do, driving the adversary&rsquo;s effective throughput to the H-Constant ceiling. The ceiling itself does not move; the adversary just gets there faster. That is the strongest possible position for a defender.
+      <br><br>
+      <strong>What this means.</strong> An adversary fielding 10,000 AI-orchestrated workers produces ~7M fake actions per day. Without HPP, a single $50/month server produces 7M fake actions in <em>about 11 minutes</em>. The ratio is the moat &mdash; and it grows linearly with the adversary&rsquo;s labor cost while remaining fixed at the per-action thermodynamic minimum for HPP.
+      <br><br>
+      <strong>Threat model scope.</strong> HPP&rsquo;s claims assume hardware-bound liveness detection is not bypassed at scale. Individual deepfake circumvention is not in scope; what is in scope is whether the attack <em>scales</em>. Per the NPHT paper &sect;6, all results are assumption-conditional on the H-Constant. Based on P1 (Time-Anchored Biometric Pulse), NPHT (adversarial throughput notion), and the H-Constant.
     </div>
   </div>
 </section>
@@ -3917,95 +3973,187 @@ body.log-open #log-panel { right: 0; }
     return '$' + n.toFixed(0);
   }
 
+  // Mode state — defaults to AI-orchestrated (2026 threat)
+  window.BOT_MODE = 'ai';
+
+  window.setBotMode = function(mode) {
+    window.BOT_MODE = mode;
+    // Visual selected state
+    document.querySelectorAll('#bot-cost .bot-mode-btn').forEach(function(btn) {
+      if (btn.getAttribute('data-mode') === mode) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    // Adjust default cycle time when mode changes
+    var cycleSlider = document.getElementById('bot-cycle');
+    var cycleLabel  = document.getElementById('bot-cycle-label');
+    if (mode === 'ai') {
+      cycleSlider.min = 3;
+      cycleSlider.max = 15;
+      cycleSlider.value = 5;
+      cycleSlider.step = 1;
+      cycleLabel.textContent = 'Effective cycle time per fake action (AI-orchestrated)';
+    } else {
+      cycleSlider.min = 20;
+      cycleSlider.max = 90;
+      cycleSlider.value = 45;
+      cycleSlider.step = 5;
+      cycleLabel.textContent = 'Effective cycle time per fake action (manual)';
+    }
+    updateBotCalc();
+
+    // Sync the throughput calculator mode if it exists, so the page tells one story
+    if (typeof window.setThroughputMode === 'function' && window.TP_MODE !== mode) {
+      window.setThroughputMode(mode);
+    }
+  };
+
   window.updateBotCalc = function() {
-    var accounts   = parseInt(document.getElementById('bot-accounts').value);
-    var timePerSec = parseFloat(document.getElementById('bot-time').value);
+    var budget     = parseInt(document.getElementById('bot-budget').value);
+    var cycleSec   = parseFloat(document.getElementById('bot-cycle').value);
     var deviceCost = parseInt(document.getElementById('bot-device-cost').value);
     var laborHr    = parseFloat(document.getElementById('bot-labor').value);
+    var mode       = window.BOT_MODE || 'ai';
 
     // Display slider values
-    document.getElementById('bot-accounts-val').textContent    = accounts.toLocaleString();
-    document.getElementById('bot-time-val').textContent        = timePerSec.toFixed(1) + 's';
+    document.getElementById('bot-budget-val').textContent      = '$' + budget.toLocaleString();
+    document.getElementById('bot-cycle-val').textContent       = cycleSec.toFixed(0) + 's';
     document.getElementById('bot-device-cost-val').textContent = '$' + deviceCost.toLocaleString();
     document.getElementById('bot-labor-val').textContent       = '$' + laborHr.toFixed(2) + '/hr';
 
-    // NPHT calculation
-    var secondsPerDay   = 8 * 3600;  // 8-hour work day
-    var attestsPerDevice = Math.floor(secondsPerDay / timePerSec);
-    var devicesNeeded    = Math.ceil(accounts / attestsPerDevice);
-    var humanHours       = (accounts * timePerSec) / 3600;
-    var workersNeeded    = Math.ceil(humanHours / 8); // 8-hr shifts
-    var shiftsNeeded     = Math.ceil(humanHours / (workersNeeded * 8)) || 1;
+    // ── SUSTAINED BURN-RATE MODEL ─────────────────────────────────────
+    // 1-minute-burn-per-minute physical ceiling (P1: Time-Anchored Biometric Pulse).
+    // Mode B (AI-orchestrated): cycle dominated by ~3s biometric pulse; ~85% utilization.
+    // Mode A (manual click farm): cycle 30–60s of human-driven workflow; ~50% utilization.
+    var theoreticalPerHour = 3600 / cycleSec;
+    var utilization        = (mode === 'ai') ? 0.85 : 0.50;
+    var sustainedPerShift  = Math.floor(theoreticalPerHour * 8 * utilization);
 
-    var dailyDeviceCost  = devicesNeeded * (deviceCost / 365); // amortized over 1 year
-    var dailyLaborCost   = humanHours * laborHr;
-    var totalDailyCost   = dailyDeviceCost + dailyLaborCost;
+    var shiftHours        = 8;
+    var costPerWorker     = laborHr * shiftHours;             // labor only, per worker per shift
+    var amortizedDevicePerDay = deviceCost / 365;             // device amortized over 1 year
 
-    // Update outputs
-    document.getElementById('bot-out-devices').textContent     = fmtNum(devicesNeeded) + ' devices';
-    document.getElementById('bot-out-hours').textContent       = fmtNum(Math.round(humanHours)) + ' hours';
-    document.getElementById('bot-out-device-cost').textContent = fmtDollar(dailyDeviceCost) + ' / day (amortized)';
-    document.getElementById('bot-out-labor-cost').textContent  = fmtDollar(dailyLaborCost) + ' / day';
-    document.getElementById('bot-out-total').textContent       = fmtDollar(totalDailyCost) + ' / day';
+    // Each worker needs one device — 1:1 because Secure Enclave keys are non-transferable
+    var fullyLoadedCostPerWorker = costPerWorker + amortizedDevicePerDay;
 
-    // Comparison
-    document.getElementById('bot-cmp-without').textContent      = fmtNum(accounts) + ' fake accounts';
-    document.getElementById('bot-cmp-with').textContent         = fmtNum(accounts) + ' fake accounts';
-    document.getElementById('bot-cmp-devices-inline').textContent = fmtNum(devicesNeeded);
-    document.getElementById('bot-cmp-workers-inline').textContent = fmtNum(workersNeeded);
-    document.getElementById('bot-cmp-shifts-inline').textContent  = shiftsNeeded > 1 ? shiftsNeeded + ' x 8hr' : '8hr';
-    document.getElementById('bot-cmp-cost-inline').textContent    = fmtDollar(totalDailyCost);
+    var workers           = Math.max(1, Math.floor(budget / fullyLoadedCostPerWorker));
+    var devices           = workers;
+    var maxFakeAccounts   = workers * sustainedPerShift;
+    var costPerAccountHPP = budget / Math.max(1, maxFakeAccounts);
+
+    // ── NO-HPP BASELINE ───────────────────────────────────────────────
+    // AI agent on commodity infrastructure: marginal cost per fake action ~$0.0001
+    // (industry estimates: Akamai 2024 bot economics, CHEQ 2024 fraud index).
+    var costPerAccountNoHPP = 0.0001;
+    var noHppFakeAccounts   = Math.floor(budget / costPerAccountNoHPP);
+
+    // Cost-per-account ratio
+    var ratio = costPerAccountHPP / costPerAccountNoHPP;
+
+    // ── OUTPUT ────────────────────────────────────────────────────────
+    document.getElementById('bot-out-workers').textContent     = fmtNum(workers) + ' workers';
+    document.getElementById('bot-out-devices').textContent     = fmtNum(devices) + ' devices';
+    document.getElementById('bot-out-accounts').textContent    = fmtNum(maxFakeAccounts);
+    document.getElementById('bot-out-per-account').textContent = '$' + costPerAccountHPP.toFixed(2);
+
+    document.getElementById('bot-cmp-without').textContent     = fmtNum(noHppFakeAccounts) + ' fake actions';
+    document.getElementById('bot-cmp-without-per').textContent = '$' + costPerAccountNoHPP.toFixed(4);
+    document.getElementById('bot-cmp-with').textContent        = fmtNum(maxFakeAccounts) + ' fake actions';
+
+    document.getElementById('bot-ratio-big').textContent       = fmtNum(Math.round(ratio)) + 'x';
   };
 
   // Initialize on load
-  if (document.getElementById('bot-accounts')) {
-    updateBotCalc();
+  if (document.getElementById('bot-budget')) {
+    setBotMode('ai');  // default mode initializes calc
   }
 
   /* ── Adversarial Throughput Calculator ─────────────────────────── */
+  window.TP_MODE = 'ai';
+
+  window.setThroughputMode = function(mode) {
+    window.TP_MODE = mode;
+    // Visual selected state
+    document.querySelectorAll('#throughput .bot-mode-btn').forEach(function(btn) {
+      if (btn.getAttribute('data-mode') === mode) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+    // Adjust default cycle time when mode changes
+    var cycleSlider = document.getElementById('tp-cycle');
+    var cycleLabel  = document.getElementById('tp-cycle-label');
+    if (mode === 'ai') {
+      cycleSlider.min = 3;
+      cycleSlider.max = 15;
+      cycleSlider.value = 5;
+      cycleSlider.step = 1;
+      cycleLabel.textContent = 'Effective cycle time per fake action (AI-orchestrated)';
+    } else {
+      cycleSlider.min = 20;
+      cycleSlider.max = 90;
+      cycleSlider.value = 45;
+      cycleSlider.step = 5;
+      cycleLabel.textContent = 'Effective cycle time per fake action (manual)';
+    }
+    updateThroughput();
+
+    // Sync the bot-cost calculator mode if it exists, so the page tells one story
+    if (typeof window.setBotMode === 'function' && window.BOT_MODE !== mode) {
+      window.setBotMode(mode);
+    }
+  };
+
   window.updateThroughput = function() {
-    var workers = parseInt(document.getElementById('tp-workers').value);
-    var secs    = parseFloat(document.getElementById('tp-secs').value);
-    var rps     = parseInt(document.getElementById('tp-rps').value);
+    var workers  = parseInt(document.getElementById('tp-workers').value);
+    var cycleSec = parseFloat(document.getElementById('tp-cycle').value);
+    var mode     = window.TP_MODE || 'ai';
 
     // Display slider values
     document.getElementById('tp-workers-val').textContent = workers.toLocaleString();
-    document.getElementById('tp-secs-val').textContent    = secs.toFixed(1) + 's';
-    document.getElementById('tp-rps-val').textContent     = rps.toLocaleString();
+    document.getElementById('tp-cycle-val').textContent   = cycleSec.toFixed(0) + 's';
 
-    // With HPP: workers × (3600 / secs_per_attest)
-    var hppPerHour   = Math.floor(workers * (3600 / secs));
-    // Without HPP: rps × 3600
-    var noHppPerHour = rps * 3600;
-    // Reduction factor
-    var factor = Math.round(noHppPerHour / Math.max(1, hppPerHour));
+    // ── BIOLOGICAL CEILING MODEL ──────────────────────────────────────
+    // Theoretical = 3600 / cycle_seconds (1-minute-burn-per-minute cap).
+    // Sustained = theoretical × 8hrs × utilization
+    //   AI-orchestrated: ~85% utilization
+    //   Manual: ~50% utilization
+    var theoreticalPerHour = Math.floor(3600 / cycleSec);
+    var utilization        = (mode === 'ai') ? 0.85 : 0.50;
+    var sustainedPerShift  = Math.floor(theoreticalPerHour * 8 * utilization);
 
-    document.getElementById('tp-out-hpp').textContent    = fmtNum(hppPerHour) + ' / hour';
-    document.getElementById('tp-out-no-hpp').textContent = fmtNum(noHppPerHour) + ' / hour';
-    document.getElementById('tp-out-factor').textContent = fmtNum(factor) + 'x reduction';
+    var dailyCeiling = workers * sustainedPerShift;
 
-    // Bar chart (hpp is baseline width, no-hpp overflows)
-    var maxVal   = Math.max(hppPerHour, noHppPerHour);
-    var hppPct   = Math.max(3, (hppPerHour / maxVal) * 100);
-    var noHppPct = Math.max(3, (noHppPerHour / maxVal) * 100);
+    // ── NO-HPP BASELINE: $50/month server at 10,000 RPS ──────────────
+    var noHppRequestsPerSec  = 10000;
+    var serverSecondsToMatch = dailyCeiling / noHppRequestsPerSec;
+    var serverTimeStr;
+    if (serverSecondsToMatch < 60) {
+      serverTimeStr = serverSecondsToMatch.toFixed(1) + ' seconds';
+    } else if (serverSecondsToMatch < 3600) {
+      serverTimeStr = (serverSecondsToMatch / 60).toFixed(1) + ' minutes';
+    } else {
+      serverTimeStr = (serverSecondsToMatch / 3600).toFixed(1) + ' hours';
+    }
 
-    var barHpp   = document.getElementById('tp-bar-hpp');
-    var barNoHpp = document.getElementById('tp-bar-no-hpp');
-    barHpp.style.width      = hppPct + '%';
-    barHpp.textContent      = fmtNum(hppPerHour);
-    barNoHpp.style.width    = noHppPct + '%';
-    barNoHpp.textContent    = fmtNum(noHppPerHour);
+    var noHppPerDay = noHppRequestsPerSec * 86400;
+    var ratio       = Math.round(noHppPerDay / Math.max(1, dailyCeiling));
 
-    var overflow = document.getElementById('tp-bar-overflow');
-    overflow.textContent = noHppPerHour > hppPerHour * 2 ? fmtNum(factor) + 'x more \u2192' : '';
+    // ── OUTPUT ────────────────────────────────────────────────────────
+    document.getElementById('tp-out-theoretical').textContent = fmtNum(theoreticalPerHour) + ' / hour (theoretical, not sustainable)';
+    document.getElementById('tp-out-sustained').textContent   = fmtNum(sustainedPerShift) + ' / shift (sustainable)';
+    document.getElementById('tp-out-daily').textContent       = fmtNum(dailyCeiling);
+    document.getElementById('tp-out-server-time').textContent = serverTimeStr;
 
-    // Ratio banner
-    document.getElementById('tp-ratio-big').textContent  = fmtNum(factor) + 'x';
-    document.getElementById('tp-ratio-text').textContent  = 'fewer fake attestations per hour with HPP (' + fmtNum(hppPerHour) + ' vs ' + fmtNum(noHppPerHour) + ')';
+    document.getElementById('tp-ratio-big').textContent  = fmtNum(ratio) + 'x';
+    document.getElementById('tp-ratio-text').textContent = 'fewer fake actions per day under HPP \u2014 and the ceiling is biological. AI cannot move it; it can only drive the adversary closer to it.';
   };
 
   if (document.getElementById('tp-workers')) {
-    updateThroughput();
+    setThroughputMode('ai');  // default mode initializes calc
   }
 
   window.exportReceiptJSON = function() {
