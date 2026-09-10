@@ -1,5 +1,29 @@
 const result = document.getElementById('result');
 
+function successUrl() {
+  try {
+    const here = new URL(window.location.href);
+    if (here.hostname === 'humanpresenceprotocol.com' || here.hostname === 'www.humanpresenceprotocol.com') {
+      return 'https://humanpresenceprotocol.com/Dev/Chrome/success.html';
+    }
+    return new URL('success.html', here).href;
+  } catch {
+    return 'success.html';
+  }
+}
+
+function showVerifiedOnPage() {
+  const title = document.querySelector('h1');
+  if (title) title.textContent = 'You have been verified as a human.';
+  const lead = document.querySelector('.lead');
+  if (lead) {
+    lead.textContent = 'The page received a Boolean success result from Human Presence Protocol. It did not receive biometric data, keys, or a verifier session token.';
+  }
+  const button = document.getElementById('verify');
+  if (button) button.hidden = true;
+  if (result) result.textContent = 'Verified.';
+}
+
 document.getElementById('verify').onclick = async () => {
   result.textContent = 'Waiting for HPP…';
   const missing = window.setTimeout(() => {
@@ -11,7 +35,8 @@ document.getElementById('verify').onclick = async () => {
     const ok = await HPP.verify({ claim: 'human_presence' });
     window.clearTimeout(missing);
     if (ok === true) {
-      location.href = new URL('success.html', window.location.href).href;
+      showVerifiedOnPage();
+      window.location.replace(successUrl());
       return;
     }
     result.textContent = 'Verification was not completed.';
