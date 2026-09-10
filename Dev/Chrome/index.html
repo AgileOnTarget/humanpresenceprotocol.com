@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'self'; form-action 'self'">
+    <title>Human Presence Protocol</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icons/hpp-icon.png" type="image/png">
+  </head>
+  <body>
+    <main>
+      <header class="brand">
+        <img class="brand-mark" src="icons/hpp-icon.png" width="88" height="88" alt="Human Presence Protocol">
+        <div class="brand-text">
+          <div class="wordmark">HPP</div>
+          <div class="product">Human Presence Protocol</div>
+          <div class="tagline">Verified human presence. Zero disclosure.</div>
+        </div>
+      </header>
+      <p class="kicker">Chrome Gateway test</p>
+      <h1>Are you a real person?</h1>
+      <p class="lead">This page asks Human Presence Protocol for one Boolean human-presence result. It does not run HPP cryptography itself. You need the HPP Chrome extension and the HPP iPhone app.</p>
+      <button id="verify" type="button">Verify Human</button>
+      <div id="result" aria-live="polite"></div>
+      <section class="about">
+        <h2>What is HPP?</h2>
+        <p>Human Presence Protocol provides cryptographic evidence that a human was physically present at a device at the time an action was authorized.</p>
+        <p>Website request, then HPP verification, then QR, then iPhone, then biometric and hardware attestation, then the verifier, then success or failure.</p>
+        <p>HPP does not prove identity merely because it proves presence. HPP does not store biometric templates.</p>
+        <p>HPP does not attempt to distinguish bots by behavioral detection. Instead, valid attestations require the protocol's hardware-bound, biometric-gated verification process. Under HPP's stated trust assumptions, software automation alone cannot fabricate a valid presence attestation.</p>
+      </section>
+      <section class="about">
+        <h2>How it is used</h2>
+        <p>A website can use HPP in the same conceptual place as a CAPTCHA. The site asks whether a real human is present. HPP runs the verification on the iPhone. The site receives true or false for the requested claim.</p>
+        <p>Typical uses include keeping automated software from completing a human-only action, without a behavioral puzzle and without identifying the person.</p>
+      </section>
+      <section>
+        <h2>Developer contract</h2>
+        <pre>const verified = await HPP.verify({
+  claim: "human_presence"
+});</pre>
+      </section>
+      <nav class="site-foot" aria-label="Site">
+        <a href="Privacy/">Privacy</a>
+        <a href="https://humanpresenceprotocol.com/">HPP home</a>
+      </nav>
+    </main>
+    <script src="hpp-web.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; base-uri 'self'">
+    <title>Privacy Policy: HPP Chrome Gateway</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="icon" href="../icons/hpp-icon.png" type="image/png">
+  </head>
+  <body>
+    <main class="policy">
+      <header class="brand">
+        <img class="brand-mark" src="../icons/hpp-icon.png" width="88" height="88" alt="Human Presence Protocol">
+        <div class="brand-text">
+          <div class="wordmark">HPP</div>
+          <div class="product">Human Presence Protocol</div>
+          <div class="tagline">Verified human presence. Zero disclosure.</div>
+        </div>
+      </header>
+      <p class="meta">Privacy Policy · Effective 10 September 2026 · Last updated 10 September 2026</p>
+      <h1>Privacy Policy for the HPP Chrome Gateway</h1>
+      <p class="lead">This policy describes the Chrome Gateway test pages at humanpresenceprotocol.com/Dev/Chrome and the Human Presence Protocol Chrome extension. Privacy is the architecture, not a later add-on. HPP proves presence, not identity.</p>
+      <p>The iPhone app and HPP verifier are also covered by the product privacy policy at <a href="https://humanpresenceprotocol.com/privacy">humanpresenceprotocol.com/privacy</a>. This page is the complete policy for the Chrome Gateway so a visitor, a developer, or a Chrome Web Store reviewer can see exactly what this browser path does.</p>
+
+      <section>
+        <h2>Who we are</h2>
+        <p>Human Presence Protocol (HPP) is operated by Agile On Target LLC. Contact for privacy questions: <a href="mailto:privacy@humanpresenceprotocol.com">privacy@humanpresenceprotocol.com</a>.</p>
+        <p>These Chrome test pages are a developer demonstration. The extension is not in the Chrome Web Store as of this date. Treat this as a reference integration, not a claim that the Gateway is production-ready.</p>
+      </section>
+
+      <section>
+        <h2>Core privacy principle</h2>
+        <p>HPP provides cryptographic evidence that a human was physically present at a device at the time an action was authorized. HPP does not prove identity merely because it proves presence. HPP does not store biometric templates.</p>
+        <p>The Chrome test page asks for one Boolean result: true or false for the claim <code>human_presence</code>. The page is architecturally not given biometric data, keys, location, date of birth, advertising identifiers, or a verifier session token.</p>
+      </section>
+
+      <section>
+        <h2>What this Chrome path collects</h2>
+        <h3>On the test page</h3>
+        <p>The static pages at /Dev/Chrome do not create accounts, do not set first-party cookies, and do not run analytics, advertising, or tracking pixels. They load only their own HTML, CSS, images, and the small <code>HPP.verify()</code> script.</p>
+        <p>If you click Verify Human, the page sends a same-origin message asking the extension for a Boolean. It does not read your browsing history. It does not receive a receipt.</p>
+
+        <h3>In the Chrome extension, on your computer</h3>
+        <p>The extension uses <code>chrome.storage.local</code> only. It does not use <code>chrome.storage.sync</code>. Local storage holds:</p>
+        <ul>
+          <li>A mode flag: local test broker, or the live HPP verifier.</li>
+          <li>An optional allowlisted verifier URL override.</li>
+        </ul>
+        <p>Those values stay on the device. They are not your name, email, or browsing history. Uninstalling the extension deletes them.</p>
+
+        <h3>What the extension sends to the HPP verifier</h3>
+        <p>When a participating page calls <code>HPP.verify({ claim: "human_presence" })</code>, the extension asks the allowlisted HPP verifier to create a short-lived relay slot, then shows a QR code for the HPP iPhone app. The QR payload is JSON of the form the iPhone app already scans:</p>
+        <ul>
+          <li>Verifier URL</li>
+          <li>Site host (for example, humanpresenceprotocol.com)</li>
+          <li>Protocol version</li>
+          <li>Session duration</li>
+          <li>Relay identifier</li>
+          <li>Requested claim</li>
+        </ul>
+        <p>The QR does not contain biometric data, Face ID templates, private keys, public keys, nonces minted by Chrome, signatures, or session tokens. Chrome does not mint HPP nonces. The iPhone app and the existing HPP verifier remain the cryptographic authority.</p>
+        <p>The extension then polls relay status. If the verifier response includes a session token, the extension strips that token before anything reaches the page. The page receives only whether verification succeeded.</p>
+
+        <h3>What happens on the iPhone</h3>
+        <p>Face ID or Touch ID is handled by Apple. HPP receives a pass or fail from the platform, not a biometric template. The Secure Enclave holds the private key. The verifier receives the minimum attestation material described in the product privacy policy: a public key that is not tied to your name or Apple ID, a one-use signature, a timestamp, and the site identifier.</p>
+      </section>
+
+      <section>
+        <h2>What this Chrome path does not collect</h2>
+        <ul>
+          <li>Name or real-world identity</li>
+          <li>Email address, phone number, or Apple ID</li>
+          <li>Location or GPS data</li>
+          <li>Browsing history, page content, or form fields from the sites you visit</li>
+          <li>Device fingerprinting for advertising</li>
+          <li>Biometric templates (Face ID / Touch ID stay in the Secure Enclave)</li>
+          <li>Date of birth</li>
+          <li>Advertising identifiers</li>
+          <li>Contacts, photos, or other on-device content</li>
+        </ul>
+        <p>The extension does not sell data. It does not include advertising SDKs. It does not use the content script to scrape pages for any purpose other than receiving the page's <code>HPP.verify()</code> request and showing the verification panel.</p>
+      </section>
+
+      <section>
+        <h2>Why Chrome permissions exist</h2>
+        <table>
+          <thead>
+            <tr><th>Permission</th><th>Why it exists</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>storage</td>
+              <td>Remember local-test versus live-verifier mode, and the allowlisted verifier URL, on this computer only.</td>
+            </tr>
+            <tr>
+              <td>Host access to the HPP verifier</td>
+              <td>Create a relay slot and poll status. The service worker does not upload page content.</td>
+            </tr>
+            <tr>
+              <td>Content scripts on HTTPS pages and localhost</td>
+              <td>So a website can call <code>HPP.verify()</code> the way it would call a CAPTCHA. Not used for ads or scraping.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>How data is used</h2>
+        <ul>
+          <li><strong>Purpose.</strong> Answer one question: was a human present for this request?</li>
+          <li><strong>No secondary use.</strong> We do not use Gateway traffic for advertising, profiling, or sale.</li>
+          <li><strong>No cross-site tracking graph.</strong> A true result on one origin says nothing about another origin. The page SDK accepts results only from the same window and the same origin that asked.</li>
+        </ul>
+        <p>A Boolean shown in the browser is a user-experience gate, not authorization by itself. A page script can forge a true in developer tools. Anything of value must be gated on the operator's own server against the HPP verifier. This policy discloses that limit so it is not mistaken for a hidden data collection.</p>
+      </section>
+
+      <section>
+        <h2>Retention</h2>
+        <ul>
+          <li><strong>Extension settings:</strong> until you change them or uninstall the extension.</li>
+          <li><strong>Verifier challenges:</strong> purged on the HPP verifier after 300 seconds (5 minutes), as described in the product privacy policy.</li>
+          <li><strong>Session tokens:</strong> expire and are purged on the verifier. The Chrome page is never given the token.</li>
+          <li><strong>Attestation receipts on the verifier:</strong> chain-linked cryptographic records with no name, email, or biometric template. See the product privacy policy.</li>
+          <li><strong>GitHub Pages request logs:</strong> this static site is hosted by GitHub. GitHub may process ordinary web request metadata under GitHub's privacy policy. We do not run a separate analytics pipeline on these pages.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Third-party services</h2>
+        <ul>
+          <li><strong>GitHub Pages</strong> hosts these static test pages. Subject to GitHub's privacy policy.</li>
+          <li><strong>Render</strong> hosts the HPP verification server used for live attestations. Subject to Render's privacy policy.</li>
+          <li><strong>Apple</strong> provides the App Store, Secure Enclave, and Face ID / Touch ID. Subject to Apple's privacy policy. HPP does not receive biometric templates from Apple.</li>
+          <li><strong>Google Chrome</strong> runs the extension APIs. Subject to Google's privacy policy for Chrome.</li>
+        </ul>
+        <p>We do not use analytics, advertising, or tracking services on the Chrome Gateway test pages.</p>
+      </section>
+
+      <section>
+        <h2>Claims this version does not fulfill</h2>
+        <p>The request schema can name <code>age_over</code>, geofence, or location-region claims so later adapters can be added. Version 0.1 of this Chrome Gateway returns false for those claims. It does not fabricate age or location results. Date of birth, when used by the iPhone app for other HPP features, stays on the phone as described in the product privacy policy.</p>
+      </section>
+
+      <section>
+        <h2>Children</h2>
+        <p>These Chrome test pages do not knowingly collect personal information from children under 13. HPP is designed so a presence check does not require a name, email, or account. This policy does not claim that every possible deployment is automatically COPPA or KOSA compliant. That depends on how a relying site uses the Boolean, in which jurisdiction, and for what purpose.</p>
+      </section>
+
+      <section>
+        <h2>Your choices</h2>
+        <ul>
+          <li>Do not click Verify Human, and no relay is created.</li>
+          <li>Close the verification panel to cancel.</li>
+          <li>Remove the Chrome extension to delete local mode and endpoint settings.</li>
+          <li>Uninstall the HPP iPhone app to delete on-device HPP data, as described in the product privacy policy.</li>
+          <li>Email <a href="mailto:privacy@humanpresenceprotocol.com">privacy@humanpresenceprotocol.com</a> with questions, including requests about verifier-side receipts (those receipts contain no personal information).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Legal positioning</h2>
+        <p>The Chrome Gateway is designed around data minimization and purpose limitation. We do not market this package as automatically GDPR compliant, COPPA compliant, or compliant with every age-assurance or privacy law. Preferred language is privacy by design, data minimization, and designed to support minimal-disclosure verification.</p>
+      </section>
+
+      <section>
+        <h2>Changes</h2>
+        <p>We may update this policy when the Chrome Gateway or the HPP verifier changes. Material changes will be noted on this page with a new last-updated date.</p>
+      </section>
+
+      <section class="contact">
+        <h2>Contact</h2>
+        <p>Human Presence Protocol · Agile On Target LLC</p>
+        <p>Privacy: <a href="mailto:privacy@humanpresenceprotocol.com">privacy@humanpresenceprotocol.com</a></p>
+        <p>Product privacy policy: <a href="https://humanpresenceprotocol.com/privacy">humanpresenceprotocol.com/privacy</a></p>
+        <p>Support: <a href="https://humanpresenceprotocol.com/support">humanpresenceprotocol.com/support</a></p>
+      </section>
+
+      <nav class="site-foot" aria-label="Site">
+        <a href="../">Chrome test</a>
+        <a href="https://humanpresenceprotocol.com/privacy">HPP Privacy</a>
+        <a href="https://humanpresenceprotocol.com/">HPP home</a>
+      </nav>
+    </main>
+  </body>
+</html>
