@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; base-uri 'self'">
     <title>Privacy Policy: HPP Chrome Gateway</title>
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=20260910c">
     <link rel="icon" href="../icons/hpp-icon.png" type="image/png">
   </head>
   <body>
@@ -26,7 +26,7 @@
       <section>
         <h2>Who we are</h2>
         <p>Human Presence Protocol (HPP) is operated by Agile On Target LLC. Contact for privacy questions: <a href="mailto:privacy@humanpresenceprotocol.com">privacy@humanpresenceprotocol.com</a>.</p>
-        <p>These Chrome test pages are a developer demonstration. The extension is not in the Chrome Web Store as of this date. Treat this as a reference integration, not a claim that the Gateway is production-ready.</p>
+        <p>These Chrome test pages are the public demo for the Chrome Gateway. They are not a claim that every relying website is production-ready. The iPhone app remains the prover. The HPP verifier remains the cryptographic authority.</p>
       </section>
 
       <section>
@@ -44,8 +44,7 @@
         <h3>In the Chrome extension, on your computer</h3>
         <p>The extension uses <code>chrome.storage.local</code> only. It does not use <code>chrome.storage.sync</code>. Local storage holds:</p>
         <ul>
-          <li>A mode flag: local test broker, or the live HPP verifier.</li>
-          <li>An optional allowlisted verifier URL override.</li>
+          <li>Optional verifier settings that stay on this computer.</li>
         </ul>
         <p>Those values stay on the device. They are not your name, email, or browsing history. Uninstalling the extension deletes them.</p>
 
@@ -91,14 +90,14 @@
           <tbody>
             <tr>
               <td>storage</td>
-              <td>Remember local-test versus live-verifier mode, and the allowlisted verifier URL, on this computer only.</td>
+              <td>Remember verifier settings on this computer only. Not synced. Not your name or browsing history.</td>
             </tr>
             <tr>
               <td>Host access to the HPP verifier</td>
               <td>Create a relay slot and poll status. The service worker does not upload page content.</td>
             </tr>
             <tr>
-              <td>Content scripts on HTTPS pages and localhost</td>
+              <td>Content scripts on HTTPS pages</td>
               <td>So a website can call <code>HPP.verify()</code> the way it would call a CAPTCHA. Not used for ads or scraping.</td>
             </tr>
           </tbody>

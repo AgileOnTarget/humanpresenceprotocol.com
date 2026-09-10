@@ -21,11 +21,30 @@ main {
   padding: 32px;
 }
 
+h1 {
+  font-size: clamp(28px, 5vw, 44px);
+  line-height: 1.15;
+  margin: 14px 0;
+  color: var(--navy);
+  overflow-wrap: break-word;
+}
+
+main > h1 {
+  font-size: clamp(32px, 6vw, 52px);
+  line-height: 1.08;
+}
+
 .brand {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 18px;
   margin-bottom: 36px;
+}
+
+.brand-text {
+  min-width: 0;
+  flex: 1 1 220px;
 }
 
 .brand-mark {
@@ -67,14 +86,6 @@ main {
   text-transform: uppercase;
   color: var(--gold);
   font-weight: 700;
-}
-
-h1 {
-  font-size: clamp(32px, 6vw, 52px);
-  line-height: 1.08;
-  margin: 14px 0;
-  color: var(--navy);
-  overflow-wrap: anywhere;
 }
 
 .lead,
@@ -158,6 +169,7 @@ a {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  table-layout: fixed;
 }
 
 .policy th,
@@ -166,6 +178,46 @@ a {
   vertical-align: top;
   padding: 10px 12px 10px 0;
   border-bottom: 1px solid var(--line);
+  overflow-wrap: break-word;
+}
+
+.policy th:first-child,
+.policy td:first-child {
+  width: 34%;
+  padding-right: 16px;
+}
+
+.policy code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  main {
+    margin: 4vh auto;
+    padding: 20px 16px;
+  }
+
+  .policy table,
+  .policy thead,
+  .policy tbody,
+  .policy tr,
+  .policy th,
+  .policy td {
+    display: block;
+    width: 100%;
+  }
+
+  .policy th {
+    border-bottom: 0;
+    padding-bottom: 2px;
+  }
+
+  .policy td {
+    padding-top: 0;
+    margin-bottom: 12px;
+  }
 }
 
 .policy th {
