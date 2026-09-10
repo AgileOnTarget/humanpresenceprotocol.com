@@ -11,7 +11,7 @@ document.getElementById('verify').onclick = async () => {
     const ok = await HPP.verify({ claim: 'human_presence' });
     window.clearTimeout(missing);
     if (ok === true) {
-      location.href = 'success.html';
+      location.href = new URL('success.html', window.location.href).href;
       return;
     }
     result.textContent = 'Verification was not completed.';
