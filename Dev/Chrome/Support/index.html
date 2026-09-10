@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self'; img-src 'self'; base-uri 'self'">
+    <title>Support: HPP Chrome Gateway</title>
+    <link rel="stylesheet" href="../style.css?v=20260910d">
+    <link rel="icon" href="../icons/hpp-icon.png" type="image/png">
+  </head>
+  <body>
+    <main class="policy">
+      <header class="brand">
+        <img class="brand-mark" src="../icons/hpp-icon.png" width="88" height="88" alt="Human Presence Protocol">
+        <div class="brand-text">
+          <div class="wordmark">HPP</div>
+          <div class="product">Human Presence Protocol</div>
+          <div class="tagline">Verified human presence. Zero disclosure.</div>
+        </div>
+      </header>
+      <p class="meta">Support · Chrome Gateway</p>
+      <h1>Support for the HPP Chrome Gateway</h1>
+      <p class="lead">This page is help for the Human Presence Protocol Chrome extension and the public test pages at humanpresenceprotocol.com/Dev/Chrome. The website receives only true or false. It does not receive biometrics, keys, or a verifier session token.</p>
+
+      <section>
+        <h2>What you need</h2>
+        <ul>
+          <li>The Human Presence Protocol Chrome extension</li>
+          <li>The HPP iPhone app from the App Store</li>
+          <li>An iPhone with Face ID or Touch ID set up</li>
+        </ul>
+        <p>Test page: <a href="https://humanpresenceprotocol.com/Dev/Chrome">humanpresenceprotocol.com/Dev/Chrome</a></p>
+      </section>
+
+      <section>
+        <h2>How to verify</h2>
+        <ol>
+          <li>Install the Chrome extension.</li>
+          <li>Open the test page and click Verify Human.</li>
+          <li>A QR code appears in Chrome. There should be no SIMULATION label on a live HTTPS page.</li>
+          <li>In the HPP iPhone app, scan that QR and complete Face ID or Touch ID.</li>
+          <li>Chrome should show that you have been verified as a human.</li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Troubleshooting</h2>
+        <h3>Verify Human does nothing, or says the extension is missing</h3>
+        <p>Install or enable the extension, then reload the tab. The page cannot complete a live check without the extension.</p>
+
+        <h3>The QR will not scan</h3>
+        <p>Allow camera access for the HPP app in iOS Settings. Hold the phone about 6 to 12 inches from the screen. If the code is small, enlarge the Chrome window.</p>
+
+        <h3>Face ID or Touch ID does not complete</h3>
+        <p>Confirm biometrics in iOS Settings. If the check fails, scan a fresh QR from the website and try again.</p>
+
+        <h3>The phone succeeds but the Chrome tab stays on the test page</h3>
+        <p>Keep the tab open after you scan. After Face ID, Chrome should move to the success page. If it does not, reload the extension, hard-refresh the tab, and run Verify Human again.</p>
+      </section>
+
+      <section>
+        <h2>Contact</h2>
+        <p>Human Presence Protocol · Agile On Target LLC</p>
+        <p>Support: <a href="mailto:support@humanpresenceprotocol.com">support@humanpresenceprotocol.com</a></p>
+        <p>Privacy: <a href="mailto:privacy@humanpresenceprotocol.com">privacy@humanpresenceprotocol.com</a></p>
+        <p>Product support (iPhone app and general HPP): <a href="https://humanpresenceprotocol.com/support">humanpresenceprotocol.com/support</a></p>
+        <p>Chrome Gateway privacy policy: <a href="https://humanpresenceprotocol.com/Dev/Chrome/Privacy">humanpresenceprotocol.com/Dev/Chrome/Privacy</a></p>
+      </section>
+
+      <nav class="site-foot" aria-label="Site">
+        <a href="../">Chrome test</a>
+        <a href="../Privacy/">Privacy</a>
+        <a href="https://humanpresenceprotocol.com/support">HPP support</a>
+        <a href="https://humanpresenceprotocol.com/">HPP home</a>
+      </nav>
+    </main>
+  </body>
+</html>

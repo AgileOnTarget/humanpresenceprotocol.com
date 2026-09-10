@@ -167,7 +167,8 @@ a {
   margin: 20px 0 8px;
 }
 
-.policy ul {
+.policy ul,
+.policy ol {
   color: var(--muted);
   line-height: 1.65;
   padding-left: 1.2em;
